@@ -104,6 +104,7 @@
 <p class="caption"><span class="caption-text">Example Galleries</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../_examples/tutorial/index.html">The tutorial gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_examples/ppgs/index.html">The PPGs gallery</a></li>
 </ul>
 
             
@@ -230,18 +231,18 @@ and (ii) docs as a source folder.</p>
 <div class="section" id="set-up-the-repository-locally">
 <h2>Set up the repository locally<a class="headerlink" href="#set-up-the-repository-locally" title="Permalink to this headline">¶</a></h2>
 <p>On your computer, open the terminal and create your repository folder:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> mkdir fyp2020-bahp <span class="c1"># fyp&lt;yyyy&gt;-&lt;imperial-username&gt;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir fyp2020-bahp <span class="c1"># fyp&lt;yyyy&gt;-&lt;imperial-username&gt;</span>
 </pre></div>
 </div>
 <p>Move inside the folder:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> fyp2020-bahp
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span> fyp2020-bahp
 </pre></div>
 </div>
 <p>Clone each branch in a different folder:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone -b main https://github.com/bahp/fyp2020-bahp.git
-<span class="gp">$</span> mv &lt;repository_name&gt; main
-<span class="gp">$</span> git clone -b gh-pages https://github.com/bahp/fyp2020-bahp.gi
-<span class="gp">$</span> mv &lt;repository_name&gt; gh-pages
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git clone -b main https://github.com/bahp/fyp2020-bahp.git
+<span class="gp">$ </span>mv &lt;repository_name&gt; main
+<span class="gp">$ </span>git clone -b gh-pages https://github.com/bahp/fyp2020-bahp.gi
+<span class="gp">$ </span>mv &lt;repository_name&gt; gh-pages
 </pre></div>
 </div>
 <p>Your repository is now ready!</p>
@@ -346,13 +347,13 @@ in docs/source/tutorials/setup.rst.</p>
 included in the documentation (gallery examples) using sphinx-gallery. Remember
 to include the folder(s) containing the scripts in the variable <code class="docutils literal notranslate"><span class="pre">sphinx_gallery_conf</span></code>
 in the conf.py file as shown below for tutorial.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span> Configuration <span class="k">for</span> sphinx_gallery
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Configuration <span class="k">for</span> sphinx_gallery
 <span class="go">sphinx_gallery_conf = {</span>
-<span class="gp">    #</span> path to your example scripts
+<span class="gp">    # </span>path to your example scripts
 <span class="hll"><span class="go">    &#39;examples_dirs&#39;: [&#39;../../examples/tutorial&#39;],</span>
-</span><span class="gp">    #</span> path to where to save gallery generated output
+</span><span class="gp">    # </span>path to where to save gallery generated output
 <span class="hll"><span class="go">    &#39;gallery_dirs&#39;: [&#39;../source/_examples/tutorial&#39;],</span>
-</span><span class="gp">    #</span> Other
+</span><span class="gp">    # </span>Other
 <span class="go">    &#39;line_numbers&#39;: True,</span>
 <span class="go">    &#39;download_all_examples&#39;: False,</span>
 <span class="go">    &#39;within_subsection_order&#39;: FileNameSortKey</span>

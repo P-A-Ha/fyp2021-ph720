@@ -1,0 +1,12 @@
+
+:orphan:
+
+.. _sphx_glr__examples_ppgs_sg_execution_times:
+
+Computation times
+=================
+**00:00.380** total execution time for **_examples_ppgs** files:
+
++--------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr__examples_ppgs_plot_sample.py` (``plot_sample.py``) | 00:00.380 | 0.0 MB |
++--------------------------------------------------------------------+-----------+--------+
