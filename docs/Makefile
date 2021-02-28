@@ -24,4 +24,4 @@ help:
 # implemented by changing the BUILDDIR variable. (add make clean html)
 github:
 	@make clean html
-	@cp -a build/html/ ../../gh-pages/docs
+	@copy -a build/html/ ../../gh-pages/docs

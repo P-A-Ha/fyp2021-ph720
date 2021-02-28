@@ -12,14 +12,14 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../fyp2020-username/'))
+sys.path.insert(0, os.path.abspath('../../fyp2021-ph720/'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'fyp2020-username'
-copyright = '2021, <Full name>'
-author = '<Full name>'
+project = 'fyp2021-ph720'
+copyright = '2021, Philippos Arkis Hadjimarkou'
+author = 'Philippos Arkis Hadjimarkou'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
@@ -62,7 +62,7 @@ napoleon_use_ivar = True
 # https://sphinx-gallery.github.io/stable/configuration.html
 
 # Import library
-from sphinx_gallery.sorting import FileNameSortKey
+from sphinx_gallery.sorting import FileNameSortKey # pylint: disable=import-error
 
 # Configuration for sphinx_gallery
 sphinx_gallery_conf = {
