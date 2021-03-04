@@ -4,22 +4,22 @@
 
 .. _sphx_glr__examples_tutorial:
 
-The tutorial gallery
-====================
+Example Gallery with some plots
+===============================
 
 Below is a gallery of examples
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Example using your package">
+    <div class="sphx-glr-thumbcontainer" tooltip="Example plot of &#x27;Pleth&#x27; and &#x27;ECG1&#x27; from an ascii file. ">
 
 .. only:: html
 
- .. figure:: /_examples/tutorial/images/thumb/sphx_glr_plot_greetings_01_thumb.png
-     :alt: Plotting greetings
+ .. figure:: /_examples/tutorial/images/thumb/sphx_glr_Ascii_plot_thumb.png
+     :alt: Plotting data from an ASCII file (script)
 
-     :ref:`sphx_glr__examples_tutorial_plot_greetings_01.py`
+     :ref:`sphx_glr__examples_tutorial_Ascii_plot.py`
 
 .. raw:: html
 
@@ -29,7 +29,28 @@ Below is a gallery of examples
 .. toctree::
    :hidden:
 
-   /_examples/tutorial/plot_greetings_01
+   /_examples/tutorial/Ascii_plot
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example plot of &#x27;PULSE_BPM&#x27; and &#x27;SPO2_PCT&#x27; from a CSV file. ">
+
+.. only:: html
+
+ .. figure:: /_examples/tutorial/images/thumb/sphx_glr_Test-plotting_thumb.png
+     :alt: Plotting data from an CSV file (script)
+
+     :ref:`sphx_glr__examples_tutorial_Test-plotting.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /_examples/tutorial/Test-plotting
 
 .. raw:: html
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Plotting a gaussian (script) &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  <title>Plotting data from an CSV file (script) &mdash; fyp2021-ph720 0.0.1 documentation</title>
   
 
   
@@ -42,8 +42,8 @@
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Plotting a gaussian (tutorial)" href="plot_sample_02.html" />
-    <link rel="prev" title="Plotting data from an CSV file (script)" href="Test-plotting.html" /> 
+    <link rel="next" title="Plotting a gaussian (script)" href="plot_sample_01.html" />
+    <link rel="prev" title="Plotting data from an ASCII file (script)" href="Ascii_plot.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,8 +96,8 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Example Gallery with some plots</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Ascii_plot.html">Plotting data from an ASCII file (script)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Test-plotting.html">Plotting data from an CSV file (script)</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting a gaussian (script)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting data from an CSV file (script)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sample_01.html">Plotting a gaussian (script)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_sample_02.html">Plotting a gaussian (tutorial)</a></li>
 </ul>
 </li>
@@ -151,13 +151,13 @@
         
           <li><a href="index.html">Example Gallery with some plots</a> &raquo;</li>
         
-      <li>Plotting a gaussian (script)</li>
+      <li>Plotting data from an CSV file (script)</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/_examples/tutorial/plot_sample_01.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/_examples/tutorial/Test-plotting.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -172,15 +172,13 @@
             
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tutorial-plot-sample-01-py"><span class="std std-ref">here</span></a>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-tutorial-test-plotting-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="plotting-a-gaussian-script">
-<span id="sphx-glr-examples-tutorial-plot-sample-01-py"></span><h1>Plotting a gaussian (script)<a class="headerlink" href="#plotting-a-gaussian-script" title="Permalink to this headline">¶</a></h1>
-<p>Example <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> to plot a gaussian.</p>
-<img alt="plot sample 01" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_sample_01_001.png" />
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 8
- 9
+<div class="sphx-glr-example-title section" id="plotting-data-from-an-csv-file-script">
+<span id="sphx-glr-examples-tutorial-test-plotting-py"></span><h1>Plotting data from an CSV file (script)<a class="headerlink" href="#plotting-data-from-an-csv-file-script" title="Permalink to this headline">¶</a></h1>
+<p>Example plot of ‘PULSE_BPM’ and ‘SPO2_PCT’ from a CSV file.</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 9
 10
 11
 12
@@ -196,55 +194,32 @@ to download the full example code</p>
 22
 23
 24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Libraries</span>
- <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
  <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
+ <span class="c1">#Remember to Change Path</span>
+ <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;D:\FILES\Desktop\Dissertation ICL\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\PPG\01NVa-003-2001 Smartcare.csv&quot;</span><span class="p">)</span>
 
- <span class="c1"># ---------------------------</span>
- <span class="c1"># Methods</span>
- <span class="c1"># ---------------------------</span>
- <span class="k">def</span> <span class="nf">gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sig</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)))</span>
+ <span class="c1">#visualising Data</span>
+ <span class="n">df</span>
 
+ <span class="c1">#Plotting Data</span>
+ <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 
- <span class="c1"># ---------------------------</span>
- <span class="c1"># Configuration</span>
- <span class="c1"># ---------------------------</span>
+ <span class="n">df</span><span class="p">[:</span><span class="mi">10000</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;TIMESTAMP_MS&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;PULSE_BPM&#39;</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+ <span class="n">df</span><span class="p">[:</span><span class="mi">10000</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;TIMESTAMP_MS&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;SPO2_PCT&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-
- <span class="c1"># ---------------------------</span>
- <span class="c1"># Main</span>
- <span class="c1"># ---------------------------</span>
- <span class="c1"># Load data</span>
- <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
- <span class="n">y</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
- <span class="c1"># Plot</span>
- <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
- <span class="c1"># Show</span>
  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </td></tr></table></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.308 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tutorial-plot-sample-01-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-tutorial-test-plotting-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/44b6bd1ecfa2ab5296af08a7aa65275c/plot_sample_01.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_sample_01.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/9bdf3a7759010134e7629c87b4b12957/Test-plotting.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">Test-plotting.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/6a9639d59c378012715147a451ba71bb/plot_sample_01.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_sample_01.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/8fa243eb5e7c6b44b5ad9ce1091b308d/Test-plotting.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">Test-plotting.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -256,8 +231,8 @@ to download the full example code</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="plot_sample_02.html" class="btn btn-neutral float-right" title="Plotting a gaussian (tutorial)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="Test-plotting.html" class="btn btn-neutral float-left" title="Plotting data from an CSV file (script)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plot_sample_01.html" class="btn btn-neutral float-right" title="Plotting a gaussian (script)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Ascii_plot.html" class="btn btn-neutral float-left" title="Plotting data from an ASCII file (script)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

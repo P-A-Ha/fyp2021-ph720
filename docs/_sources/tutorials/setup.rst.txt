@@ -190,7 +190,7 @@ Note that make github is defined within the Makefile and it is equivalent to:
 .. code-block:: console
 
   make clean html
-  cp -a _build/html/. ../../gh-pages/docs
+  xcopy -a _build/html/. ../../gh-pages/docs
 
 These commands first generate the sphinx documentation in html and then copies
 the html folder into the gh-pages branch. You can see how the documentation
