@@ -24,4 +24,5 @@ help:
 # implemented by changing the BUILDDIR variable. (add make clean html)
 github:
 	@make clean html
-	@Xcopy /E "D:\FILES\Desktop\Dissertation ICL\Git\main\docs\build" "../../gh-pages/docs"
+	@xcopy .\build\html ..\..\gh-pages\docs\ /E /Y > nul
+	#@Xcopy /E "D:\FILES\Desktop\Dissertation ICL\Git\main\docs\build" "../../gh-pages/docs"
