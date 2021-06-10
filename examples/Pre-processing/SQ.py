@@ -114,7 +114,7 @@ print(trough_list.shape)
 
 #THE FUNCTION BELOW OUTPUTS AN ERROR, NEEDS TO BE EDITED SO THAT if signals are none, they are replaced with NaN
 
-computed_sqi = sqi_hl.compute_all_SQI(signal=data.signals[0], segments=data.segments[0], raw_signal=original_signal[0], primary_peakdet=7, secondary_peakdet=6, template_type=0)
+#computed_sqi = sqi_hl.compute_all_SQI(signal=data.signals[0], segments=data.segments[0], raw_signal=original_signal[0], primary_peakdet=7, secondary_peakdet=6, template_type=0)
 
 '''
 ERROR THAT COMES UP:
