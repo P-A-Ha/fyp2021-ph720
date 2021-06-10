@@ -1,7 +1,7 @@
 
 # fyp-package-template
 
-[url-documentation]: https://bahp.github.io/fyp-pypkg-template/
+[url-documentation]: https://p-a-ha.github.io/fyp2021-ph720/
 [url-installation]: https://bahp.github.io/fyp-pypkg-template/
 [url-development]: https://bahp.github.io/fyp-pypkg-template/
 
