@@ -67,10 +67,11 @@ from sphinx_gallery.sorting import FileNameSortKey # pylint: disable=import-erro
 # Configuration for sphinx_gallery
 sphinx_gallery_conf = {
     # path to your example scripts
-    'examples_dirs': ['../../examples/tutorial'],
+    'examples_dirs': ['../../examples/tutorial', '../../examples/Pre-processing' ],
     #'examples_dirs_2': ['../source/_examples/Examples/Test-Plot/Output'],
     # path to where to save gallery generated output
-    'gallery_dirs': ['../source/_examples/tutorial'],
+    'gallery_dirs': ['../source/_examples/tutorial', '../source/_examples/Pre-Processing'],
+
     #'gallery_dirs_2': ['../source/_examples/Examples/Test-Plot/Output'],
     # Other
     'line_numbers': True,

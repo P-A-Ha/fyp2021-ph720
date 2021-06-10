@@ -1,10 +1,18 @@
+"""
+PPG Pre-processing and SQI Calculations
+=======================================
+
+Trimming, Filtering, Segmentation and SQI Calculations
+
+"""
+
 # Code Adapted from:
 # https://github.com/meta00/vital_sqi/blob/main/examples/SQI_pipeline_PPG.ipynb
 # AND
 # https://meta00.github.io/vital_sqi/_examples/others/plot_read_signal.html#sphx-glr-examples-others-plot-read-signal-py
 
 #%%
-##Libraries
+# Libraries
 
 # Generic
 import os
@@ -22,9 +30,9 @@ import vital_sqi.highlevel_functions.highlevel as sqi_hl
 import vital_sqi.data.segment_split as sqi_sg
 from vital_sqi.common.rpeak_detection import PeakDetector
 
-# ----------------------------
+#%%
 # Load data
-# ----------------------------
+
 
 # Filepath
  
@@ -61,6 +69,9 @@ ax.plot(plot_range, data.signals[0][0:1000])
 
 
 
+#%%
+# Filtering, Trimming and Segmentation
+
 #Saving a copy of the original Sigal
 
 original_signal = np.copy(data.signals.T[trim_amount*sampling_rate:-trim_amount*sampling_rate].T)
@@ -85,8 +96,10 @@ print("Data Segments Shape: ", data.segments.shape)
 segments= pd.DataFrame(data.segments)
 
 
+#%%
+# Peak Detection
 
-# #PEAK DETECTION
+#Peak Detector
 peak_list, trough_list = PeakDetector().ppg_detector(signals.iloc[0,segments.iloc[0,0]:segments.iloc[0,1]], 7)
 
 plot_range = np.arange(0,3000,1)
@@ -110,6 +123,11 @@ print(data.segments.shape)
 print(original_signal.shape)
 print(peak_list.shape)
 print(trough_list.shape)
+
+
+
+#%%
+# SQI Calculation
 
 
 #THE FUNCTION BELOW OUTPUTS AN ERROR, NEEDS TO BE EDITED SO THAT if signals are none, they are replaced with NaN
@@ -137,6 +155,10 @@ print(peak_list.shape)
 print(trough_list.shape)
 print(computed_sqi[1873]['snr'])
 '''
+
+
+#%%
+# Segment Rejection
 
 #AFTER COMPUTING SQIs REJECT USING CRITERIA IS THE NEXT STEP.
 
