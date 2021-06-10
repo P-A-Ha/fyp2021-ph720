@@ -20,6 +20,13 @@ Welcome to fyp2021-ph720's documentation!
 
    _examples/tutorial/index
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Pre Processing
+   :hidden:
+
+   _examples/Pre-processing/index
+
 
 Indices and tables
 ==================

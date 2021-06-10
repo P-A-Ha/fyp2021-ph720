@@ -1,0 +1,12 @@
+
+:orphan:
+
+.. _sphx_glr__examples_Pre-Processing_sg_execution_times:
+
+Computation times
+=================
+**00:12.882** total execution time for **_examples_Pre-Processing** files:
+
++----------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr__examples_Pre-Processing_plot_SQ.py` (``plot_SQ.py``) | 00:12.882 | 0.0 MB |
++----------------------------------------------------------------------+-----------+--------+

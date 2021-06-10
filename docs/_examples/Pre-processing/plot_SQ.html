@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>PPG Pre-processing and SQI Calculations &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fyp2021-ph720
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Example Galleries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Example Gallery with some plots</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pre Processing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Pre Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fyp2021-ph720</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>PPG Pre-processing and SQI Calculations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/_examples/Pre-processing/plot_SQ.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-pre-processing-plot-sq-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="ppg-pre-processing-and-sqi-calculations">
+<span id="sphx-glr-examples-pre-processing-plot-sq-py"></span><h1>PPG Pre-processing and SQI Calculations<a class="headerlink" href="#ppg-pre-processing-and-sqi-calculations" title="Permalink to this headline">¶</a></h1>
+<p>Trimming, Filtering, Segmentation and SQI Calculations</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Code Adapted from:</span>
+ <span class="c1"># https://github.com/meta00/vital_sqi/blob/main/examples/SQI_pipeline_PPG.ipynb</span>
+ <span class="c1"># AND</span>
+ <span class="c1"># https://meta00.github.io/vital_sqi/_examples/others/plot_read_signal.html#sphx-glr-examples-others-plot-read-signal-py</span>
+</pre></div>
+</td></tr></table></div>
+<p>Libraries</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Generic</span>
+ <span class="kn">import</span> <span class="nn">os</span>
+ <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+ <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+ <span class="c1"># Scipy</span>
+ <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">skew</span>
+ <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kurtosis</span>
+
+  <span class="c1"># vitalSQI</span>
+ <span class="kn">from</span> <span class="nn">vital_sqi.data.signal_io</span> <span class="kn">import</span> <span class="n">PPG_reader</span>
+ <span class="kn">import</span> <span class="nn">vital_sqi.highlevel_functions.highlevel</span> <span class="k">as</span> <span class="nn">sqi_hl</span>
+ <span class="kn">import</span> <span class="nn">vital_sqi.data.segment_split</span> <span class="k">as</span> <span class="nn">sqi_sg</span>
+ <span class="kn">from</span> <span class="nn">vital_sqi.common.rpeak_detection</span> <span class="kn">import</span> <span class="n">PeakDetector</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Importing the dtw module. When using in academic works please cite:
+  T. Giorgino. Computing and Visualizing Dynamic Time Warping Alignments in R: The dtw Package.
+  J. Stat. Soft., doi:10.18637/jss.v031.i07.
+</pre></div>
+</div>
+<p>Load data</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Filepath</span>
+
+ <span class="n">filepath</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\PPG&#39;</span>
+ <span class="n">filename</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;01NVa-003-2001 Smartcare.csv&#39;</span>
+
+
+ <span class="c1">#defining constants</span>
+ <span class="n">trim_amount</span> <span class="o">=</span> <span class="mi">120</span>
+ <span class="n">hp_filt_params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#(Hz, order)</span>
+ <span class="n">lp_filt_params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="c1">#(Hz, order)</span>
+ <span class="n">filter_type</span> <span class="o">=</span>  <span class="s1">&#39;butter&#39;</span>
+ <span class="n">segment_length</span> <span class="o">=</span> <span class="mi">30</span>
+ <span class="n">sampling_rate</span> <span class="o">=</span> <span class="mi">100</span>
+
+ <span class="c1">#readind PPG data</span>
+ <span class="n">data</span> <span class="o">=</span> <span class="n">PPG_reader</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span>
+     <span class="n">signal_idx</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;PLETH&quot;</span><span class="p">,</span> <span class="s2">&quot;IR_ADC&quot;</span><span class="p">],</span>
+     <span class="n">timestamp_idx</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TIMESTAMP_MS&quot;</span><span class="p">],</span>
+     <span class="n">info_idx</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SPO2_PCT&quot;</span><span class="p">,</span><span class="s2">&quot;PULSE_BPM&quot;</span><span class="p">,</span><span class="s2">&quot;PERFUSION_INDEX&quot;</span><span class="p">],</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span>
+
+
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">start_datetime</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">wave_type</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+ <span class="n">plot_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+ <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+ <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_range</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">1000</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+<img alt="plot SQ" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQ_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;vital_sqi.data.signal_sqi_class.SignalSQI object at 0x000001AC953D1670&gt;
+[[ 36033  40919  45715 ...  31117  30761  30261]
+ [216524 216470 216415 ... 184296 184554 184828]]
+100
+None
+ppg
+(2, 5626377)
+
+[&lt;matplotlib.lines.Line2D object at 0x000001AC96431BB0&gt;]
+</pre></div>
+</div>
+<p>Filtering, Trimming and Segmentation</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#Saving a copy of the original Sigal</span>
+
+ <span class="n">original_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">trim_amount</span><span class="o">*</span><span class="n">sampling_rate</span><span class="p">:</span><span class="o">-</span><span class="n">trim_amount</span><span class="o">*</span><span class="n">sampling_rate</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+ <span class="n">original</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">original_signal</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raw Signals Shape: &quot;</span><span class="p">,</span> <span class="n">original</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+ <span class="c1">#Signal  Filtering</span>
+
+ <span class="n">data</span><span class="o">.</span><span class="n">update_signal</span><span class="p">(</span><span class="n">sqi_hl</span><span class="o">.</span><span class="n">signal_preprocess</span><span class="p">(</span><span class="n">signal_channel</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">,</span> <span class="n">hp_cutoff_order</span><span class="o">=</span><span class="n">hp_filt_params</span><span class="p">,</span> <span class="n">lp_cutoff_order</span><span class="o">=</span><span class="n">lp_filt_params</span><span class="p">,</span> <span class="n">trim_amount</span><span class="o">=</span><span class="n">trim_amount</span><span class="p">,</span> <span class="n">filter_type</span><span class="o">=</span><span class="n">filter_type</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">))</span>
+ <span class="n">signals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Filtered Signals Shape: &quot;</span><span class="p">,</span> <span class="n">signals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+ <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+ <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_range</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">1000</span><span class="p">])</span>
+
+
+ <span class="c1"># Signal Segmenation</span>
+
+ <span class="n">data</span><span class="o">.</span><span class="n">update_segment_indices</span><span class="p">(</span><span class="n">sqi_sg</span><span class="o">.</span><span class="n">generate_segment_idx</span><span class="p">(</span><span class="n">segment_length</span><span class="o">=</span><span class="n">segment_length</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">signal_array</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">))</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data Segments Shape: &quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+ <span class="n">segments</span><span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">segments</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<img alt="plot SQ" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQ_002.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Raw Signals Shape:  (2, 5602377)
+Filtered Signals Shape:  (2, 5602377)
+Data Segments Shape:  (2, 1868)
+</pre></div>
+</div>
+<p>Peak Detection</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#Peak Detector</span>
+ <span class="n">peak_list</span><span class="p">,</span> <span class="n">trough_list</span> <span class="o">=</span> <span class="n">PeakDetector</span><span class="p">()</span><span class="o">.</span><span class="n">ppg_detector</span><span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">segments</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]:</span><span class="n">segments</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="mi">7</span><span class="p">)</span>
+
+ <span class="n">plot_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+ <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+ <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_range</span><span class="p">,</span> <span class="n">signals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">segments</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]:</span><span class="n">segments</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+ <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_list</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">peak_list</span><span class="p">,</span><span class="n">signals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">peak_list</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">)</span>
+ <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trough_list</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">trough_list</span><span class="p">,</span><span class="n">signals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">trough_list</span><span class="p">],</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">)</span>
+
+
+ <span class="c1">#Single period plot</span>
+ <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+ <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">trough_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">trough_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">segments</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">original_signal</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">peak_list</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">trough_list</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<ul class="sphx-glr-horizontal">
+<li><img alt="plot SQ" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_SQ_003.png" />
+</li>
+<li><img alt="plot SQ" class="sphx-glr-multi-img" src="../../_images/sphx_glr_plot_SQ_004.png" />
+</li>
+</ul>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[ 142  821 2090 ... 1555 1462 1302]
+(2, 5602377)
+(2, 1868)
+(2, 1868)
+(2, 5602377)
+(71,)
+(71,)
+</pre></div>
+</div>
+<p>SQI Calculation</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#THE FUNCTION BELOW OUTPUTS AN ERROR, NEEDS TO BE EDITED SO THAT if signals are none, they are replaced with NaN</span>
+
+ <span class="c1">#computed_sqi = sqi_hl.compute_all_SQI(signal=data.signals[0], segments=data.segments[0], raw_signal=original_signal[0], primary_peakdet=7, secondary_peakdet=6, template_type=0)</span>
+
+ <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> ERROR THAT COMES UP:</span>
+
+<span class="sd"> raise Exception(&quot;Not enough peaks in the signal to generate per beat SQI&quot;)</span>
+<span class="sd"> Exception: Not enough peaks in the signal to generate per beat</span>
+
+<span class="sd"> THIS COMES UP FOR PLETH (index 0) BUT NOT FOR IR_ADC (index 1)</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+
+
+ <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> computed_sqi = pd.DataFrame(computed_sqi)</span>
+
+
+<span class="sd"> print(computed_sqi[2].keys())</span>
+<span class="sd"> print(data.segments.shape)</span>
+<span class="sd"> print(peak_list.shape)</span>
+<span class="sd"> print(trough_list.shape)</span>
+<span class="sd"> print(computed_sqi[1873][&#39;snr&#39;])</span>
+<span class="sd"> &#39;&#39;&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;\ncomputed_sqi = pd.DataFrame(computed_sqi)\n\n\nprint(computed_sqi[2].keys())\nprint(data.segments.shape)\nprint(peak_list.shape)\nprint(trough_list.shape)\nprint(computed_sqi[1873][&#39;snr&#39;])\n&quot;
+</pre></div>
+</div>
+<p>Segment Rejection</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#AFTER COMPUTING SQIs REJECT USING CRITERIA IS THE NEXT STEP.</span>
+
+
+
+
+
+
+
+
+
+
+
+
+ <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  12.882 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sq-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/5732b380e6aa960238029416d262b1c6/plot_SQ.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQ.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/a6b6ad91e640ba50cf13013bab7c6202/plot_SQ.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_SQ.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Philippos Arkis Hadjimarkou.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
