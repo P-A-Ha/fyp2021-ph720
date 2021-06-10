@@ -3,3 +3,5 @@ Sphinx
 sphinx-rtd-theme
 sphinx-gallery
 matplotlib
+vital_sqi
+numpy
