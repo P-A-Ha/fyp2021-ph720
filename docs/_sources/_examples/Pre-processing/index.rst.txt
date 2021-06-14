@@ -7,8 +7,29 @@
 Pre Processing
 ===============
 
-Below is a list of Pre-Processing Steps
+Below are some Pre-Processing examples
 
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Comparing Different Peak Detectors">
+
+.. only:: html
+
+ .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_plot_PeakDetectorsonPPG_thumb.png
+     :alt: PPG Peak Detector Comparisons
+
+     :ref:`sphx_glr__examples_Pre-Processing_plot_PeakDetectorsonPPG.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /_examples/Pre-Processing/plot_PeakDetectorsonPPG
 
 .. raw:: html
 
