@@ -1,0 +1,851 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>PPG Pre-processing and SQI Calculations using Pandas &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fyp2021-ph720
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Example Galleries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Example Gallery with some plots</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pre Processing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Pre Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fyp2021-ph720</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>PPG Pre-processing and SQI Calculations using Pandas</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/_examples/Pre-processing/plot_SQI_pandas.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-pre-processing-plot-sqi-pandas-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="ppg-pre-processing-and-sqi-calculations-using-pandas">
+<span id="sphx-glr-examples-pre-processing-plot-sqi-pandas-py"></span><h1>PPG Pre-processing and SQI Calculations using Pandas<a class="headerlink" href="#ppg-pre-processing-and-sqi-calculations-using-pandas" title="Permalink to this headline">¶</a></h1>
+<p>Trimming, Filtering, Segmentation and SQI Calculations utilising Pandas</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Code Adapted from:</span>
+ <span class="c1"># https://meta00.github.io/vital_sqi/_examples/others/plot_pipeline_02.html</span>
+ <span class="c1"># AND</span>
+ <span class="c1"># https://meta00.github.io/vital_sqi/_examples/others/plot_read_signal.html#sphx-glr-examples-others-plot-read-signal-py</span>
+</pre></div>
+</td></tr></table></div>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> This file will be used in calculating the SQIs for each patient (and discarding parts of the signal soon).</span>
+<span class="sd"> A loop will be implemented in future iterations for the different patiend files. In general, the file is built</span>
+<span class="sd"> parametrically so that the procedure can be automated.</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;\nThis file will be used in calculating the SQIs for each patient (and discarding parts of the signal soon).\nA loop will be implemented in future iterations for the different patiend files. In general, the file is built\nparametrically so that the procedure can be automated.\n\n&#39;
+</pre></div>
+</div>
+<p>Importing Libraries</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Generic</span>
+ <span class="kn">import</span> <span class="nn">os</span>
+ <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+ <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+ <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+
+ <span class="c1"># Scipy</span>
+ <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">skew</span><span class="p">,</span> <span class="n">kurtosis</span><span class="p">,</span> <span class="n">entropy</span>
+
+  <span class="c1"># vitalSQI</span>
+ <span class="kn">from</span> <span class="nn">vital_sqi.data.signal_io</span> <span class="kn">import</span> <span class="n">PPG_reader</span>
+ <span class="kn">import</span> <span class="nn">vital_sqi.highlevel_functions.highlevel</span> <span class="k">as</span> <span class="nn">sqi_hl</span>
+ <span class="kn">import</span> <span class="nn">vital_sqi.data.segment_split</span> <span class="k">as</span> <span class="nn">sqi_sg</span>
+ <span class="kn">from</span> <span class="nn">vital_sqi.common.rpeak_detection</span> <span class="kn">import</span> <span class="n">PeakDetector</span>
+ <span class="kn">from</span> <span class="nn">vital_sqi.preprocess.band_filter</span> <span class="kn">import</span> <span class="n">BandpassFilter</span>
+ <span class="kn">import</span> <span class="nn">vital_sqi.sqi</span> <span class="k">as</span> <span class="nn">sq</span>
+</pre></div>
+</td></tr></table></div>
+<p>Loading data</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Filepath definition</span>
+ <span class="n">filepath</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\PPG&#39;</span>
+ <span class="n">filename</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;01NVa-003-2001 Smartcare.csv&#39;</span>
+
+
+ <span class="c1">#defining constants</span>
+ <span class="n">trim_amount</span> <span class="o">=</span> <span class="mi">300</span>
+ <span class="n">hp_filt_params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#(Hz, order)</span>
+ <span class="n">lp_filt_params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="c1">#(Hz, order)</span>
+ <span class="n">filter_type</span> <span class="o">=</span>  <span class="s1">&#39;butter&#39;</span>
+ <span class="n">segment_length</span> <span class="o">=</span> <span class="mi">30</span>
+ <span class="n">sampling_rate</span> <span class="o">=</span> <span class="mi">100</span>
+
+ <span class="c1">#readind PPG data</span>
+ <span class="n">data</span> <span class="o">=</span> <span class="n">PPG_reader</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span>
+     <span class="n">signal_idx</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;PLETH&quot;</span><span class="p">,</span> <span class="s2">&quot;IR_ADC&quot;</span><span class="p">],</span>
+     <span class="n">timestamp_idx</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;TIMESTAMP_MS&quot;</span><span class="p">],</span>
+     <span class="n">info_idx</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SPO2_PCT&quot;</span><span class="p">,</span><span class="s2">&quot;PULSE_BPM&quot;</span><span class="p">,</span><span class="s2">&quot;PERFUSION_INDEX&quot;</span><span class="p">],</span> <span class="n">sampling_rate</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span>
+
+
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">start_datetime</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">wave_type</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+ <span class="n">plot_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+ <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+ <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_range</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">1000</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+<img alt="plot SQI pandas" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_pandas_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;vital_sqi.data.signal_sqi_class.SignalSQI object at 0x000001F097B0A040&gt;
+[[ 36033  40919  45715 ...  31117  30761  30261]
+ [216524 216470 216415 ... 184296 184554 184828]]
+100
+None
+ppg
+(2, 5626377)
+
+[&lt;matplotlib.lines.Line2D object at 0x000001F09795F190&gt;]
+</pre></div>
+</div>
+<p>Setting the indexes for the raw data - adopted from examples</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="o">.</span><span class="fm">__str__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">_repr_base</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+ <span class="c1">#Transposing data.signals to set into columns</span>
+ <span class="n">signals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+ <span class="c1"># Include column with index</span>
+ <span class="n">signals</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+
+ <span class="n">signals</span><span class="p">[</span><span class="s1">&#39;timedelta&#39;</span><span class="p">]</span> <span class="o">=</span> \
+     <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">index</span> <span class="o">/</span> <span class="n">sampling_rate</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+
+ <span class="c1"># Set the timedelta index (keep numeric index too)</span>
+ <span class="n">signals</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;timedelta&#39;</span><span class="p">)</span>
+
+ <span class="c1"># Rename column to avoid confusion</span>
+ <span class="n">signals</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;idx&#39;</span><span class="p">})</span>
+
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Raw Signals:&quot;</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">signals</span><span class="p">)</span>
+
+ <span class="c1">#Plotting</span>
+ <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+ <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+ <span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+ <span class="n">signals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+<img alt="plot SQI pandas" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_pandas_002.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Raw Signals:
+                            idx      0       1
+timedelta
+0 days 00:00:00               0  36033  216524
+0 days 00:00:00.010000        1  40919  216470
+0 days 00:00:00.020000        2  45715  216415
+0 days 00:00:00.030000        3  50227  216364
+0 days 00:00:00.040000        4  54362  216379
+...                         ...    ...     ...
+0 days 15:37:43.720000  5626372  31408  183755
+0 days 15:37:43.730000  5626373  31318  184002
+0 days 15:37:43.740000  5626374  31117  184296
+0 days 15:37:43.750000  5626375  30761  184554
+0 days 15:37:43.760000  5626376  30261  184828
+
+[5626377 rows x 3 columns]
+
+&lt;AxesSubplot:xlabel=&#39;timedelta&#39;&gt;
+</pre></div>
+</div>
+<p>Trimming the first and last 5 minutes</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>111
+112
+113
+114
+115
+116
+117
+118
+119</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#Defining the 5 minute offset</span>
+ <span class="n">offset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+ <span class="c1">#Indexes - adopted from example</span>
+ <span class="n">idxs</span> <span class="o">=</span> <span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">offset</span><span class="p">)</span> <span class="o">&amp;</span> \
+         <span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">signals</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span>
+
+ <span class="c1">#Trimming</span>
+ <span class="n">signals</span> <span class="o">=</span> <span class="n">signals</span><span class="p">[</span><span class="n">idxs</span><span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>124
+125
+126</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># RESAMPLE??</span>
+ <span class="c1"># MISSING DATA INPUT??</span>
+ <span class="c1"># TAPPERING??</span>
+</pre></div>
+</td></tr></table></div>
+<p>Band-pass filtering</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> Band-pass filtering can be adjusted, maybe use a lower low-pass</span>
+<span class="sd"> cutoff frequency @15-17Hz</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+ <span class="c1">#Band pass filtering function</span>
+ <span class="k">def</span> <span class="nf">bpf</span><span class="p">(</span><span class="n">signal</span><span class="p">):</span>
+     <span class="n">hp_filt_params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#(Cutoff Hz, order)</span>
+     <span class="n">lp_filt_params</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="c1">#( Cutoff Hz, order)</span>
+     <span class="n">sampling_rate</span> <span class="o">=</span> <span class="mi">100</span>
+     <span class="nb">filter</span> <span class="o">=</span> <span class="n">BandpassFilter</span><span class="p">(</span><span class="n">band_type</span><span class="o">=</span><span class="s1">&#39;butter&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">sampling_rate</span><span class="p">)</span>
+     <span class="n">filtered_signal</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">signal_highpass_filter</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">hp_filt_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">order</span><span class="o">=</span><span class="n">hp_filt_params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+     <span class="n">filtered_signal</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">signal_lowpass_filter</span><span class="p">(</span><span class="n">filtered_signal</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">lp_filt_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">order</span><span class="o">=</span><span class="n">lp_filt_params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+     <span class="k">return</span> <span class="n">filtered_signal</span>
+
+ <span class="c1">#Band-pass filtered signals</span>
+ <span class="n">signals</span><span class="p">[</span><span class="s1">&#39;0_bpf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bpf</span><span class="p">(</span><span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+ <span class="n">signals</span><span class="p">[</span><span class="s1">&#39;1_bpf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bpf</span><span class="p">(</span><span class="n">signals</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+ <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Raw and Filtered Signals:&#39;</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">signals</span><span class="p">)</span>
+
+ <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+ <span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+ <span class="n">signals</span><span class="p">[</span><span class="s1">&#39;0_bpf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+ <span class="n">signals</span><span class="p">[</span><span class="s1">&#39;1_bpf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+<img alt="plot SQI pandas" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_pandas_003.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Raw and Filtered Signals:
+                            idx      0       1         0_bpf        1_bpf
+timedelta
+0 days 00:05:00.010000    30001  53180  184815    246.408656   -57.360381
+0 days 00:05:00.020000    30002  55406  184984   1526.842327  -332.244261
+0 days 00:05:00.030000    30003  57204  185278   4331.003662  -849.693981
+0 days 00:05:00.040000    30004  58558  185676   7695.138441 -1281.147905
+0 days 00:05:00.050000    30005  59446  186030  10104.482982 -1298.722393
+...                         ...    ...     ...           ...          ...
+0 days 15:32:43.710000  5596371  15083  186186    942.030869    45.325519
+0 days 15:32:43.720000  5596372  13923  186422    708.195771    93.296871
+0 days 15:32:43.730000  5596373  12818  186662    542.754581   127.077955
+0 days 15:32:43.740000  5596374  11769  186807    442.131641   151.598399
+0 days 15:32:43.750000  5596375  10763  186899    402.889073   159.679506
+
+[5566375 rows x 5 columns]
+
+&lt;AxesSubplot:xlabel=&#39;timedelta&#39;&gt;
+</pre></div>
+</div>
+<p>SQI Functions Definition and Peak Detection</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="k">def</span> <span class="nf">PeakDetection</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+     <span class="n">detector</span> <span class="o">=</span> <span class="n">PeakDetector</span><span class="p">()</span>
+     <span class="n">peaks</span><span class="p">,</span> <span class="n">troughs</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">ppg_detector</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span> <span class="c1">#6 and 7 work the best</span>
+     <span class="k">return</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">troughs</span>
+
+ <span class="c1">#Defining SQI Functions</span>
+
+ <span class="k">def</span> <span class="nf">snr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+     <span class="c1">#Signal to noise ratio</span>
+     <span class="c1">#needs raw signal</span>
+     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sq</span><span class="o">.</span><span class="n">standard_sqi</span><span class="o">.</span><span class="n">signal_to_noise_sqi</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+ <span class="k">def</span> <span class="nf">zcr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+     <span class="c1">#Zero Crossing Rate</span>
+     <span class="c1">#Needs filtered signal</span>
+     <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+
+ <span class="k">def</span> <span class="nf">mcr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+     <span class="c1">#Mean Crossing Rate</span>
+     <span class="c1">#needs raw signal</span>
+     <span class="k">return</span> <span class="n">zcr</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+ <span class="k">def</span> <span class="nf">perfusion</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+     <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+
+ <span class="k">def</span> <span class="nf">correlogram</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+     <span class="c1">#Correlogram</span>
+     <span class="c1">#Needs filtered signal</span>
+     <span class="k">return</span> <span class="n">sq</span><span class="o">.</span><span class="n">rpeaks_sqi</span><span class="o">.</span><span class="n">correlogram_sqi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+ <span class="c1">#Calculating peaks and troughs using peakdetector function for both filtered signals</span>
+ <span class="n">peak_list_0</span><span class="p">,</span> <span class="n">trough_list_0</span> <span class="o">=</span> <span class="n">PeakDetection</span><span class="p">(</span><span class="n">signals</span><span class="p">[</span><span class="s1">&#39;0_bpf&#39;</span><span class="p">])</span>
+ <span class="n">peak_list_1</span><span class="p">,</span> <span class="n">trough_list_1</span> <span class="o">=</span> <span class="n">PeakDetection</span><span class="p">(</span><span class="n">signals</span><span class="p">[</span><span class="s1">&#39;1_bpf&#39;</span><span class="p">])</span>
+
+ <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> MSW values that are being calculated are too small, maybe peakdetectors need</span>
+<span class="sd"> to be revisited?</span>
+<span class="sd"> &#39;&#39;&#39;</span>
+ <span class="k">def</span> <span class="nf">msq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">peaks</span><span class="p">):</span>
+     <span class="c1">#Dynamic Time Warping</span>
+     <span class="c1">#Requires Filtered Signal and peaks</span>
+      <span class="c1"># Return</span>
+      <span class="k">return</span> <span class="n">sq</span><span class="o">.</span><span class="n">standard_sqi</span><span class="o">.</span><span class="n">msq_sqi</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">peaks_1</span><span class="o">=</span><span class="n">peaks</span><span class="p">,</span> <span class="n">peak_detect2</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+ <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> Below function is outputting an error, needs revisiting</span>
+<span class="sd"> &#39;&#39;&#39;</span>
+ <span class="c1"># def dtw(x,troughs):</span>
+ <span class="c1">#     #Dynamic Time Warping</span>
+ <span class="c1">#     #Requires Filtered Signal and troughs and template selection 0-3 (0-2 for PPG)</span>
+ <span class="c1">#     # Per beat</span>
+ <span class="c1">#     dtw_list = sq.standard_sqi.per_beat_sqi(sqi_func=sq.dtw_sqi, troughs=troughs, signal=x, taper=True, template_type=1)</span>
+ <span class="c1">#     # Return mean and standard deviation</span>
+ <span class="c1">#     return [np.mean(dtw_list), np.std(dtw_list)]</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;\nBelow function is outputting an error, needs revisiting\n&#39;
+</pre></div>
+</div>
+<p>Function Computing SQIs</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="k">def</span> <span class="nf">sqi_all</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">raw</span><span class="p">,</span><span class="n">filtered</span><span class="p">,</span><span class="n">peaks</span><span class="p">,</span><span class="n">troughs</span><span class="p">):</span>
+
+     <span class="c1">#Computing  all SQIs using the functions above</span>
+
+     <span class="c1"># Information</span>
+     <span class="n">dinfo</span> <span class="o">=</span> <span class="p">{</span>
+         <span class="s1">&#39;first&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+         <span class="s1">&#39;last&#39;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">idx</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+         <span class="s1">&#39;skew&#39;</span><span class="p">:</span> <span class="n">skew</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">raw</span><span class="p">]),</span>
+         <span class="s1">&#39;entropy&#39;</span><span class="p">:</span> <span class="n">entropy</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">raw</span><span class="p">]),</span>
+         <span class="s1">&#39;kurtosis&#39;</span><span class="p">:</span> <span class="n">kurtosis</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">raw</span><span class="p">]),</span>
+         <span class="s1">&#39;snr&#39;</span><span class="p">:</span> <span class="n">snr</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">raw</span><span class="p">]),</span>
+         <span class="s1">&#39;mcr&#39;</span><span class="p">:</span> <span class="n">mcr</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">raw</span><span class="p">]),</span>
+         <span class="s1">&#39;zcr&#39;</span><span class="p">:</span> <span class="n">zcr</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">filtered</span><span class="p">]),</span>
+         <span class="s1">&#39;msq&#39;</span><span class="p">:</span> <span class="n">msq</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">filtered</span><span class="p">],</span><span class="n">peaks</span><span class="p">),</span>
+         <span class="s1">&#39;perfusion&#39;</span><span class="p">:</span> <span class="n">perfusion</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">raw</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">filtered</span><span class="p">]),</span>
+         <span class="s1">&#39;correlogram&#39;</span><span class="p">:</span> <span class="n">correlogram</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">filtered</span><span class="p">]),</span>
+         <span class="c1">#&#39;dtw&#39;: dtw(x[filtered],troughs)</span>
+     <span class="p">}</span>
+     <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">     When using dtw an empty signal error is presented that</span>
+<span class="sd">     needs fixing, not sure why it does that</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+     <span class="c1"># Return</span>
+     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dinfo</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">sqis_0</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Grouper</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;30s&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqi_all</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="s1">&#39;0_bpf&#39;</span><span class="p">,</span> <span class="n">peak_list_0</span><span class="p">,</span> <span class="n">trough_list_0</span><span class="p">))</span>
+ <span class="n">sqis_1</span> <span class="o">=</span> <span class="n">signals</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Grouper</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;30s&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqi_all</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="s1">&#39;1_bpf&#39;</span><span class="p">,</span> <span class="n">peak_list_1</span><span class="p">,</span> <span class="n">trough_list_1</span><span class="p">))</span>
+
+ <span class="c1">#Displaying the SQIs per signal</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SQIs Signal 0 (Pleth):&quot;</span><span class="p">)</span>
+ <span class="n">sqis_0</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">sqis_0</span><span class="p">)</span>
+
+ <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SQIs Signal 1 (IR_ADC):&quot;</span><span class="p">)</span>
+ <span class="n">sqis_1</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">sqis_1</span><span class="p">)</span>
+ <span class="n">sqis_1</span> <span class="o">=</span> <span class="n">sqis_1</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;first&#39;</span><span class="p">,</span><span class="s1">&#39;last&#39;</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+
+ <span class="c1"># Add window id to identify point of shock more easily</span>
+ <span class="n">sqis_1</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sqis_1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>d:\files\desktop\dissertation icl\env\lib\site-packages\statsmodels\tsa\stattools.py:667: FutureWarning: fft=True will become the default after the release of the 0.12 release of statsmodels. To suppress this warning, explicitly set fft=False.
+  warnings.warn(
+SQIs Signal 0 (Pleth):
+                          first     last      skew   entropy  ...       zcr       msq   perfusion                                        correlogram
+timedelta                                                     ...
+0 days 00:05:00.010000    30001    33000  0.011563  7.889833  ...  0.026676  0.000453  131.514564  [75, 150, 225, 0.9314065557422081, 0.834979955...
+0 days 00:05:30.010000    33001    36000 -0.132401  7.869577  ...  0.026676  0.000037  130.516948  [74, 148, 223, 0.9387718726284522, 0.866959689...
+0 days 00:06:00.010000    36001    39000 -0.124814  7.857955  ...  0.027009  0.000000  136.711744  [75, 150, 225, 0.9292757814937312, 0.814518481...
+0 days 00:06:30.010000    39001    42000  0.087626  7.863540  ...  0.027342  0.000007  135.201781  [75, 150, 225, 0.9390128411208709, 0.869965651...
+0 days 00:07:00.010000    42001    45000 -0.058097  7.855827  ...  0.026676  0.000000  139.143295  [74, 149, 224, 0.9289524246136973, 0.828885495...
+...                         ...      ...       ...       ...  ...       ...       ...         ...                                                ...
+0 days 15:30:30.010000  5583001  5586000  0.144338  7.847808  ...  0.031010  0.000015  145.800649  [37, 74, 110, -0.3896969995477288, 0.940822237...
+0 days 15:31:00.010000  5586001  5589000  0.128500  7.874039  ...  0.030343  0.000015  137.206158  [36, 76, 111, -0.3935314528998662, 0.942263483...
+0 days 15:31:30.010000  5589001  5592000 -0.003407  7.861910  ...  0.027676  0.000000  131.726227  [36, 76, 111, -0.4074861857015019, 0.958215239...
+0 days 15:32:00.010000  5592001  5595000  0.113608  7.865455  ...  0.032011  0.000015  142.104603  [37, 75, 110, -0.3809337047215236, 0.939346033...
+0 days 15:32:30.010000  5595001  5596375  0.017611  7.092237  ...  0.027656  0.000000  133.237013  [38, 75, 113, -0.35109335503478545, 0.92491394...
+
+[1856 rows x 11 columns]
+SQIs Signal 1 (IR_ADC):
+                          first     last      skew   entropy  ...       zcr       msq  perfusion                                        correlogram
+timedelta                                                     ...
+0 days 00:05:00.010000    30001    33000  0.254305  8.004757  ...  0.026676  0.000323   6.674922  [75, 150, 225, 0.9087943183455219, 0.789911832...
+0 days 00:05:30.010000    33001    36000  0.562860  8.006121  ...  0.027009  0.000013   5.596514  [74, 148, 222, 0.9181757635079706, 0.827234373...
+0 days 00:06:00.010000    36001    39000  0.485952  8.005997  ...  0.026676  0.000008   6.091551  [75, 150, 224, 0.9094662436276878, 0.775536874...
+0 days 00:06:30.010000    39001    42000 -0.199789  8.005720  ...  0.026676  0.000021   4.305403  [75, 150, 225, 0.9134459565030647, 0.822742844...
+0 days 00:07:00.010000    42001    45000  0.416908  8.006205  ...  0.027009  0.000000   4.244410  [74, 149, 223, 0.913985197557938, 0.7969092381...
+...                         ...      ...       ...       ...  ...       ...       ...        ...                                                ...
+0 days 15:30:30.010000  5583001  5586000  0.596729  8.005492  ...  0.027009  0.000008   4.864304  [31, 74, 105, -0.38335045092285824, 0.93538125...
+0 days 15:31:00.010000  5586001  5589000  0.263594  8.005904  ...  0.027009  0.000008   4.277679  [76, 151, 226, 0.9362344077635872, 0.847005080...
+0 days 15:31:30.010000  5589001  5592000  0.187485  8.006171  ...  0.027009  0.000004   4.790734  [76, 152, 228, 0.9537593069974436, 0.889395196...
+0 days 15:32:00.010000  5592001  5595000 -0.217683  8.006045  ...  0.028009  0.000004   4.068148  [74, 149, 223, 0.9298975484283258, 0.810992077...
+0 days 15:32:30.010000  5595001  5596375 -0.133055  7.226034  ...  0.026929  0.000000   4.373367  [75, 150, 226, 0.9176870729126787, 0.846958319...
+
+[1856 rows x 11 columns]
+</pre></div>
+</div>
+<p>Final Formatting into a single DataFrame and Saving into a .csv file</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#Merging SQIs of different signals from the same record (Pleth and IR_ADC)</span>
+ <span class="n">Signal_SQIs</span> <span class="o">=</span> <span class="n">sqis_0</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sqis_1</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;timedelta&#39;</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;_0&#39;</span><span class="p">,</span> <span class="s1">&#39;_1&#39;</span><span class="p">))</span>
+
+ <span class="c1">#Automatically fetching the study_no from the filename and including it in the DataFrame</span>
+ <span class="n">Signal_SQIs</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:]</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">Signal_SQIs</span><span class="p">)</span>
+
+ <span class="c1"># Saving the SQIs to a CSV file</span>
+ <span class="n">Signal_SQIs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI.csv&#39;</span><span class="p">)</span>
+
+ <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> #Running Some Abstract Checks to Verify Results etc.</span>
+
+<span class="sd"> print(perfusion(signals[0][0:3000], signals[&#39;0_bpf&#39;][0:3000]))</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>                          first     last    skew_0  entropy_0  ...  perfusion_1                                      correlogram_1     w  study_no
+timedelta                                                      ...
+0 days 00:05:00.010000    30001    33000  0.011563   7.889833  ...     6.674922  [75, 150, 225, 0.9087943183455219, 0.789911832...     0  003-2001
+0 days 00:05:30.010000    33001    36000 -0.132401   7.869577  ...     5.596514  [74, 148, 222, 0.9181757635079706, 0.827234373...     1  003-2001
+0 days 00:06:00.010000    36001    39000 -0.124814   7.857955  ...     6.091551  [75, 150, 224, 0.9094662436276878, 0.775536874...     2  003-2001
+0 days 00:06:30.010000    39001    42000  0.087626   7.863540  ...     4.305403  [75, 150, 225, 0.9134459565030647, 0.822742844...     3  003-2001
+0 days 00:07:00.010000    42001    45000 -0.058097   7.855827  ...     4.244410  [74, 149, 223, 0.913985197557938, 0.7969092381...     4  003-2001
+...                         ...      ...       ...        ...  ...          ...                                                ...   ...       ...
+0 days 15:30:30.010000  5583001  5586000  0.144338   7.847808  ...     4.864304  [31, 74, 105, -0.38335045092285824, 0.93538125...  1851  003-2001
+0 days 15:31:00.010000  5586001  5589000  0.128500   7.874039  ...     4.277679  [76, 151, 226, 0.9362344077635872, 0.847005080...  1852  003-2001
+0 days 15:31:30.010000  5589001  5592000 -0.003407   7.861910  ...     4.790734  [76, 152, 228, 0.9537593069974436, 0.889395196...  1853  003-2001
+0 days 15:32:00.010000  5592001  5595000  0.113608   7.865455  ...     4.068148  [74, 149, 223, 0.9298975484283258, 0.810992077...  1854  003-2001
+0 days 15:32:30.010000  5595001  5596375  0.017611   7.092237  ...     4.373367  [75, 150, 226, 0.9176870729126787, 0.846958319...  1855  003-2001
+
+[1856 rows x 22 columns]
+
+&quot;\n#Running Some Abstract Checks to Verify Results etc.\n\nprint(perfusion(signals[0][0:3000], signals[&#39;0_bpf&#39;][0:3000]))\n\n&quot;
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>288
+289
+290</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> Discarding Process to be implemented after quality check.</span>
+<span class="sd"> &#39;&#39;&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;\nDiscarding Process to be implemented after quality check.\n&#39;
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  50.003 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-pandas-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b81bb49a1e80bbb1f004f85c85f88160/plot_SQI_pandas.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_pandas.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/abd8c771d045642bc8921a9d691844d0/plot_SQI_pandas.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_SQI_pandas.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Philippos Arkis Hadjimarkou.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -303,7 +303,7 @@ Peak Detector Comparison on PLETH
     the 'mode' parameter is not supported in the pandas implementation of take()
     search_for_onset() takes 3 positional arguments but 4 were given
 
-    <function show at 0x000001772AE04CA0>
+    <function show at 0x000001F0FFC0BD30>
 
 
 
@@ -311,7 +311,7 @@ Peak Detector Comparison on PLETH
 
 Peak Detector Comparison on IR_ADC
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-153
+.. GENERATED FROM PYTHON SOURCE LINES 134-154
 
 .. code-block:: default
    :lineno-start: 134
@@ -335,6 +335,7 @@ Peak Detector Comparison on IR_ADC
         ax.plot(IRADC_segment[peaks[0]:peaks[1]]) #plotting only one period
 
     plt.show
+
 
 
 
@@ -395,14 +396,41 @@ Peak Detector Comparison on IR_ADC
     the 'mode' parameter is not supported in the pandas implementation of take()
     search_for_onset() takes 3 positional arguments but 4 were given
 
-    <function show at 0x000001772AE04CA0>
+    <function show at 0x000001F0FFC0BD30>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 155-162
+
+.. code-block:: default
+   :lineno-start: 156
+
+
+    '''
+
+    Detector 6 and 7 seem to be performing better overall
+
+    Note that the diacrotic notch can be higher than the diastolic peak
+    and therefore, cannot be effectively detected by the peak detector.
+    '''
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    '\n\nDetector 6 and 7 seem to be performing better overall\n\nNote that the diacrotic notch can be higher than the diastolic peak\nand therefore, cannot be effectively detected by the peak detector.\n'
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  34.782 seconds)
+   **Total running time of the script:** ( 0 minutes  28.699 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_PeakDetectorsonPPG.py:

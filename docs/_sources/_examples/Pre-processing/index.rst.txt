@@ -51,6 +51,27 @@ Below are some Pre-Processing examples
    :hidden:
 
    /_examples/Pre-Processing/plot_SQ
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Trimming, Filtering, Segmentation and SQI Calculations utilising Pandas">
+
+.. only:: html
+
+ .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_plot_SQI_pandas_thumb.png
+     :alt: PPG Pre-processing and SQI Calculations using Pandas
+
+     :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_pandas.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /_examples/Pre-Processing/plot_SQI_pandas
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>
