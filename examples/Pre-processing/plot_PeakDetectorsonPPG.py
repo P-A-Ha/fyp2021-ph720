@@ -1,6 +1,6 @@
 """
 PPG Peak Detector Comparisons
-=======================================
+==============================
 
 Comparing Different Peak Detectors
 
@@ -150,4 +150,13 @@ for i in range(1,8,1):
     ax.plot(IRADC_segment[peaks[0]:peaks[1]]) #plotting only one period
 
 plt.show
+
 # %%
+
+'''
+
+Detector 6 and 7 seem to be performing better overall
+
+Note that the diacrotic notch can be higher than the diastolic peak
+and therefore, cannot be effectively detected by the peak detector.
+'''
