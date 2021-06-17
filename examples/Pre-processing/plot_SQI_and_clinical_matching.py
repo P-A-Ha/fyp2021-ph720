@@ -114,7 +114,7 @@ Window_position = Window_position - 2503
 print(Window_position)
 
 #%%
-# We then match the test to the w of using indexing and the "w" column constructed earlier
+# We then match the event to the specific window using indexing and the "w" column constructed earlier.
 if SQIs['w'][Window_position]:
     SQIs['Event'] = np.nan #filling up with nans to form the column
     SQIs['Event'][Window_position] = event_lookup #replacing the nan with the event on the specified cell
