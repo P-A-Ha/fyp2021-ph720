@@ -5,10 +5,10 @@
 
 Computation times
 =================
-**00:01.136** total execution time for **_examples_Pre-Processing** files:
+**00:01.123** total execution time for **_examples_Pre-Processing** files:
 
 +--------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching.py` (``plot_SQI_and_clinical_matching.py``) | 00:01.136 | 0.0 MB |
+| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching.py` (``plot_SQI_and_clinical_matching.py``) | 00:01.123 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr__examples_Pre-Processing_plot_PeakDetectorsonPPG.py` (``plot_PeakDetectorsonPPG.py``)               | 00:00.000 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------+-----------+--------+

@@ -251,7 +251,7 @@ Using the relative time we can calculate the window and then match the event to 
 
 .. GENERATED FROM PYTHON SOURCE LINES 117-118
 
-We then match the test to the w of using indexing and the "w" column constructed earlier
+We then match the event to the specific window using indexing and the "w" column constructed earlier.
 
 .. GENERATED FROM PYTHON SOURCE LINES 118-127
 
@@ -352,7 +352,7 @@ Allignment Example
  .. code-block:: none
 
 
-    <matplotlib.image.AxesImage object at 0x000001E844C0BAC0>
+    <matplotlib.image.AxesImage object at 0x000001B3C5F8CAC0>
 
 
 
@@ -390,7 +390,7 @@ Some thoughts on a single file SQIs (Ignore for now)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.136 seconds)
+   **Total running time of the script:** ( 0 minutes  1.123 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_and_clinical_matching.py:

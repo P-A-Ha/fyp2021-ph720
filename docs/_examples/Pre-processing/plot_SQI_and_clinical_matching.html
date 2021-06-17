@@ -414,7 +414,7 @@ Relative Event List:
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>4
 </pre></div>
 </div>
-<p>We then match the test to the w of using indexing and the “w” column constructed earlier</p>
+<p>We then match the event to the specific window using indexing and the “w” column constructed earlier.</p>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>118
 119
 120
@@ -473,7 +473,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </td></tr></table></div>
 <img alt="Example a Event Alignment with SQIs in Excel" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_and_clinical_matching_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage object at 0x000001E844C0BAC0&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage object at 0x000001B3C5F8CAC0&gt;
 </pre></div>
 </div>
 <p>Some thoughts on a single file SQIs (Ignore for now)</p>
@@ -496,7 +496,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;\nID = [SQIs[&#39;study_no&#39;][0]]\nfor i in range(len(SQIs[&#39;study_no&#39;]-1)):\n    if ID != ID[-1]:\n        ID = ID.append(SQIs[&#39;study_no&#39;][i+1])\n        find_time(Clinical_df, SQIs, &#39;event_shock&#39;, ID)\n&quot;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.136 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.123 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/85aa81fe0c50aa760bff6a9f63b37dac/plot_SQI_and_clinical_matching.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_and_clinical_matching.py</span></code></a></p>
