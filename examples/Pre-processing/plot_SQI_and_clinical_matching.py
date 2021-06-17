@@ -103,7 +103,7 @@ print(relative_event)
 # Using the relative time we can calculate the window and then match the event to the SQI window
 
 #The following was used during debugging
-SQIs = SQIs.drop(['Event'], axis = 1)
+#SQIs = SQIs.drop(['Event'], axis = 1)
 
 #We divide by 30 to find the number of windows, -10 for the 5 minute trimming and -1 for the indexing
 Window_position = int((relative_event[0].seconds/30) - 10 - 1) #(due to the trimming and indexing of w starting from 0)
@@ -127,7 +127,7 @@ print(SQIs)
 #%%
 # Save to CSV File
 
-SQIs.to_csv(r'..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI_and_clinical.csv')
+SQIs.to_csv(r'..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI_and_clinicals.csv')
 
 #%%
 # Allignment Example
