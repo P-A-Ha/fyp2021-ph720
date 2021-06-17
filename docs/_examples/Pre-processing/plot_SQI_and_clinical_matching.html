@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Matching SQI Dataframe Window to Clinical Time of Shock &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fyp2021-ph720
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Example Galleries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Example Gallery with some plots</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pre Processing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Pre Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fyp2021-ph720</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Matching SQI Dataframe Window to Clinical Time of Shock</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/_examples/Pre-processing/plot_SQI_and_clinical_matching.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="matching-sqi-dataframe-window-to-clinical-time-of-shock">
+<span id="sphx-glr-examples-pre-processing-plot-sqi-and-clinical-matching-py"></span><h1>Matching SQI Dataframe Window to Clinical Time of Shock<a class="headerlink" href="#matching-sqi-dataframe-window-to-clinical-time-of-shock" title="Permalink to this headline">¶</a></h1>
+<p>Matching SQI Dataframe Window to Clinical Time of Shock</p>
+<p>Importing Libraries</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+ <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+ <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+ <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+ <span class="c1"># We could use the below for simplicity but since we are going to be calculating these dataframes for multiple patients,</span>
+ <span class="c1"># then using a csv reader might be more efficient for large scale? Coule we append on axis = 0 multiple dataframes isntead? We would still</span>
+ <span class="c1"># need to read from CSV so that we only carry out once the calculations.</span>
+
+ <span class="c1">#from plot_SQI_pandas import Signal_SQIs as sqis</span>
+</pre></div>
+</td></tr></table></div>
+<p>Loading SQI Data and clinical data</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> With some string manipulation and a loop we will be able to apply the following pipeline automatically,</span>
+<span class="sd"> depends on how we structure our SQIs i.e. separate dataframes or one large dataframe?</span>
+<span class="sd"> For now let&#39;s do it for a single file.</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+ <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI.csv&#39;</span>
+ <span class="n">filename_Clinical</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv&#39;</span>
+
+
+ <span class="c1">#reading .csv into dataframes</span>
+ <span class="n">Clinical</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_Clinical</span><span class="p">)</span>
+ <span class="n">SQIs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_SQIs</span><span class="p">)</span>
+
+ <span class="c1">#Showing Data</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">Clinical</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">SQIs</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>       Unnamed: 0  study_no                 date        column         result unit result_old  date_old
+0               0  003-1001  2020-06-11 13:30:00  hypertension           True  NaN        NaN       NaN
+1               1  003-1002  2020-06-17 11:10:00  hypertension          False  NaN        NaN       NaN
+2               2  003-1003  2020-06-18 07:30:00  hypertension          False  NaN        NaN       NaN
+3               3  003-1004  2020-06-22 12:45:00  hypertension          False  NaN        NaN       NaN
+4               4  003-1005  2020-07-02 15:11:00  hypertension          False  NaN        NaN       NaN
+...           ...       ...                  ...           ...            ...  ...        ...       ...
+42060       42060  003-2231  2020-12-05 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42061       42061  003-2232  2020-12-19 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42062       42062  003-2233  2021-01-02 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42063       42063  003-2234  2021-01-08 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42064       42064  003-2235  2021-01-18 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+
+[42065 rows x 8 columns]
+                   timedelta    first     last    skew_0  entropy_0  ...     msq_1  perfusion_1                                      correlogram_1     w  study_no
+0     0 days 00:05:00.010000    30001    33000  0.011563   7.889833  ...  0.000323     6.674922  [75, 150, 225, 0.9087943183455219, 0.789911832...     0  003-2001
+1     0 days 00:05:30.010000    33001    36000 -0.132401   7.869577  ...  0.000013     5.596514  [74, 148, 222, 0.9181757635079706, 0.827234373...     1  003-2001
+2     0 days 00:06:00.010000    36001    39000 -0.124814   7.857955  ...  0.000008     6.091551  [75, 150, 224, 0.9094662436276878, 0.775536874...     2  003-2001
+3     0 days 00:06:30.010000    39001    42000  0.087626   7.863540  ...  0.000021     4.305403  [75, 150, 225, 0.9134459565030647, 0.822742844...     3  003-2001
+4     0 days 00:07:00.010000    42001    45000 -0.058097   7.855827  ...  0.000000     4.244410  [74, 149, 223, 0.913985197557938, 0.7969092381...     4  003-2001
+...                      ...      ...      ...       ...        ...  ...       ...          ...                                                ...   ...       ...
+1851  0 days 15:30:30.010000  5583001  5586000  0.144338   7.847808  ...  0.000008     4.864304  [31, 74, 105, -0.38335045092285824, 0.93538125...  1851  003-2001
+1852  0 days 15:31:00.010000  5586001  5589000  0.128500   7.874039  ...  0.000008     4.277679  [76, 151, 226, 0.9362344077635872, 0.847005080...  1852  003-2001
+1853  0 days 15:31:30.010000  5589001  5592000 -0.003407   7.861910  ...  0.000004     4.790734  [76, 152, 228, 0.9537593069974436, 0.889395196...  1853  003-2001
+1854  0 days 15:32:00.010000  5592001  5595000  0.113608   7.865455  ...  0.000004     4.068148  [74, 149, 223, 0.9298975484283258, 0.810992077...  1854  003-2001
+1855  0 days 15:32:30.010000  5595001  5596375  0.017611   7.092237  ...  0.000000     4.373367  [75, 150, 226, 0.9176870729126787, 0.846958319...  1855  003-2001
+
+[1856 rows x 23 columns]
+</pre></div>
+</div>
+<p>Main Functions fetching event time, ppg start time and the relative time</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> We might need to add another function input variable for ID, depending on how we structure</span>
+<span class="sd"> SQI Dataframes i.e. Single or Double</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+
+ <span class="c1">#Function that fetches the time of a pre-specified event into a list for multiple occurences</span>
+ <span class="k">def</span> <span class="nf">find_event_time</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span><span class="n">SQIs</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+     <span class="n">indx_list</span> <span class="o">=</span> <span class="p">[]</span>
+     <span class="n">date_list</span> <span class="o">=</span> <span class="p">[]</span>
+     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">])):</span>
+         <span class="c1">#Need to revise this logic, doing this just to get a picture on how to do it</span>
+         <span class="k">if</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;column&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">event</span> <span class="ow">and</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span> <span class="ow">or</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">event</span><span class="p">):</span>
+             <span class="n">indx_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+             <span class="n">date_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+     <span class="k">return</span> <span class="n">indx_list</span><span class="p">,</span> <span class="n">date_list</span>
+
+ <span class="c1">#Calcuating the time of ppg_start</span>
+ <span class="k">def</span> <span class="nf">find_event_ppg_time</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span><span class="n">SQIs</span><span class="p">):</span>
+     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">])):</span>
+         <span class="c1">#first logical expression needs revisting for multiple SQI Dataframes, event_ppg seemed accurate when crosschecking with raw data</span>
+         <span class="k">if</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;study_no&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;column&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;event_ppg&#39;</span> <span class="ow">and</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span>
+             <span class="n">ppg_start</span> <span class="o">=</span> <span class="n">Clinical</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+             <span class="k">return</span> <span class="n">ppg_start</span>
+
+ <span class="c1">#Calculating the relative time i.e. time of event - time of start</span>
+ <span class="k">def</span> <span class="nf">calculate_relative_time</span><span class="p">(</span><span class="n">ppg_start</span><span class="p">,</span> <span class="n">date_list</span><span class="p">):</span>
+     <span class="n">relative_event</span> <span class="o">=</span> <span class="p">[]</span>
+     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">date_list</span><span class="p">)):</span>
+         <span class="k">if</span> <span class="n">ppg_start</span> <span class="o">&lt;</span> <span class="n">date_list</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="c1">#Makins sure that event is after start of PPG Record</span>
+             <span class="n">temp_date_list</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span> <span class="c1">#converting str to datetime</span>
+             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Temporary Date List (converted to datetime):&#39;</span><span class="p">)</span>
+             <span class="nb">print</span><span class="p">(</span><span class="n">temp_date_list</span><span class="p">)</span>
+             <span class="n">temp_ppg_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">ppg_start</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span> <span class="c1">#converting str to datetime</span>
+             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Temporary PPG Start (converted to datetime):&#39;</span><span class="p">)</span>
+             <span class="nb">print</span><span class="p">(</span><span class="n">temp_ppg_start</span><span class="p">)</span>
+             <span class="n">relative_event</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_date_list</span><span class="o">-</span><span class="n">temp_ppg_start</span><span class="p">)</span> <span class="c1">#List of events with relative times</span>
+     <span class="k">return</span> <span class="n">relative_event</span>
+
+ <span class="c1">#Defining the event we are interested in (this one was used as an example as it was the only one that could be used for this specified patient)</span>
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_laboratory&#39;</span>
+
+ <span class="n">ppg_start</span> <span class="o">=</span> <span class="n">find_event_ppg_time</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span><span class="n">SQIs</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PPG Start Time:&#39;</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">ppg_start</span><span class="p">)</span>
+ <span class="n">indx_list</span><span class="p">,</span> <span class="n">date_list</span> <span class="o">=</span> <span class="n">find_event_time</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Event Indexes List:&#39;</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">indx_list</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Event Datetime List:&#39;</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">date_list</span><span class="p">)</span>
+
+ <span class="n">relative_event</span> <span class="o">=</span> <span class="n">calculate_relative_time</span><span class="p">(</span><span class="n">ppg_start</span><span class="p">,</span> <span class="n">date_list</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Relative Event List:&#39;</span><span class="p">)</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">relative_event</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>PPG Start Time:
+2020-06-04 09:05:00
+Event Indexes List:
+[24089, 24218, 24275]
+Event Datetime List:
+[&#39;2020-06-03 08:56:00&#39;, &#39;2020-06-04 08:00:00&#39;, &#39;2020-06-05 06:04:00&#39;]
+Temporary Date List (converted to datetime):
+2020-06-05 06:04:00
+Temporary PPG Start (converted to datetime):
+2020-06-04 09:05:00
+Relative Event List:
+[datetime.timedelta(seconds=75540)]
+</pre></div>
+</div>
+<p>Using the relative time we can calculate the window and then match the event to the SQI window</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>105
+106
+107
+108
+109
+110
+111
+112
+113
+114</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#The following was used during debugging</span>
+ <span class="c1">#SQIs = SQIs.drop([&#39;Event&#39;], axis = 1)</span>
+
+ <span class="c1">#We divide by 30 to find the number of windows, -10 for the 5 minute trimming and -1 for the indexing</span>
+ <span class="n">Window_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">relative_event</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">seconds</span><span class="o">/</span><span class="mi">30</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#(due to the trimming and indexing of w starting from 0)</span>
+
+ <span class="c1">#The below is done for the sake of the example as we cannot find an event within the PPG record for this patient (other than Dengue Shock which has no time)</span>
+ <span class="c1">#And we are subtractinf 2513 to be able to easily observe the effect of the actions that follow</span>
+ <span class="n">Window_position</span> <span class="o">=</span> <span class="n">Window_position</span> <span class="o">-</span> <span class="mi">2503</span>
+ <span class="nb">print</span><span class="p">(</span><span class="n">Window_position</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>4
+</pre></div>
+</div>
+<p>We then match the test to the w of using indexing and the “w” column constructed earlier</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>118
+119
+120
+121
+122
+123
+124
+125</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="k">if</span> <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">][</span><span class="n">Window_position</span><span class="p">]:</span>
+     <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;Event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1">#filling up with nans to form the column</span>
+     <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;Event&#39;</span><span class="p">][</span><span class="n">Window_position</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_lookup</span> <span class="c1">#replacing the nan with the event on the specified cell</span>
+ <span class="c1">#The raise below is not really needed since if it is out of range another ValueError will be raised</span>
+ <span class="k">else</span><span class="p">:</span>
+     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Window not found&#39;</span><span class="p">)</span> <span class="c1">#just in case not such window exists</span>
+
+ <span class="nb">print</span><span class="p">(</span><span class="n">SQIs</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching.py:120: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQIs[&#39;Event&#39;][Window_position] = event_lookup #replacing the nan with the event on the specified cell
+d:\files\desktop\dissertation icl\env\lib\site-packages\pandas\core\indexing.py:1637: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+                   timedelta    first     last    skew_0  ...                                      correlogram_1     w  study_no             Event
+0     0 days 00:05:00.010000    30001    33000  0.011563  ...  [75, 150, 225, 0.9087943183455219, 0.789911832...     0  003-2001               NaN
+1     0 days 00:05:30.010000    33001    36000 -0.132401  ...  [74, 148, 222, 0.9181757635079706, 0.827234373...     1  003-2001               NaN
+2     0 days 00:06:00.010000    36001    39000 -0.124814  ...  [75, 150, 224, 0.9094662436276878, 0.775536874...     2  003-2001               NaN
+3     0 days 00:06:30.010000    39001    42000  0.087626  ...  [75, 150, 225, 0.9134459565030647, 0.822742844...     3  003-2001               NaN
+4     0 days 00:07:00.010000    42001    45000 -0.058097  ...  [74, 149, 223, 0.913985197557938, 0.7969092381...     4  003-2001  event_laboratory
+...                      ...      ...      ...       ...  ...                                                ...   ...       ...               ...
+1851  0 days 15:30:30.010000  5583001  5586000  0.144338  ...  [31, 74, 105, -0.38335045092285824, 0.93538125...  1851  003-2001               NaN
+1852  0 days 15:31:00.010000  5586001  5589000  0.128500  ...  [76, 151, 226, 0.9362344077635872, 0.847005080...  1852  003-2001               NaN
+1853  0 days 15:31:30.010000  5589001  5592000 -0.003407  ...  [76, 152, 228, 0.9537593069974436, 0.889395196...  1853  003-2001               NaN
+1854  0 days 15:32:00.010000  5592001  5595000  0.113608  ...  [74, 149, 223, 0.9298975484283258, 0.810992077...  1854  003-2001               NaN
+1855  0 days 15:32:30.010000  5595001  5596375  0.017611  ...  [75, 150, 226, 0.9176870729126787, 0.846958319...  1855  003-2001               NaN
+
+[1856 rows x 24 columns]
+</pre></div>
+</div>
+<p>Save to CSV File</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>130</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">SQIs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI_and_clinicals.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Allignment Example</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>135
+136
+137</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\MISC\SQI_Clinical_Image_example.png&#39;</span><span class="p">)</span>
+ <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Example a Event Alignment with SQIs in Excel&#39;</span><span class="p">)</span>
+ <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<img alt="Example a Event Alignment with SQIs in Excel" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_and_clinical_matching_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage object at 0x000001E844C0BAC0&gt;
+</pre></div>
+</div>
+<p>Some thoughts on a single file SQIs (Ignore for now)</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>140
+141
+142
+143
+144
+145
+146</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> ID = [SQIs[&#39;study_no&#39;][0]]</span>
+<span class="sd"> for i in range(len(SQIs[&#39;study_no&#39;]-1)):</span>
+<span class="sd">     if ID != ID[-1]:</span>
+<span class="sd">         ID = ID.append(SQIs[&#39;study_no&#39;][i+1])</span>
+<span class="sd">         find_time(Clinical_df, SQIs, &#39;event_shock&#39;, ID)</span>
+<span class="sd"> &#39;&#39;&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;\nID = [SQIs[&#39;study_no&#39;][0]]\nfor i in range(len(SQIs[&#39;study_no&#39;]-1)):\n    if ID != ID[-1]:\n        ID = ID.append(SQIs[&#39;study_no&#39;][i+1])\n        find_time(Clinical_df, SQIs, &#39;event_shock&#39;, ID)\n&quot;
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.136 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/85aa81fe0c50aa760bff6a9f63b37dac/plot_SQI_and_clinical_matching.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_and_clinical_matching.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/6b9e327fb08f1bb40f7299b1bf6e106b/plot_SQI_and_clinical_matching.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_SQI_and_clinical_matching.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Philippos Arkis Hadjimarkou.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
