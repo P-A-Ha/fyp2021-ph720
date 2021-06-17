@@ -12,6 +12,27 @@ Below are some Pre-Processing examples
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Matching SQI Dataframe Window to Clinical Time of Shock">
+
+.. only:: html
+
+ .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_SQI_and_clinical_matching_thumb.png
+     :alt: Matching SQI Dataframe Window to Clinical Time of Shock
+
+     :ref:`sphx_glr__examples_Pre-Processing_SQI_and_clinical_matching.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /_examples/Pre-Processing/SQI_and_clinical_matching
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Comparing Different Peak Detectors">
 
 .. only:: html
