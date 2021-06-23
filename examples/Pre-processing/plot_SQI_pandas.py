@@ -28,6 +28,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
+from datetime import datetime
 
 # Scipy
 from scipy.stats import skew, kurtosis, entropy
@@ -47,6 +48,8 @@ import vital_sqi.sqi as sq
 # Filepath definition
 filepath = r'..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\PPG'
 filename = r'01NVa-003-2001 Smartcare.csv'
+filename_Clinical = r'..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv'
+
 
 
 #defining constants
@@ -57,38 +60,56 @@ filter_type =  'butter'
 segment_length = 30
 sampling_rate = 100
 
+#reading Clinical Data
+Clinical = pd.read_csv(filename_Clinical)
+
 #readind PPG data
-data = PPG_reader(os.path.join(filepath, filename), 
-    signal_idx=["PLETH", "IR_ADC"],
-    timestamp_idx=["TIMESTAMP_MS"],
-    info_idx=["SPO2_PCT","PULSE_BPM","PERFUSION_INDEX"], sampling_rate=sampling_rate)
+
+data = pd.read_csv(os.path.join(filepath, filename))
+
+# data = PPG_reader(os.path.join(filepath, filename), 
+#     signal_idx=["PLETH", "IR_ADC"],
+#     timestamp_idx=["TIMESTAMP_MS"],
+#     info_idx=["SPO2_PCT","PULSE_BPM","PERFUSION_INDEX"], sampling_rate=sampling_rate)
+
 
 
 print(data)
-print(data.signals)
-print(data.sampling_rate)
-print(data.start_datetime)
-print(data.wave_type)
-print(data.signals.shape)
+print(data.PLETH)
+print(data.IR_ADC)
+print(data.TIMESTAMP_MS)
+print(data.SPO2_PCT)
 
+signals = data[["PLETH", "IR_ADC"]]
 
 plot_range = np.arange(0,1000,1)
 fig, ax = plt.subplots()
-ax.plot(plot_range, data.signals[0][0:1000])
+ax.plot(plot_range, signals.iloc[0:1000, 0])
+
+#%%
+#fetching ppg_start time
+def find_event_ppg_time(Clinical,Patient):
+    row = Clinical[(Clinical.study_no == Patient) & (Clinical.column == 'event_ppg') & (Clinical.result == 'True')]
+    return row['date'].values
 
 # %%
 # Setting the indexes for the raw data - adopted from examples
 pd.Timedelta.__str__ = lambda x: x._repr_base('all')
 
 #Transposing data.signals to set into columns
-signals = pd.DataFrame(data.signals.T)
+#signals = pd.DataFrame(data.signals.T)
 
 # Include column with index
 signals = signals.reset_index()
 
+signals['timedelta'] = pd.to_timedelta(data.TIMESTAMP_MS, unit='ms')
 
-signals['timedelta'] = \
-    pd.to_timedelta(signals.index / sampling_rate, unit='s')
+PPG_start_date = find_event_ppg_time(Clinical, filename.split()[0][-8:])
+
+PPG_start_date = datetime.strptime(PPG_start_date[0], '%Y-%m-%d %H:%M:%S')
+
+signals['PPG_Datetime'] = pd.to_datetime(PPG_start_date)
+signals['PPG_Datetime']+= pd.to_timedelta(signals.timedelta)
 
 # Set the timedelta index (keep numeric index too)
 signals = signals.set_index('timedelta')
@@ -102,8 +123,8 @@ print(signals)
 #Plotting
 fig, axes = plt.subplots(nrows=2, ncols=1)
 axes = axes.flatten()
-signals[0].plot(ax=axes[0])
-signals[1].plot(ax=axes[1])
+signals.iloc[:,1].plot(ax=axes[0])
+signals.iloc[:,2].plot(ax=axes[1])
 
 # %%
 # Trimming the first and last 5 minutes
@@ -117,6 +138,8 @@ idxs = (signals.index > offset) & \
 
 #Trimming
 signals = signals[idxs]
+
+print(signals)
 
 
 # %%
@@ -144,16 +167,16 @@ def bpf(signal):
     return filtered_signal
 
 #Band-pass filtered signals
-signals['0_bpf'] = bpf(signals[0])
-signals['1_bpf'] = bpf(signals[1])
+signals['PLETH_bpf'] = bpf(signals.iloc[:,1])
+signals['IR_ADC_bpf'] = bpf(signals.iloc[:,2])
 
 print('Raw and Filtered Signals:')
 print(signals)
 
 fig, axes = plt.subplots(nrows=2, ncols=1)
 axes = axes.flatten()
-signals['0_bpf'].plot(ax=axes[0])
-signals['1_bpf'].plot(ax=axes[1])
+signals['PLETH_bpf'].plot(ax=axes[0])
+signals['IR_ADC_bpf'].plot(ax=axes[1])
 
 
 # %%
@@ -190,8 +213,8 @@ def correlogram(x):
     return sq.rpeaks_sqi.correlogram_sqi(x)
 
 #Calculating peaks and troughs using peakdetector function for both filtered signals
-peak_list_0, trough_list_0 = PeakDetection(signals['0_bpf'])
-peak_list_1, trough_list_1 = PeakDetection(signals['1_bpf'])
+peak_list_0, trough_list_0 = PeakDetection(signals['PLETH_bpf'])
+peak_list_1, trough_list_1 = PeakDetection(signals['IR_ADC_bpf'])
 
 '''
 MSW values that are being calculated are too small, maybe peakdetectors need
@@ -223,6 +246,8 @@ def sqi_all(x,raw,filtered,peaks,troughs):
     
     # Information
     dinfo = {
+        'PPG_w_s': x.PPG_Datetime.iloc[0],
+        'PPG_w_f': x.PPG_Datetime.iloc[-1],
         'first': x.idx.iloc[0],
         'last': x.idx.iloc[-1],
         'skew': skew(x[raw]),
@@ -246,8 +271,8 @@ def sqi_all(x,raw,filtered,peaks,troughs):
 #%%
 # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC
 
-sqis_0 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 0,'0_bpf', peak_list_0, trough_list_0))
-sqis_1 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 1,'1_bpf', peak_list_1, trough_list_1))
+sqis_0 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'PLETH','PLETH_bpf', peak_list_0, trough_list_0))
+sqis_1 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'IR_ADC','IR_ADC_bpf', peak_list_1, trough_list_1))
 
 #Displaying the SQIs per signal
 print("SQIs Signal 0 (Pleth):")
@@ -257,7 +282,7 @@ print(sqis_0)
 print("SQIs Signal 1 (IR_ADC):")
 sqis_1
 print(sqis_1)
-sqis_1 = sqis_1.drop(['first','last'], axis = 1)
+sqis_1 = sqis_1.drop(['first','last', 'PPG_w_s', 'PPG_w_f'], axis = 1)
 
 
 # Add window id to identify point of shock more easily
@@ -277,10 +302,13 @@ print(Signal_SQIs)
 # Saving the SQIs to a CSV file
 Signal_SQIs.to_csv(r'..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI.csv')
 
+
+#%%
+
 '''
 #Running Some Abstract Checks to Verify Results etc.
 
-print(perfusion(signals[0][0:3000], signals['0_bpf'][0:3000]))
+print(perfusion(signals[0][0:3000], signals['PLETH_bpf'][0:3000]))
 
 '''
 
