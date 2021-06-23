@@ -300,7 +300,7 @@ Signal_SQIs['study_no'] = filename.split()[0][-8:]
 print(Signal_SQIs)
 
 # Saving the SQIs to a CSV file
-Signal_SQIs.to_csv(r'..\..\..\..\OUCRU\01NVa_Dengue\Adults\01NVa-003-2001\SQI.csv')
+Signal_SQIs.to_csv(r'..\..\..\..\OUCRU\Outputs\SQI.csv')
 
 
 #%%
