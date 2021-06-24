@@ -1,6 +1,6 @@
 """
-Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
-==============================================================================
+Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records [Unfinished]
+===========================================================================================
 Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 
 """
@@ -27,28 +27,30 @@ study_no_list = os.listdir(study_no_path) # Need to take the last 8 characters i
 Clinical = pd.read_csv(filename_Clinical)
 SQIs = pd.read_csv(filename_SQIs)
 
-TERMINAL = False
+TERMINAL = True
 
 #Showing Data
 if TERMINAL:
+    print("\n Clincial Data:")
     print(Clinical)
+    print("\n SQI Data:")
     print(SQIs)
 
 def match_clinical_to_SQIs(Clinical, SQIs, event, study_no_list):
     SQIs[event]=np.nan #forming an empty column for the event 
+    print("\n EVENT: ", event)
     for i in range(len(study_no_list)):
+        print("\n STUDY-NO: ", study_no_list[i])
         #finding the rows for which the following logic is satisfied
         event_row = Clinical[(((Clinical.column == event) & (Clinical.result == 'True')) | (Clinical.result == event)) & (Clinical.study_no == study_no_list[i][-8:])]
-        #print(event_row)
-        #for j in range(len(event_row)):
-        #    valid_SQI_rows = SQIs[SQIs.PPG_w_s < event_row[j].date < SQIs.PPG_w_f]
-        #    print(valid_SQI_rows)
-        
-            
-
-            
-
-    return event_row
+        #print(event_row.date.index[0])
+        for j in range(len(event_row)):
+            valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
+            SQIs[event][valid_SQI_rows.index] = True
+            print("\n Valid Event SQIs Index:")
+            print(valid_SQI_rows.index)
+    
+    return SQIs
 
 '''
 
@@ -58,13 +60,20 @@ in the SQI file, that is no longer needed.
 
 '''
 
-event_lookup = 'event_laboratory'
 
+event_lookup = 'event_laboratory'
 SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs, event_lookup, study_no_list)
 
-print(SQIs_with_Clinical)
+event_lookup = 'event_shock'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
 
-#SQIs_with_Clinical.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical.csv')
+
+if TERMINAL:
+    print('\n SQIs with Clinical Event Match:')
+    print(SQIs_with_Clinical)
+
+
+SQIs_with_Clinical.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical.csv')
 
 
 if TERMINAL:
