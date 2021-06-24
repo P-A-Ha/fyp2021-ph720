@@ -54,6 +54,27 @@ Below are some Pre-Processing examples
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Trimming, Filtering, Segmentation and SQI Calculations utilising Pandas on Multiple Patients">
+
+.. only:: html
+
+ .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_thumb.png
+     :alt: PPG Pre-processing and SQI Calculations using Pandas on multiple Patients
+
+     :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /_examples/Pre-Processing/plot_SQI_Pandas_on_Multiple_Patients
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Matching SQI Dataframe Window to Clinical Time of Shock">
 
 .. only:: html
@@ -72,6 +93,27 @@ Below are some Pre-Processing examples
    :hidden:
 
    /_examples/Pre-Processing/plot_SQI_and_clinical_matching
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Matching SQI Dataframe Window to Clinical Time of &quot;Event&quot; for Multiple Records [Unfinished]">
+
+.. only:: html
+
+ .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_plot_SQI_and_clinical_matching_multiple_patients_thumb.png
+     :alt: Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records [Unfinished]
+
+     :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /_examples/Pre-Processing/plot_SQI_and_clinical_matching_multiple_patients
 
 .. raw:: html
 

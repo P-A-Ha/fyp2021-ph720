@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Matching SQI Dataframe Window to Clinical Time of “Event” for Multiple Records [Unfinished] &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fyp2021-ph720
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Example Galleries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Example Gallery with some plots</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pre Processing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Pre Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fyp2021-ph720</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Matching SQI Dataframe Window to Clinical Time of “Event” for Multiple Records [Unfinished]</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/_examples/Pre-processing/plot_SQI_and_clinical_matching_multiple_patients.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="matching-sqi-dataframe-window-to-clinical-time-of-event-for-multiple-records-unfinished">
+<span id="sphx-glr-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py"></span><h1>Matching SQI Dataframe Window to Clinical Time of “Event” for Multiple Records [Unfinished]<a class="headerlink" href="#matching-sqi-dataframe-window-to-clinical-time-of-event-for-multiple-records-unfinished" title="Permalink to this headline">¶</a></h1>
+<p>Matching SQI Dataframe Window to Clinical Time of “Event” for Multiple Records</p>
+<p>Importing Libraries</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+ <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+ <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+ <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+ <span class="kn">import</span> <span class="nn">os</span>
+</pre></div>
+</td></tr></table></div>
+<p>Loading SQI Data and clinical data</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
+ <span class="n">filename_Clinical</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv&#39;</span>
+ <span class="n">study_no_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults&#39;</span>
+ <span class="n">study_no_list</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">study_no_path</span><span class="p">)</span> <span class="c1"># Need to take the last 8 characters i.e. study_no_list[i][-8:]</span>
+
+ <span class="c1">#reading .csv into dataframes</span>
+ <span class="n">Clinical</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_Clinical</span><span class="p">)</span>
+ <span class="n">SQIs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_SQIs</span><span class="p">)</span>
+
+ <span class="n">TERMINAL</span> <span class="o">=</span> <span class="kc">True</span>
+
+ <span class="c1">#Showing Data</span>
+ <span class="k">if</span> <span class="n">TERMINAL</span><span class="p">:</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Clincial Data:&quot;</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">Clinical</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> SQI Data:&quot;</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">SQIs</span><span class="p">)</span>
+
+ <span class="k">def</span> <span class="nf">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">):</span>
+     <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1">#forming an empty column for the event</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> EVENT: &quot;</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">study_no_list</span><span class="p">)):</span>
+         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> STUDY-NO: &quot;</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+         <span class="c1">#finding the rows for which the following logic is satisfied</span>
+         <span class="n">event_row</span> <span class="o">=</span> <span class="n">Clinical</span><span class="p">[(((</span><span class="n">Clinical</span><span class="o">.</span><span class="n">column</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="n">event</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
+         <span class="c1">#print(event_row.date.index[0])</span>
+         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_row</span><span class="p">)):</span>
+             <span class="n">valid_SQI_rows</span> <span class="o">=</span> <span class="n">SQIs</span><span class="p">[(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_s</span> <span class="o">&lt;=</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_f</span> <span class="o">&gt;</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
+             <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Valid Event SQIs Index:&quot;</span><span class="p">)</span>
+             <span class="nb">print</span><span class="p">(</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+     <span class="k">return</span> <span class="n">SQIs</span>
+
+ <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd"> We previously had functions that fetched ppg start and</span>
+<span class="sd"> calculated relative times but since we included the PPG Start times</span>
+<span class="sd"> in the SQI file, that is no longer needed.</span>
+
+<span class="sd"> &#39;&#39;&#39;</span>
+
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_laboratory&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_shock&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+
+ <span class="k">if</span> <span class="n">TERMINAL</span><span class="p">:</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> SQIs with Clinical Event Match:&#39;</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">SQIs_with_Clinical</span><span class="p">)</span>
+
+
+ <span class="n">SQIs_with_Clinical</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical.csv&#39;</span><span class="p">)</span>
+
+
+ <span class="c1"># if TERMINAL:</span>
+ <span class="c1">#     img = plt.imread(r&#39;..\..\..\..\MISC\SQI_Clinical_Image_example.png&#39;)</span>
+ <span class="c1">#     plt.title(&#39;Example a Event Alignment with SQIs in Excel&#39;)</span>
+ <span class="c1">#     plt.imshow(img)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> Clincial Data:
+       Unnamed: 0  study_no                 date        column         result unit result_old  date_old
+0               0  003-1001  2020-06-11 13:30:00  hypertension           True  NaN        NaN       NaN
+1               1  003-1002  2020-06-17 11:10:00  hypertension          False  NaN        NaN       NaN
+2               2  003-1003  2020-06-18 07:30:00  hypertension          False  NaN        NaN       NaN
+3               3  003-1004  2020-06-22 12:45:00  hypertension          False  NaN        NaN       NaN
+4               4  003-1005  2020-07-02 15:11:00  hypertension          False  NaN        NaN       NaN
+...           ...       ...                  ...           ...            ...  ...        ...       ...
+42060       42060  003-2231  2020-12-05 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42061       42061  003-2232  2020-12-19 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42062       42062  003-2233  2021-01-02 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42063       42063  003-2234  2021-01-08 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+42064       42064  003-2235  2021-01-18 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+
+[42065 rows x 8 columns]
+
+ SQI Data:
+                   timedelta                  PPG_w_s                  PPG_w_f  ...                                      correlogram_1     w  study_no
+0     0 days 00:05:00.010000  2020-06-04 09:10:00.010  2020-06-04 09:10:30.000  ...  [75, 150, 226, 0.9132608947040779, 0.799647163...     0  003-2001
+1     0 days 00:05:30.010000  2020-06-04 09:10:30.010  2020-06-04 09:11:00.000  ...  [74, 148, 222, 0.9164960001123641, 0.827303342...     1  003-2001
+2     0 days 00:06:00.010000  2020-06-04 09:11:00.010  2020-06-04 09:11:30.000  ...  [75, 150, 225, 0.9097936306566979, 0.779681593...     2  003-2001
+3     0 days 00:06:30.010000  2020-06-04 09:11:30.010  2020-06-04 09:12:00.000  ...  [75, 149, 224, 0.9128541336509863, 0.807913379...     3  003-2001
+4     0 days 00:07:00.010000  2020-06-04 09:12:00.010  2020-06-04 09:12:30.000  ...  [74, 149, 223, 0.9123059092032415, 0.791340070...     4  003-2001
+...                      ...                      ...                      ...  ...                                                ...   ...       ...
+5087  0 days 14:15:30.010000  2020-08-12 14:15:30.010  2020-08-12 14:16:00.000  ...  [6, 11, 18, -0.0019374058650579195, -0.0017696...  1701  003-2012
+5088  0 days 14:16:00.010000  2020-08-12 14:16:00.010  2020-08-12 14:16:30.000  ...  [6, 11, 20, 0.039241068108281145, 0.0041982087...  1702  003-2012
+5089  0 days 14:16:30.010000  2020-08-12 14:16:30.010  2020-08-12 14:17:00.000  ...  [6, 10, 18, -0.02065026993537243, -0.034124123...  1703  003-2012
+5090  0 days 14:17:00.010000  2020-08-12 14:17:00.010  2020-08-12 14:17:30.000  ...  [6, 11, 15, -0.0005607782359069993, -0.0363094...  1704  003-2012
+5091  0 days 14:17:30.010000  2020-08-12 14:17:30.010  2020-08-12 14:17:51.610  ...  [6, 10, 20, 0.014910364149073808, 0.0444651847...  1705  003-2012
+
+[5092 rows x 25 columns]
+
+ EVENT:  event_laboratory
+
+ STUDY-NO:  01NVa-003-2001
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:49: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQIs[event][valid_SQI_rows.index] = True
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ STUDY-NO:  01NVa-003-2009
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ STUDY-NO:  01NVa-003-2012
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([3449], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([4519], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([3435], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([3555], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([3795], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([3915], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([4155], dtype=&#39;int64&#39;)
+
+ EVENT:  event_shock
+
+ STUDY-NO:  01NVa-003-2001
+
+ STUDY-NO:  01NVa-003-2009
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ STUDY-NO:  01NVa-003-2012
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ Valid Event SQIs Index:
+Int64Index([], dtype=&#39;int64&#39;)
+
+ SQIs with Clinical Event Match:
+                   timedelta                  PPG_w_s                  PPG_w_f    first  ...     w  study_no  event_laboratory  event_shock
+0     0 days 00:05:00.010000  2020-06-04 09:10:00.010  2020-06-04 09:10:30.000    29913  ...     0  003-2001               NaN          NaN
+1     0 days 00:05:30.010000  2020-06-04 09:10:30.010  2020-06-04 09:11:00.000    32913  ...     1  003-2001               NaN          NaN
+2     0 days 00:06:00.010000  2020-06-04 09:11:00.010  2020-06-04 09:11:30.000    35913  ...     2  003-2001               NaN          NaN
+3     0 days 00:06:30.010000  2020-06-04 09:11:30.010  2020-06-04 09:12:00.000    38913  ...     3  003-2001               NaN          NaN
+4     0 days 00:07:00.010000  2020-06-04 09:12:00.010  2020-06-04 09:12:30.000    41913  ...     4  003-2001               NaN          NaN
+...                      ...                      ...                      ...      ...  ...   ...       ...               ...          ...
+5087  0 days 14:15:30.010000  2020-08-12 14:15:30.010  2020-08-12 14:16:00.000  5132472  ...  1701  003-2012               NaN          NaN
+5088  0 days 14:16:00.010000  2020-08-12 14:16:00.010  2020-08-12 14:16:30.000  5135472  ...  1702  003-2012               NaN          NaN
+5089  0 days 14:16:30.010000  2020-08-12 14:16:30.010  2020-08-12 14:17:00.000  5138472  ...  1703  003-2012               NaN          NaN
+5090  0 days 14:17:00.010000  2020-08-12 14:17:00.010  2020-08-12 14:17:30.000  5141472  ...  1704  003-2012               NaN          NaN
+5091  0 days 14:17:30.010000  2020-08-12 14:17:30.010  2020-08-12 14:17:51.610  5144472  ...  1705  003-2012               NaN          NaN
+
+[5092 rows x 27 columns]
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.619 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/03b5979f714e5200f67a3adc18e799cb/plot_SQI_and_clinical_matching_multiple_patients.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_and_clinical_matching_multiple_patients.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/caea89d33465c464ac82672df867b7d3/plot_SQI_and_clinical_matching_multiple_patients.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_SQI_and_clinical_matching_multiple_patients.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Philippos Arkis Hadjimarkou.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
