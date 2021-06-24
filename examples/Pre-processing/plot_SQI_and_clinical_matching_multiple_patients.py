@@ -76,10 +76,10 @@ if TERMINAL:
 SQIs_with_Clinical.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical.csv')
 
 
-if TERMINAL:
-    img = plt.imread(r'..\..\..\..\MISC\SQI_Clinical_Image_example.png')
-    plt.title('Example a Event Alignment with SQIs in Excel')  
-    plt.imshow(img)
+# if TERMINAL:
+#     img = plt.imread(r'..\..\..\..\MISC\SQI_Clinical_Image_example.png')
+#     plt.title('Example a Event Alignment with SQIs in Excel')  
+#     plt.imshow(img)
 
 
 
