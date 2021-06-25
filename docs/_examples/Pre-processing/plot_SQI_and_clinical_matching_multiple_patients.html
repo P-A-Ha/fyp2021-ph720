@@ -248,9 +248,20 @@ to download the full example code</p>
 79
 80
 81
-82</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
  <span class="n">filename_Clinical</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv&#39;</span>
  <span class="n">study_no_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults&#39;</span>
+
+ <span class="c1">#taking a list of records</span>
  <span class="n">study_no_list</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">study_no_path</span><span class="p">)</span> <span class="c1"># Need to take the last 8 characters i.e. study_no_list[i][-8:]</span>
 
  <span class="c1">#reading .csv into dataframes</span>
@@ -269,20 +280,21 @@ to download the full example code</p>
  <span class="k">def</span> <span class="nf">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">):</span>
      <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1">#forming an empty column for the event</span>
      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> EVENT: &quot;</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+     <span class="c1">#iterating through the study_no</span>
      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">study_no_list</span><span class="p">)):</span>
          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> STUDY-NO: &quot;</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
          <span class="c1">#finding the rows for which the following logic is satisfied</span>
          <span class="n">event_row</span> <span class="o">=</span> <span class="n">Clinical</span><span class="p">[(((</span><span class="n">Clinical</span><span class="o">.</span><span class="n">column</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="n">event</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
-         <span class="c1">#print(event_row.date.index[0])</span>
+         <span class="c1">#iterating through the event row for indexing</span>
          <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_row</span><span class="p">)):</span>
              <span class="n">valid_SQI_rows</span> <span class="o">=</span> <span class="n">SQIs</span><span class="p">[(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_s</span> <span class="o">&lt;=</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_f</span> <span class="o">&gt;</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
-             <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+             <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#Setting the value to True for the window corresponding to an event</span>
              <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Valid Event SQIs Index:&quot;</span><span class="p">)</span>
              <span class="nb">print</span><span class="p">(</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-
      <span class="k">return</span> <span class="n">SQIs</span>
 
  <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> NOTE:</span>
 
 <span class="sd"> We previously had functions that fetched ppg start and</span>
 <span class="sd"> calculated relative times but since we included the PPG Start times</span>
@@ -290,10 +302,12 @@ to download the full example code</p>
 
 <span class="sd"> &#39;&#39;&#39;</span>
 
-
+ <span class="c1">#Calling the matching function by first defining the event</span>
  <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_laboratory&#39;</span>
  <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
 
+ <span class="c1">#In the second iteration we call the function with the output of the first one, so that we can form</span>
+ <span class="c1">#multiple columns of events</span>
  <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_shock&#39;</span>
  <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
 
@@ -303,15 +317,20 @@ to download the full example code</p>
      <span class="nb">print</span><span class="p">(</span><span class="n">SQIs_with_Clinical</span><span class="p">)</span>
 
 
+ <span class="c1">#Saving output to CSV</span>
  <span class="n">SQIs_with_Clinical</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical.csv&#39;</span><span class="p">)</span>
 
 
- <span class="c1"># if TERMINAL:</span>
- <span class="c1">#     img = plt.imread(r&#39;..\..\..\..\MISC\SQI_Clinical_Image_example.png&#39;)</span>
- <span class="c1">#     plt.title(&#39;Example a Event Alignment with SQIs in Excel&#39;)</span>
- <span class="c1">#     plt.imshow(img)</span>
+ <span class="k">if</span> <span class="n">TERMINAL</span><span class="p">:</span>
+     <span class="c1">#example of the output</span>
+     <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\MISC\SQI_Clinical_Image_example_2.png&#39;</span><span class="p">)</span>
+     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Example a Event Alignment with SQIs in Excel&#39;</span><span class="p">)</span>
+     <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+     <span class="n">img2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\MISC\SQI_Clinical_Image_example_3.png&#39;</span><span class="p">)</span>
+     <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img2</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
+<img alt="Example a Event Alignment with SQIs in Excel" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_and_clinical_matching_multiple_patients_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> Clincial Data:
        Unnamed: 0  study_no                 date        column         result unit result_old  date_old
@@ -348,11 +367,11 @@ to download the full example code</p>
  EVENT:  event_laboratory
 
  STUDY-NO:  01NVa-003-2001
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:49: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:52: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQIs[event][valid_SQI_rows.index] = True
+  SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
 
  Valid Event SQIs Index:
 Int64Index([], dtype=&#39;int64&#39;)
@@ -461,7 +480,7 @@ Int64Index([], dtype=&#39;int64&#39;)
 [5092 rows x 27 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.619 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.966 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/03b5979f714e5200f67a3adc18e799cb/plot_SQI_and_clinical_matching_multiple_patients.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_and_clinical_matching_multiple_patients.py</span></code></a></p>

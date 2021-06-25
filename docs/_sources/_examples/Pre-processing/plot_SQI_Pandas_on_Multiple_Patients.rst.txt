@@ -73,7 +73,7 @@ Importing Libraries
 
     filepath_start = r'..\..\..\..\OUCRU\01NVa_Dengue\Adults'
     filename_Clinical = r'..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv'
-    files = os.listdir(filepath_start)
+    files = os.listdir(filepath_start) # fetching the list of records (currently only 3 for processing simplicity)
 
     #Loading Clinical Data to a Dataframe
 
@@ -177,7 +177,7 @@ DEFINING FUNCTIONS
         return sq.rpeaks_sqi.correlogram_sqi(x)
 
     '''
-    MSW values that are being calculated are too small, maybe peakdetectors need
+    MSQ values that are being calculated are too small, maybe peakdetectors need
     to be revisited?
     '''
     def msq(x,peaks):
@@ -207,8 +207,8 @@ DEFINING FUNCTIONS
     
         # Information
         dinfo = {
-            'PPG_w_s': x.PPG_Datetime.iloc[0],
-            'PPG_w_f': x.PPG_Datetime.iloc[-1],
+            'PPG_w_s': x.PPG_Datetime.iloc[0], #timedate window start
+            'PPG_w_f': x.PPG_Datetime.iloc[-1], #timedate window finish
             'first': x.idx.iloc[0],
             'last': x.idx.iloc[-1],
             'skew': skew(x[raw]),
@@ -237,7 +237,7 @@ DEFINING FUNCTIONS
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 172-303
+.. GENERATED FROM PYTHON SOURCE LINES 172-320
 
 .. code-block:: default
    :lineno-start: 172
@@ -247,6 +247,8 @@ DEFINING FUNCTIONS
     We first calculate each patients SQIs and the carry out the rejection process (latter not yet implementred).
     We then concatenate the SQIs along with other descriptors into a single SQI file.
     '''
+
+    #reading the studies and automatically parsing the files
     for i in range(len(files)):
         filepath_end = os.listdir(os.path.join(filepath_start,files[i],r'PPG'))
         filename = os.path.join(filepath_start,files[i],r'PPG',filepath_end[0])
@@ -254,14 +256,16 @@ DEFINING FUNCTIONS
     
         if TERMINAL:
             print(data)
-            print(data.PLETH)
-            print(data.IR_ADC)
-            print(data.TIMESTAMP_MS)
-            print(data.SPO2_PCT)
+            #print(data.PLETH)
+            #print(data.IR_ADC)
+            #print(data.TIMESTAMP_MS)
+            #print(data.SPO2_PCT)
 
         signals = data[["PLETH", "IR_ADC"]]
 
         if TERMINAL:
+            # In the future we will be using plotly, for better graphs but due to processing times 
+            # that change hasn't been made yet
             plot_range = np.arange(0,1000,1)
             fig, ax = plt.subplots()
             ax.plot(plot_range, signals.iloc[0:1000, 0])
@@ -272,12 +276,16 @@ DEFINING FUNCTIONS
         # Include column with index
         signals = signals.reset_index()
 
+        #creating the timedelta index using ms
         signals['timedelta'] = pd.to_timedelta(data.TIMESTAMP_MS, unit='ms')
 
+        #fetching the PPG start date
         PPG_start_date = find_event_ppg_time(Clinical, files[i][-8:])
 
+        #converting to datetime format
         PPG_start_date = datetime.strptime(PPG_start_date[0], '%Y-%m-%d %H:%M:%S')
 
+        #creating the PPG Datetime column by taking the datetime and adding the timedeltas to it for each datapoint
         signals['PPG_Datetime'] = pd.to_datetime(PPG_start_date)
         signals['PPG_Datetime']+= pd.to_timedelta(signals.timedelta)
 
@@ -288,7 +296,7 @@ DEFINING FUNCTIONS
         signals = signals.rename(columns={'index': 'idx'})
 
         if TERMINAL:
-            print("Raw Signals:")
+            print("\n Raw Signals:")
             print(signals)
 
             #Plotting
@@ -310,6 +318,7 @@ DEFINING FUNCTIONS
         signals = signals[idxs]
     
         if TERMINAL:
+            print('\n Truncated Signals:')
             print(signals)
     
     
@@ -322,7 +331,7 @@ DEFINING FUNCTIONS
         signals['IR_ADC_bpf'] = bpf(signals.iloc[:,2])
 
         if TERMINAL:
-            print('Raw and Filtered Signals:')
+            print('\n Raw and Filtered Signals:')
             print(signals)
 
             fig, axes = plt.subplots(nrows=2, ncols=1)
@@ -334,8 +343,7 @@ DEFINING FUNCTIONS
         peak_list_0, trough_list_0 = PeakDetection(signals['PLETH_bpf'])
         peak_list_1, trough_list_1 = PeakDetection(signals['IR_ADC_bpf'])
 
-        # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC
-
+        # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC using both filtered and unfiltered signals
         sqis_0 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'PLETH','PLETH_bpf', peak_list_0, trough_list_0))
         sqis_1 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'IR_ADC','IR_ADC_bpf', peak_list_1, trough_list_1))
 
@@ -347,19 +355,25 @@ DEFINING FUNCTIONS
         print("SQIs Signal 1 (IR_ADC):")
         sqis_1
         print(sqis_1)
+        #removing duplicates 
         sqis_1 = sqis_1.drop(['first','last', 'PPG_w_s', 'PPG_w_f'], axis = 1)
 
         # Add window id to identify point of interest more easily
         sqis_1['w'] = np.arange(sqis_1.shape[0])
 
-        # Final Formatting into a single DataFrame and Saving into a .csv file
+
+
+        #Final Formatting into a single DataFrame and Saving into a .csv file
 
         #Merging SQIs of different signals from the same record (Pleth and IR_ADC) 
         Signal_SQIs = sqis_0.merge(sqis_1, on='timedelta', suffixes=('_0', '_1'))
 
         #Automatically fetching the study_no from the filename and including it in the DataFrame
         Signal_SQIs['study_no'] = files[i][-8:]
-        print(Signal_SQIs)
+
+        if TERMINAL:
+            print('\n Individual SQI Check:')
+            print(Signal_SQIs)
 
         '''
 
@@ -367,13 +381,16 @@ DEFINING FUNCTIONS
 
         '''
 
+        #concatenating into a single dataframe for all studies
         if i == 0:
             Complete_SQIs = Signal_SQIs
         else:
             Complete_SQIs = pd.concat([Complete_SQIs, Signal_SQIs])
 
-
+    #Saving to csv format
     Complete_SQIs.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv')
+
+
 
 
 .. rst-class:: sphx-glr-horizontal
@@ -454,55 +471,8 @@ DEFINING FUNCTIONS
     5626376      56269940  5627003          1         78      91.4            0  30261          5.7   293522  184828              5.6
 
     [5626377 rows x 11 columns]
-    0          36033
-    1          40919
-    2          45715
-    3          50227
-    4          54362
-               ...  
-    5626372    31408
-    5626373    31318
-    5626374    31117
-    5626375    30761
-    5626376    30261
-    Name: PLETH, Length: 5626377, dtype: int64
-    0          216524
-    1          216470
-    2          216415
-    3          216364
-    4          216379
-                ...  
-    5626372    183755
-    5626373    184002
-    5626374    184296
-    5626375    184554
-    5626376    184828
-    Name: IR_ADC, Length: 5626377, dtype: int64
-    0                 0
-    1                10
-    2                20
-    3                30
-    4                40
-                 ...   
-    5626372    56269900
-    5626373    56269910
-    5626374    56269920
-    5626375    56269930
-    5626376    56269940
-    Name: TIMESTAMP_MS, Length: 5626377, dtype: int64
-    0          97.1
-    1          97.1
-    2          97.1
-    3          97.1
-    4          97.1
-               ... 
-    5626372    91.4
-    5626373    91.4
-    5626374    91.4
-    5626375    91.4
-    5626376    91.4
-    Name: SPO2_PCT, Length: 5626377, dtype: float64
-    Raw Signals:
+
+     Raw Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime
     timedelta                                                             
     0 days 00:00:00               0  36033  216524 2020-06-04 09:05:00.000
@@ -518,6 +488,8 @@ DEFINING FUNCTIONS
     0 days 15:37:49.940000  5626376  30261  184828 2020-06-05 00:42:49.940
 
     [5626377 rows x 4 columns]
+
+     Truncated Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime
     timedelta                                                             
     0 days 00:05:00.010000    29913  21755  188656 2020-06-04 09:10:00.010
@@ -533,7 +505,8 @@ DEFINING FUNCTIONS
     0 days 15:32:49.930000  5596375  10763  186899 2020-06-05 00:37:49.930
 
     [5566463 rows x 4 columns]
-    Raw and Filtered Signals:
+
+     Raw and Filtered Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime    PLETH_bpf   IR_ADC_bpf
     timedelta                                                                                       
     0 days 00:05:00.010000    29913  21755  188656 2020-06-04 09:10:00.010  -214.886697   -32.494545
@@ -583,6 +556,8 @@ DEFINING FUNCTIONS
     0 days 15:32:30.010000 2020-06-05 00:37:30.010 2020-06-05 00:37:49.930  5594383  ...  0.000008   4.352384  [75, 150, 226, 0.9326593121930683, 0.859995140...
 
     [1856 rows x 13 columns]
+
+     Individual SQI Check:
                                            PPG_w_s                 PPG_w_f    first  ...                                      correlogram_1     w  study_no
     timedelta                                                                        ...                                                                   
     0 days 00:05:00.010000 2020-06-04 09:10:00.010 2020-06-04 09:10:30.000    29913  ...  [75, 150, 226, 0.9132608947040779, 0.799647163...     0  003-2001
@@ -612,55 +587,8 @@ DEFINING FUNCTIONS
     4646519      46474210  4647430          1         96      99.9            0  24705         23.7   163188  234287              0.9
 
     [4646520 rows x 11 columns]
-    0          45065
-    1          44683
-    2          44244
-    3          43776
-    4          43335
-               ...  
-    4646515    25317
-    4646516    25094
-    4646517    24905
-    4646518    24788
-    4646519    24705
-    Name: PLETH, Length: 4646520, dtype: int64
-    0          129705
-    1          129796
-    2          129793
-    3          129789
-    4          129789
-                ...  
-    4646515    234241
-    4646516    234256
-    4646517    234217
-    4646518    234239
-    4646519    234287
-    Name: IR_ADC, Length: 4646520, dtype: int64
-    0                 0
-    1                10
-    2                20
-    3                30
-    4                40
-                 ...   
-    4646515    46474170
-    4646516    46474180
-    4646517    46474190
-    4646518    46474200
-    4646519    46474210
-    Name: TIMESTAMP_MS, Length: 4646520, dtype: int64
-    0          99.0
-    1          99.0
-    2          99.0
-    3          99.0
-    4          99.0
-               ... 
-    4646515    99.9
-    4646516    99.9
-    4646517    99.9
-    4646518    99.9
-    4646519    99.9
-    Name: SPO2_PCT, Length: 4646520, dtype: float64
-    Raw Signals:
+
+     Raw Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime
     timedelta                                                             
     0 days 00:00:00               0  45065  129705 2020-07-29 18:00:00.000
@@ -676,6 +604,8 @@ DEFINING FUNCTIONS
     0 days 12:54:34.210000  4646519  24705  234287 2020-07-30 06:54:34.210
 
     [4646520 rows x 4 columns]
+
+     Truncated Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime
     timedelta                                                             
     0 days 00:05:00.010000    29913  10803  135438 2020-07-29 18:05:00.010
@@ -691,7 +621,8 @@ DEFINING FUNCTIONS
     0 days 12:49:34.200000  4616520  47131  223685 2020-07-30 06:49:34.200
 
     [4586608 rows x 4 columns]
-    Raw and Filtered Signals:
+
+     Raw and Filtered Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime     PLETH_bpf  IR_ADC_bpf
     timedelta                                                                                       
     0 days 00:05:00.010000    29913  10803  135438 2020-07-29 18:05:00.010   -347.936641   -0.439129
@@ -741,6 +672,8 @@ DEFINING FUNCTIONS
     0 days 12:49:30.010000 2020-07-30 06:49:30.010 2020-07-30 06:49:34.200  4616101  ...  0.000005   1.398639  [60, 120, 179, 0.7932304299133978, 0.617863646...
 
     [1530 rows x 13 columns]
+
+     Individual SQI Check:
                                            PPG_w_s                 PPG_w_f    first  ...                                      correlogram_1     w  study_no
     timedelta                                                                        ...                                                                   
     0 days 00:05:00.010000 2020-07-29 18:05:00.010 2020-07-29 18:05:30.000    29913  ...  [72, 144, 216, 0.8856102490591679, 0.794003526...     0  003-2009
@@ -770,55 +703,8 @@ DEFINING FUNCTIONS
     5176633      51771620  5177171          1        255      12.7            2      0          5.7   320757  207338              0.0
 
     [5176634 rows x 11 columns]
-    0          17712
-    1          16585
-    2          15577
-    3          14607
-    4          13718
-               ...  
-    5176629        0
-    5176630        0
-    5176631        0
-    5176632        0
-    5176633        0
-    Name: PLETH, Length: 5176634, dtype: int64
-    0          142842
-    1          142896
-    2          142845
-    3          142925
-    4          142793
-                ...  
-    5176629    207341
-    5176630    207359
-    5176631    207331
-    5176632    207370
-    5176633    207338
-    Name: IR_ADC, Length: 5176634, dtype: int64
-    0                 0
-    1                10
-    2                20
-    3                30
-    4                40
-                 ...   
-    5176629    51771580
-    5176630    51771590
-    5176631    51771600
-    5176632    51771610
-    5176633    51771620
-    Name: TIMESTAMP_MS, Length: 5176634, dtype: int64
-    0          100.0
-    1          100.0
-    2          100.0
-    3          100.0
-    4          100.0
-               ...  
-    5176629     12.7
-    5176630     12.7
-    5176631     12.7
-    5176632     12.7
-    5176633     12.7
-    Name: SPO2_PCT, Length: 5176634, dtype: float64
-    Raw Signals:
+
+     Raw Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime
     timedelta                                                             
     0 days 00:00:00               0  17712  142842 2020-08-12 00:00:00.000
@@ -834,6 +720,8 @@ DEFINING FUNCTIONS
     0 days 14:22:51.620000  5176633      0  207338 2020-08-12 14:22:51.620
 
     [5176634 rows x 4 columns]
+
+     Truncated Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime
     timedelta                                                             
     0 days 00:05:00.010000    29913  22849  151983 2020-08-12 00:05:00.010
@@ -849,7 +737,8 @@ DEFINING FUNCTIONS
     0 days 14:17:51.610000  5146632      0  207389 2020-08-12 14:17:51.610
 
     [5116720 rows x 4 columns]
-    Raw and Filtered Signals:
+
+     Raw and Filtered Signals:
                                 idx  PLETH  IR_ADC            PPG_Datetime      PLETH_bpf   IR_ADC_bpf
     timedelta                                                                                         
     0 days 00:05:00.010000    29913  22849  151983 2020-08-12 00:05:00.010  -1.830181e+02  -139.490636
@@ -899,6 +788,8 @@ DEFINING FUNCTIONS
     0 days 14:17:30.010000 2020-08-12 14:17:30.010 2020-08-12 14:17:51.610  5144472  ...  0.000026    0.057402  [6, 10, 20, 0.014910364149073808, 0.0444651847...
 
     [1706 rows x 13 columns]
+
+     Individual SQI Check:
                                            PPG_w_s                 PPG_w_f    first  ...                                      correlogram_1     w  study_no
     timedelta                                                                        ...                                                                   
     0 days 00:05:00.010000 2020-08-12 00:05:00.010 2020-08-12 00:05:30.000    29913  ...  [39, 66, 87, -0.04351235688799981, -0.06876880...     0  003-2012
@@ -918,10 +809,41 @@ DEFINING FUNCTIONS
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 321-323
+
+SQI Requirements
+example of the output
+
+.. GENERATED FROM PYTHON SOURCE LINES 323-325
+
+.. code-block:: default
+   :lineno-start: 323
+
+    img = plt.imread(r'..\..\..\..\MISC\SQI_requirements.png')
+    plt.title('SQI Requirements')  
+    plt.imshow(img)
+
+
+.. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_010.png
+    :alt: SQI Requirements
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <matplotlib.image.AxesImage object at 0x000001F50F91FAC0>
+
+
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 6 minutes  35.782 seconds)
+   **Total running time of the script:** ( 8 minutes  38.379 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py:

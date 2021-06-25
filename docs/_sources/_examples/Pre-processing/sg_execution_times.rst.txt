@@ -5,12 +5,12 @@
 
 Computation times
 =================
-**06:36.400** total execution time for **_examples_Pre-Processing** files:
+**08:39.345** total execution time for **_examples_Pre-Processing** files:
 
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py` (``plot_SQI_Pandas_on_Multiple_Patients.py``)                         | 06:35.782 | 0.0 MB |
+| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py` (``plot_SQI_Pandas_on_Multiple_Patients.py``)                         | 08:38.379 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py` (``plot_SQI_and_clinical_matching_multiple_patients.py``) | 00:00.619 | 0.0 MB |
+| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py` (``plot_SQI_and_clinical_matching_multiple_patients.py``) | 00:00.966 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr__examples_Pre-Processing_plot_PeakDetectorsonPPG.py` (``plot_PeakDetectorsonPPG.py``)                                                   | 00:00.000 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
