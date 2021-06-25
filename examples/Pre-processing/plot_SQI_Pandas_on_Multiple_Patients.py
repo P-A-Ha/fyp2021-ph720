@@ -36,7 +36,7 @@ import vital_sqi.sqi as sq
 
 filepath_start = r'..\..\..\..\OUCRU\01NVa_Dengue\Adults'
 filename_Clinical = r'..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv'
-files = os.listdir(filepath_start)
+files = os.listdir(filepath_start) # fetching the list of records (currently only 3 for processing simplicity)
 
 #Loading Clinical Data to a Dataframe
 
@@ -115,7 +115,7 @@ def correlogram(x):
     return sq.rpeaks_sqi.correlogram_sqi(x)
 
 '''
-MSW values that are being calculated are too small, maybe peakdetectors need
+MSQ values that are being calculated are too small, maybe peakdetectors need
 to be revisited?
 '''
 def msq(x,peaks):
@@ -145,8 +145,8 @@ def sqi_all(x,raw,filtered,peaks,troughs):
     
     # Information
     dinfo = {
-        'PPG_w_s': x.PPG_Datetime.iloc[0],
-        'PPG_w_f': x.PPG_Datetime.iloc[-1],
+        'PPG_w_s': x.PPG_Datetime.iloc[0], #timedate window start
+        'PPG_w_f': x.PPG_Datetime.iloc[-1], #timedate window finish
         'first': x.idx.iloc[0],
         'last': x.idx.iloc[-1],
         'skew': skew(x[raw]),
@@ -174,6 +174,8 @@ Looking through the directories and creating the SQI Dataframe for all patients.
 We first calculate each patients SQIs and the carry out the rejection process (latter not yet implementred).
 We then concatenate the SQIs along with other descriptors into a single SQI file.
 '''
+
+#reading the studies and automatically parsing the files
 for i in range(len(files)):
     filepath_end = os.listdir(os.path.join(filepath_start,files[i],r'PPG'))
     filename = os.path.join(filepath_start,files[i],r'PPG',filepath_end[0])
@@ -181,14 +183,16 @@ for i in range(len(files)):
     
     if TERMINAL:
         print(data)
-        print(data.PLETH)
-        print(data.IR_ADC)
-        print(data.TIMESTAMP_MS)
-        print(data.SPO2_PCT)
+        #print(data.PLETH)
+        #print(data.IR_ADC)
+        #print(data.TIMESTAMP_MS)
+        #print(data.SPO2_PCT)
 
     signals = data[["PLETH", "IR_ADC"]]
 
     if TERMINAL:
+        # In the future we will be using plotly, for better graphs but due to processing times 
+        # that change hasn't been made yet
         plot_range = np.arange(0,1000,1)
         fig, ax = plt.subplots()
         ax.plot(plot_range, signals.iloc[0:1000, 0])
@@ -199,12 +203,16 @@ for i in range(len(files)):
     # Include column with index
     signals = signals.reset_index()
 
+    #creating the timedelta index using ms
     signals['timedelta'] = pd.to_timedelta(data.TIMESTAMP_MS, unit='ms')
 
+    #fetching the PPG start date
     PPG_start_date = find_event_ppg_time(Clinical, files[i][-8:])
 
+    #converting to datetime format
     PPG_start_date = datetime.strptime(PPG_start_date[0], '%Y-%m-%d %H:%M:%S')
 
+    #creating the PPG Datetime column by taking the datetime and adding the timedeltas to it for each datapoint
     signals['PPG_Datetime'] = pd.to_datetime(PPG_start_date)
     signals['PPG_Datetime']+= pd.to_timedelta(signals.timedelta)
 
@@ -215,7 +223,7 @@ for i in range(len(files)):
     signals = signals.rename(columns={'index': 'idx'})
 
     if TERMINAL:
-        print("Raw Signals:")
+        print("\n Raw Signals:")
         print(signals)
 
         #Plotting
@@ -237,6 +245,7 @@ for i in range(len(files)):
     signals = signals[idxs]
     
     if TERMINAL:
+        print('\n Truncated Signals:')
         print(signals)
     
     
@@ -249,7 +258,7 @@ for i in range(len(files)):
     signals['IR_ADC_bpf'] = bpf(signals.iloc[:,2])
 
     if TERMINAL:
-        print('Raw and Filtered Signals:')
+        print('\n Raw and Filtered Signals:')
         print(signals)
 
         fig, axes = plt.subplots(nrows=2, ncols=1)
@@ -261,8 +270,7 @@ for i in range(len(files)):
     peak_list_0, trough_list_0 = PeakDetection(signals['PLETH_bpf'])
     peak_list_1, trough_list_1 = PeakDetection(signals['IR_ADC_bpf'])
 
-    # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC
-
+    # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC using both filtered and unfiltered signals
     sqis_0 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'PLETH','PLETH_bpf', peak_list_0, trough_list_0))
     sqis_1 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'IR_ADC','IR_ADC_bpf', peak_list_1, trough_list_1))
 
@@ -274,19 +282,25 @@ for i in range(len(files)):
     print("SQIs Signal 1 (IR_ADC):")
     sqis_1
     print(sqis_1)
+    #removing duplicates 
     sqis_1 = sqis_1.drop(['first','last', 'PPG_w_s', 'PPG_w_f'], axis = 1)
 
     # Add window id to identify point of interest more easily
     sqis_1['w'] = np.arange(sqis_1.shape[0])
 
-    # Final Formatting into a single DataFrame and Saving into a .csv file
+
+
+    #Final Formatting into a single DataFrame and Saving into a .csv file
 
     #Merging SQIs of different signals from the same record (Pleth and IR_ADC) 
     Signal_SQIs = sqis_0.merge(sqis_1, on='timedelta', suffixes=('_0', '_1'))
 
     #Automatically fetching the study_no from the filename and including it in the DataFrame
     Signal_SQIs['study_no'] = files[i][-8:]
-    print(Signal_SQIs)
+
+    if TERMINAL:
+        print('\n Individual SQI Check:')
+        print(Signal_SQIs)
 
     '''
 
@@ -294,10 +308,18 @@ for i in range(len(files)):
 
     '''
 
+    #concatenating into a single dataframe for all studies
     if i == 0:
         Complete_SQIs = Signal_SQIs
     else:
         Complete_SQIs = pd.concat([Complete_SQIs, Signal_SQIs])
 
-
+#Saving to csv format
 Complete_SQIs.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv')
+
+#%%
+# SQI Requirements
+#example of the output
+img = plt.imread(r'..\..\..\..\MISC\SQI_requirements.png')
+plt.title('SQI Requirements')  
+plt.imshow(img)
