@@ -96,12 +96,12 @@ Below are some Pre-Processing examples
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Matching SQI Dataframe Window to Clinical Time of &quot;Event&quot; for Multiple Records [Unfinished]">
+    <div class="sphx-glr-thumbcontainer" tooltip="Matching SQI Dataframe Window to Clinical Time of &quot;Event&quot; for Multiple Records">
 
 .. only:: html
 
  .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_plot_SQI_and_clinical_matching_multiple_patients_thumb.png
-     :alt: Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records [Unfinished]
+     :alt: Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 
      :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py`
 

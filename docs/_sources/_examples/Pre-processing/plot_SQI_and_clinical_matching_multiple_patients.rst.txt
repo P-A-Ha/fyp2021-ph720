@@ -18,8 +18,8 @@
 .. _sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py:
 
 
-Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records [Unfinished]
-===========================================================================================
+Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
+==============================================================================
 Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 
 .. GENERATED FROM PYTHON SOURCE LINES 9-10
@@ -297,7 +297,7 @@ Loading SQI Data and clinical data
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.966 seconds)
+   **Total running time of the script:** ( 0 minutes  1.188 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py:
