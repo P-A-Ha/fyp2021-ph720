@@ -1,6 +1,6 @@
 """
-Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records [Unfinished]
-===========================================================================================
+Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
+==============================================================================
 Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 
 """
