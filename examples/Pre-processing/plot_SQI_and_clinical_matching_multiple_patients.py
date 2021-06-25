@@ -84,11 +84,12 @@ SQIs_with_Clinical.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinica
 
 if TERMINAL:
     #example of the output
+    fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(8, 10))
     img = plt.imread(r'..\..\..\..\MISC\SQI_Clinical_Image_example_2.png')
-    plt.title('Example a Event Alignment with SQIs in Excel')  
-    plt.imshow(img)
+    axs[0].set_title('Example a Event Alignment with SQIs in Excel')
+    axs[0].imshow(img)
     img2 = plt.imread(r'..\..\..\..\MISC\SQI_Clinical_Image_example_3.png')
-    plt.imshow(img2)
-
+    axs[1].imshow(img2)
+    plt.show()
 
 # %%
