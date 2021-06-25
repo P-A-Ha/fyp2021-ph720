@@ -53,7 +53,7 @@ sampling_rate = 100
 TERMINAL = True
 
 #%%
-#DEFINING FUNCTIONS
+#Defining Functions
 #==================
 
 #find the start of PPG from clinical Data
@@ -169,6 +169,9 @@ def sqi_all(x,raw,filtered,peaks,troughs):
 
 
 # %%
+#Loop calculating SQIs of multiple records and concatenating results into a single dataframe
+#===========================================================================================
+
 '''
 Looking through the directories and creating the SQI Dataframe for all patients.
 We first calculate each patients SQIs and the carry out the rejection process (latter not yet implementred).

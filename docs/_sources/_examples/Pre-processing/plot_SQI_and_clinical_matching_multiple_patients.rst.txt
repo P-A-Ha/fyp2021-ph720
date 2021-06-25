@@ -50,7 +50,7 @@ Importing Libraries
 
 Loading SQI Data and clinical data
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-94
+.. GENERATED FROM PYTHON SOURCE LINES 20-95
 
 .. code-block:: default
    :lineno-start: 21
@@ -122,12 +122,13 @@ Loading SQI Data and clinical data
 
     if TERMINAL:
         #example of the output
+        fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(8, 10))
         img = plt.imread(r'..\..\..\..\MISC\SQI_Clinical_Image_example_2.png')
-        plt.title('Example a Event Alignment with SQIs in Excel')  
-        plt.imshow(img)
+        axs[0].set_title('Example a Event Alignment with SQIs in Excel')
+        axs[0].imshow(img)
         img2 = plt.imread(r'..\..\..\..\MISC\SQI_Clinical_Image_example_3.png')
-        plt.imshow(img2)
-
+        axs[1].imshow(img2)
+        plt.show()
 
 
 
@@ -297,7 +298,7 @@ Loading SQI Data and clinical data
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.188 seconds)
+   **Total running time of the script:** ( 0 minutes  0.939 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py:

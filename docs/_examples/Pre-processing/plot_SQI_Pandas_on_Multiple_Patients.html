@@ -265,7 +265,7 @@ to download the full example code</p>
 </div>
 </div>
 <div class="section" id="defining-functions">
-<h1>DEFINING FUNCTIONS<a class="headerlink" href="#defining-functions" title="Permalink to this headline">¶</a></h1>
+<h1>Defining Functions<a class="headerlink" href="#defining-functions" title="Permalink to this headline">¶</a></h1>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 59
  60
  61
@@ -487,10 +487,10 @@ to download the full example code</p>
      <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dinfo</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>172
-173
-174
-175
+</div>
+<div class="section" id="loop-calculating-sqis-of-multiple-records-and-concatenating-results-into-a-single-dataframe">
+<h1>Loop calculating SQIs of multiple records and concatenating results into a single dataframe<a class="headerlink" href="#loop-calculating-sqis-of-multiple-records-and-concatenating-results-into-a-single-dataframe" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>175
 176
 177
 178
@@ -633,7 +633,10 @@ to download the full example code</p>
 315
 316
 317
-318</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
+318
+319
+320
+321</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd"> Looking through the directories and creating the SQI Dataframe for all patients.</span>
 <span class="sd"> We first calculate each patients SQIs and the carry out the rejection process (latter not yet implementred).</span>
 <span class="sd"> We then concatenate the SQIs along with other descriptors into a single SQI file.</span>
@@ -1155,19 +1158,19 @@ timedelta                                                                       
 </div>
 <p>SQI Requirements
 example of the output</p>
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>323
-324
-325</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\MISC\SQI_requirements.png&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>326
+327
+328</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\MISC\SQI_requirements.png&#39;</span><span class="p">)</span>
  <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;SQI Requirements&#39;</span><span class="p">)</span>
  <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 <img alt="SQI Requirements" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_010.png" />
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage object at 0x000001F50F91FAC0&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage object at 0x00000169AC402C70&gt;
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 8 minutes  38.379 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 7 minutes  9.248 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-pandas-on-multiple-patients-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/c41a3eb5f4dfefae60b4ce15ac1a9f9f/plot_SQI_Pandas_on_Multiple_Patients.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_Pandas_on_Multiple_Patients.py</span></code></a></p>

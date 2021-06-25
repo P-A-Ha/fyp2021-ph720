@@ -109,7 +109,7 @@ Importing Libraries
 
 .. GENERATED FROM PYTHON SOURCE LINES 56-58
 
-DEFINING FUNCTIONS
+Defining Functions
 ==================
 
 .. GENERATED FROM PYTHON SOURCE LINES 58-171
@@ -237,10 +237,16 @@ DEFINING FUNCTIONS
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 172-320
+.. GENERATED FROM PYTHON SOURCE LINES 172-174
+
+Loop calculating SQIs of multiple records and concatenating results into a single dataframe
+===========================================================================================
+
+.. GENERATED FROM PYTHON SOURCE LINES 174-323
 
 .. code-block:: default
-   :lineno-start: 172
+   :lineno-start: 175
+
 
     '''
     Looking through the directories and creating the SQI Dataframe for all patients.
@@ -809,15 +815,15 @@ DEFINING FUNCTIONS
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 321-323
+.. GENERATED FROM PYTHON SOURCE LINES 324-326
 
 SQI Requirements
 example of the output
 
-.. GENERATED FROM PYTHON SOURCE LINES 323-325
+.. GENERATED FROM PYTHON SOURCE LINES 326-328
 
 .. code-block:: default
-   :lineno-start: 323
+   :lineno-start: 326
 
     img = plt.imread(r'..\..\..\..\MISC\SQI_requirements.png')
     plt.title('SQI Requirements')  
@@ -836,14 +842,14 @@ example of the output
  .. code-block:: none
 
 
-    <matplotlib.image.AxesImage object at 0x000001F50F91FAC0>
+    <matplotlib.image.AxesImage object at 0x00000169AC402C70>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 8 minutes  38.379 seconds)
+   **Total running time of the script:** ( 7 minutes  9.248 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py:
