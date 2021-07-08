@@ -307,9 +307,23 @@ for i in range(len(files)):
 
     '''
 
-    Discarding process to be added here.
+    Discarding process to be added below.
 
     '''
+    #RULE
+    Discarding_rules = list(zip(*[(Signal_SQIs['skew_0'].between(-2, -1), True), (Signal_SQIs['skew_0'].between(0, 1), True)]))
+
+    # Apply rule (default False)
+    Signal_SQIs['keep'] = np.select(Discarding_rules[0], Discarding_rules[1], False)
+
+    # Overwrite and keep all
+    Signal_SQIs['keep'] = True
+
+    # Keep all whose keep column value is true
+    Signal_SQIs = Signal_SQIs[Signal_SQIs.keep]
+
+
+
 
     #concatenating into a single dataframe for all studies
     if i == 0:
