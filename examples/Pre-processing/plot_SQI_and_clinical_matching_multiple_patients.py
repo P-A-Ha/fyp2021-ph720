@@ -64,13 +64,41 @@ in the SQI file, that is no longer needed.
 '''
 
 #Calling the matching function by first defining the event
-event_lookup = 'event_laboratory'
+event_lookup = 'event_shock'
 SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs, event_lookup, study_no_list)
 
 #In the second iteration we call the function with the output of the first one, so that we can form 
 #multiple columns of events
-event_lookup = 'event_shock'
+event_lookup = 'ascites'
 SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'respiratory_distress'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'ventilation_cannula'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'ventilation_mechanical'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'ventilation_ncpap'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'bleeding_severe'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'cns_abnormal'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'liver_mild'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'pleural_effusion'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'skidney'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
 
 
 if TERMINAL:
