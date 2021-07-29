@@ -67,6 +67,14 @@ in the SQI file, that is no longer needed.
 event_lookup = 'event_shock'
 SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs, event_lookup, study_no_list)
 
+event_lookup = 'reshock24'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'diagnosis_admission' #all diagnosis admission are for shock so we can use this as is 
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+event_lookup = 'shock_admission'
+SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
 #In the second iteration we call the function with the output of the first one, so that we can form 
 #multiple columns of events
 event_lookup = 'ascites'
