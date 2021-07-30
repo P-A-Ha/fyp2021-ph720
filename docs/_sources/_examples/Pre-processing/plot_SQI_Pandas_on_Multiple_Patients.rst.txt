@@ -43,9 +43,9 @@ Trimming, Filtering, Segmentation and SQI Calculations utilising Pandas on Multi
 
 .. GENERATED FROM PYTHON SOURCE LINES 15-16
 
-Importing Libraries
+# Importing Libraries
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-55
+.. GENERATED FROM PYTHON SOURCE LINES 16-56
 
 .. code-block:: default
    :lineno-start: 17
@@ -62,6 +62,7 @@ Importing Libraries
 
     # Scipy
     from scipy.stats import skew, kurtosis, entropy
+    from scipy import signal as si
 
      # vitalSQI
     from vital_sqi.data.signal_io import PPG_reader
@@ -91,37 +92,64 @@ Importing Libraries
 
 
 
-
-
 .. rst-class:: sphx-glr-script-out
 
- Out:
+.. code-block:: pytb
 
- .. code-block:: none
+    Traceback (most recent call last):
+      File "D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_Pandas_on_Multiple_Patients.py", line 31, in <module>
+        from vital_sqi.data.signal_io import PPG_reader
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\vital_sqi\__init__.py", line 8, in <module>
+        from vital_sqi import (
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\vital_sqi\data\__init__.py", line 8, in <module>
+        from vital_sqi.data.removal_utilities import (
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\vital_sqi\data\removal_utilities.py", line 7, in <module>
+        import pmdarima as pm
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\pmdarima\__init__.py", line 51, in <module>
+        from .arima import auto_arima, ARIMA, AutoARIMA, StepwiseContext, decompose
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\pmdarima\arima\__init__.py", line 5, in <module>
+        from .approx import *
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\pmdarima\arima\approx.py", line 9, in <module>
+        from ..utils.array import c, check_endog
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\pmdarima\utils\__init__.py", line 5, in <module>
+        from .array import *
+      File "d:\files\desktop\dissertation icl\env\lib\site-packages\pmdarima\utils\array.py", line 13, in <module>
+        from ._array import C_intgrt_vec
+      File "pmdarima\utils\_array.pyx", line 1, in init pmdarima.utils._array
+    ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
 
-    Importing the dtw module. When using in academic works please cite:
-      T. Giorgino. Computing and Visualizing Dynamic Time Warping Alignments in R: The dtw Package.
-      J. Stat. Soft., doi:10.18637/jss.v031.i07.
 
 
 
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 56-58
+.. GENERATED FROM PYTHON SOURCE LINES 57-59
 
 Defining Functions
 ==================
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-171
+.. GENERATED FROM PYTHON SOURCE LINES 59-201
 
 .. code-block:: default
    :lineno-start: 59
 
-
-    #find the start of PPG from clinical Data
+    '''
+    #find the start of PPG from clinical Data #OLD VERSION, NOW WE ARE USING FILENAME
     def find_event_ppg_time(Clinical,Patient):
         row = Clinical[(Clinical.study_no == Patient) & (Clinical.column == 'event_ppg') & (Clinical.result == 'True')]
         return row['date'].values
+
+    '''
+
+    #2162 does not have a start date
+
+    #find the start of PPG from filename assuming that the clinical data was recorded at +0700 UTC
+    def find_ppg_start_time(absolute_filename):
+        absolute_filename = absolute_filename[:-9]
+        absolute_filename = absolute_filename.replace('T','')
+        return datetime.strptime(absolute_filename, '%Y%m%d%H%M%S.%f')
+
+
+
+
 
     #======================================================
 
@@ -134,12 +162,27 @@ Defining Functions
     '''
     #Band pass filtering function
     def bpf(signal):
+
+        #OLD IMPLEMENTATION
+        '''
         hp_filt_params = (1, 1) #(Cutoff Hz, order)
         lp_filt_params = (20, 4) #( Cutoff Hz, order)
         sampling_rate = 100
         filter = BandpassFilter(band_type='butter', fs=sampling_rate)
         filtered_signal = filter.signal_highpass_filter(signal, cutoff=hp_filt_params[0], order=hp_filt_params[1])
         filtered_signal = filter.signal_lowpass_filter(filtered_signal, cutoff=lp_filt_params[0], order=lp_filt_params[1])
+        '''
+
+        #SCIPY IMPLEMENTATION FROM EXAMPLE
+
+        # Configure high/low filters
+        bh, ah = si.butter(1, 1, fs=sampling_rate, btype='high', analog=False)
+        bl, al = si.butter(4, 20, fs=sampling_rate, btype='low', analog=False)
+        # Apply filters
+        filtered_signal = si.filtfilt(bh, ah, signal)
+        filtered_signal = si.lfilter(bl, al, filtered_signal)
+        # Return
+
         return filtered_signal
 
     #======================================================
@@ -187,7 +230,7 @@ Defining Functions
          return sq.standard_sqi.msq_sqi(x, peaks_1=peaks, peak_detect2=6)
 
     '''
-    Below function is outputting an error, needs revisiting
+    Below function is outputting an error, needs revisiting but not very important for this project
     '''
     # def dtw(x,troughs):
     #     #Dynamic Time Warping
@@ -231,21 +274,15 @@ Defining Functions
 
 
 
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 172-174
+.. GENERATED FROM PYTHON SOURCE LINES 202-204
 
 Loop calculating SQIs of multiple records and concatenating results into a single dataframe
 ===========================================================================================
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-323
+.. GENERATED FROM PYTHON SOURCE LINES 204-383
 
 .. code-block:: default
-   :lineno-start: 175
+   :lineno-start: 205
 
 
     '''
@@ -257,599 +294,193 @@ Loop calculating SQIs of multiple records and concatenating results into a singl
     #reading the studies and automatically parsing the files
     for i in range(len(files)):
         filepath_end = os.listdir(os.path.join(filepath_start,files[i],r'PPG'))
-        filename = os.path.join(filepath_start,files[i],r'PPG',filepath_end[0])
-        data = pd.read_csv(filename)
-    
-        if TERMINAL:
-            print(data)
-            #print(data.PLETH)
-            #print(data.IR_ADC)
-            #print(data.TIMESTAMP_MS)
-            #print(data.SPO2_PCT)
+        for j in range(len(filepath_end)):
+            filename = os.path.join(filepath_start,files[i],r'PPG',filepath_end[j])
+            print("FILENAME=========================================================================")
+            print(filename)
+            print("FILENAME=========================================================================")
+            data = pd.read_csv(filename)
+        
+            if TERMINAL:
+                print(data)
+                #print(data.PLETH)
+                #print(data.IR_ADC)
+                #print(data.TIMESTAMP_MS)
+                #print(data.SPO2_PCT)
 
-        signals = data[["PLETH", "IR_ADC"]]
+            signals = data[["PLETH", "IR_ADC"]]
 
-        if TERMINAL:
-            # In the future we will be using plotly, for better graphs but due to processing times 
-            # that change hasn't been made yet
-            plot_range = np.arange(0,1000,1)
-            fig, ax = plt.subplots()
-            ax.plot(plot_range, signals.iloc[0:1000, 0])
-    
-        # Setting the indexes for the raw data - adopted from examples
-        pd.Timedelta.__str__ = lambda x: x._repr_base('all')
-    
-        # Include column with index
-        signals = signals.reset_index()
+            if TERMINAL:
+                # In the future we will be using plotly, for better graphs but due to processing times 
+                # that change hasn't been made yet
+                plot_range = np.arange(0,1000,1)
+                fig, ax = plt.subplots()
+                ax.plot(plot_range, signals.iloc[0:1000, 0])
+        
+            # Setting the indexes for the raw data - adopted from examples
+            pd.Timedelta.__str__ = lambda x: x._repr_base('all')
+        
+            # Include column with index
+            signals = signals.reset_index()
 
-        #creating the timedelta index using ms
-        signals['timedelta'] = pd.to_timedelta(data.TIMESTAMP_MS, unit='ms')
+            #creating the timedelta index using ms
+            signals['timedelta'] = pd.to_timedelta(data.TIMESTAMP_MS, unit='ms')
 
-        #fetching the PPG start date
-        PPG_start_date = find_event_ppg_time(Clinical, files[i][-8:])
+            '''
+            #Previous version during lookup in clinical data i.e. ppg_start
+            #fetching the PPG start date
+            PPG_start_date = find_ppg_start_time(Clinical, files[i][-8:])
 
-        #converting to datetime format
-        PPG_start_date = datetime.strptime(PPG_start_date[0], '%Y-%m-%d %H:%M:%S')
+            #converting to datetime format
+            PPG_start_date = datetime.strptime(PPG_start_date[0], '%Y-%m-%d %H:%M:%S')
+            '''
 
-        #creating the PPG Datetime column by taking the datetime and adding the timedeltas to it for each datapoint
-        signals['PPG_Datetime'] = pd.to_datetime(PPG_start_date)
-        signals['PPG_Datetime']+= pd.to_timedelta(signals.timedelta)
+            #finding datetime from filename and converting to datetime format
+            PPG_start_date = find_ppg_start_time(filepath_end[j])
 
-        # Set the timedelta index (keep numeric index too)
-        signals = signals.set_index('timedelta')
+            #creating the PPG Datetime column by taking the datetime and adding the timedeltas to it for each datapoint
+            signals['PPG_Datetime'] = pd.to_datetime(PPG_start_date)
+            signals['PPG_Datetime']+= pd.to_timedelta(signals.timedelta)
 
-        # Rename column to avoid confusion
-        signals = signals.rename(columns={'index': 'idx'})
+            # Set the timedelta index (keep numeric index too)
+            signals = signals.set_index('timedelta')
 
-        if TERMINAL:
-            print("\n Raw Signals:")
-            print(signals)
+            # Rename column to avoid confusion
+            signals = signals.rename(columns={'index': 'idx'})
 
-            #Plotting
-            fig, axes = plt.subplots(nrows=2, ncols=1)
-            axes = axes.flatten()
-            signals.iloc[:,1].plot(ax=axes[0])
-            signals.iloc[:,2].plot(ax=axes[1])
-    
-        # Trimming the first and last 5 minutes
+            if TERMINAL:
+                print("\n Raw Signals:")
+                print(signals)
 
-        #Defining the 5 minute offset
-        offset = pd.Timedelta(minutes=5)
+                #Plotting
+                fig, axes = plt.subplots(nrows=2, ncols=1)
+                axes = axes.flatten()
+                signals.iloc[:,1].plot(ax=axes[0])
+                signals.iloc[:,2].plot(ax=axes[1])
+        
+            # Trimming the first and last 5 minutes
 
-        #Indexes - adopted from example
-        idxs = (signals.index > offset) & \
-                (signals.index < signals.index[-1] - offset)
+            #Defining the 5 minute offset
+            offset = pd.Timedelta(minutes=5)
 
-        #Trimming
-        signals = signals[idxs]
-    
-        if TERMINAL:
-            print('\n Truncated Signals:')
-            print(signals)
-    
-    
-        # RESAMPLE??
-        # MISSING DATA INPUT??
-        # TAPPERING??
+            #Indexes - adopted from example
+            idxs = (signals.index > offset) & \
+                    (signals.index < signals.index[-1] - offset)
 
-        #Band-pass filtered signals
-        signals['PLETH_bpf'] = bpf(signals.iloc[:,1])
-        signals['IR_ADC_bpf'] = bpf(signals.iloc[:,2])
+            #Trimming
+            signals = signals[idxs]
+        
+            if TERMINAL:
+                print('\n Truncated Signals:')
+                print(signals)
+        
+        
+            # RESAMPLE??
+            # MISSING DATA INPUT??
+            # TAPPERING??
 
-        if TERMINAL:
-            print('\n Raw and Filtered Signals:')
-            print(signals)
+            #Band-pass filtered signals
+            signals['PLETH_bpf'] = bpf(signals.iloc[:,1])
+            signals['IR_ADC_bpf'] = bpf(signals.iloc[:,2])
 
-            fig, axes = plt.subplots(nrows=2, ncols=1)
-            axes = axes.flatten()
-            signals['PLETH_bpf'].plot(ax=axes[0])
-            signals['IR_ADC_bpf'].plot(ax=axes[1])
+            if TERMINAL:
+                print('\n Raw and Filtered Signals:')
+                print(signals)
 
-        #Calculating peaks and troughs using peakdetector function for both filtered signals
-        peak_list_0, trough_list_0 = PeakDetection(signals['PLETH_bpf'])
-        peak_list_1, trough_list_1 = PeakDetection(signals['IR_ADC_bpf'])
+                fig, axes = plt.subplots(nrows=2, ncols=1)
+                axes = axes.flatten()
+                signals['PLETH_bpf'].plot(ax=axes[0])
+                signals['IR_ADC_bpf'].plot(ax=axes[1])
 
-        # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC using both filtered and unfiltered signals
-        sqis_0 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'PLETH','PLETH_bpf', peak_list_0, trough_list_0))
-        sqis_1 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'IR_ADC','IR_ADC_bpf', peak_list_1, trough_list_1))
+            #Calculating peaks and troughs using peakdetector function for both filtered signals
+            peak_list_0, trough_list_0 = PeakDetection(signals['PLETH_bpf'])
+            peak_list_1, trough_list_1 = PeakDetection(signals['IR_ADC_bpf'])
 
-        #Displaying the SQIs per signal
-        print("SQIs Signal 0 (Pleth):")
-        sqis_0
-        print(sqis_0)
+            # Calculating SQIs for both signals 0 = Pleth and 1 = IR_ADC using both filtered and unfiltered signals
+            sqis_0 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'PLETH','PLETH_bpf', peak_list_0, trough_list_0))
+            sqis_1 = signals.groupby(pd.Grouper(freq='30s')).apply(lambda x: sqi_all(x, 'IR_ADC','IR_ADC_bpf', peak_list_1, trough_list_1))
 
-        print("SQIs Signal 1 (IR_ADC):")
-        sqis_1
-        print(sqis_1)
-        #removing duplicates 
-        sqis_1 = sqis_1.drop(['first','last', 'PPG_w_s', 'PPG_w_f'], axis = 1)
+            #Displaying the SQIs per signal
+            print("SQIs Signal 0 (Pleth):")
+            sqis_0
+            print(sqis_0)
 
-        # Add window id to identify point of interest more easily
-        sqis_1['w'] = np.arange(sqis_1.shape[0])
+            print("SQIs Signal 1 (IR_ADC):")
+            sqis_1
+            print(sqis_1)
+            #removing duplicates 
+            sqis_1 = sqis_1.drop(['first','last', 'PPG_w_s', 'PPG_w_f'], axis = 1)
+
+            # Add window id to identify point of interest more easily
+            sqis_1['w'] = np.arange(sqis_1.shape[0])
+
+
+            #Final Formatting into a single DataFrame and Saving into a .csv file
+
+            #Merging SQIs of different signals from the same record (Pleth and IR_ADC) 
+            Signal_SQIs = sqis_0.merge(sqis_1, on='timedelta', suffixes=('_0', '_1'))
+
+            #Automatically fetching the study_no from the filename and including it in the DataFrame
+            Signal_SQIs['study_no'] = files[i][-8:]
+            Signal_SQIs['study_no_rec'] = j
+            #also doing it for the raw signals
+            signals['study_no'] = files[i][-8:]
+            signals['study_no_rec'] = j
+        
+            if TERMINAL:
+                print('\n Individual SQI Check:')
+                print(Signal_SQIs)
+
+            '''
+
+            Discarding process to be added below.
+
+            '''
+            #RULE
+            Discarding_rules = list(zip(*[(Signal_SQIs['skew_0'].between(-2, -1), True), (Signal_SQIs['skew_0'].between(0, 1), True)]))
+
+            # Apply rule (default False)
+            Signal_SQIs['keep'] = np.select(Discarding_rules[0], Discarding_rules[1], False)
+
+            # Overwrite and keep all
+            Signal_SQIs['keep'] = True
+
+            # Keep all whose keep column value is true
+            Signal_SQIs = Signal_SQIs[Signal_SQIs.keep]
 
 
 
-        #Final Formatting into a single DataFrame and Saving into a .csv file
 
-        #Merging SQIs of different signals from the same record (Pleth and IR_ADC) 
-        Signal_SQIs = sqis_0.merge(sqis_1, on='timedelta', suffixes=('_0', '_1'))
-
-        #Automatically fetching the study_no from the filename and including it in the DataFrame
-        Signal_SQIs['study_no'] = files[i][-8:]
-
-        if TERMINAL:
-            print('\n Individual SQI Check:')
-            print(Signal_SQIs)
-
-        '''
-
-        Discarding process to be added here.
-
-        '''
-
-        #concatenating into a single dataframe for all studies
-        if i == 0:
-            Complete_SQIs = Signal_SQIs
-        else:
-            Complete_SQIs = pd.concat([Complete_SQIs, Signal_SQIs])
+            #concatenating into a single dataframe for all studies
+            if i == 0 and j == 0:
+                Complete_SQIs = Signal_SQIs
+                Raw_signals = signals
+            else:
+                Complete_SQIs = pd.concat([Complete_SQIs, Signal_SQIs])
+                Raw_signals = pd.concat([Raw_signals, signals])
 
     #Saving to csv format
     Complete_SQIs.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv')
+    Raw_signals.to_csv(r'..\..\..\..\OUCRU\Outputs\Raw_signals.csv')
 
 
-
-
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_001.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_002.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_003.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_004.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_005.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_006.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_007.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_008.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_009.png
-          :alt: plot SQI Pandas on Multiple Patients
-          :class: sphx-glr-multi-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-             TIMESTAMP_MS  COUNTER  DEVICE_ID  PULSE_BPM  SPO2_PCT  SPO2_STATUS  PLETH  BATTERY_PCT  RED_ADC  IR_ADC  PERFUSION_INDEX
-    0                   0        9          1         82      97.1            0  36033        100.0   144180  216524              4.4
-    1                  10       10          1         82      97.1            0  40919        100.0   144160  216470              4.4
-    2                  20       11          1         82      97.1            0  45715        100.0   144158  216415              4.4
-    3                  30       12          1         82      97.1            0  50227        100.0   144148  216364              4.4
-    4                  40       13          1         82      97.1            0  54362        100.0   144132  216379              4.4
-    ...               ...      ...        ...        ...       ...          ...    ...          ...      ...     ...              ...
-    5626372      56269900  5626999          1         78      91.4            0  31408          5.7   292213  183755              5.6
-    5626373      56269910  5627000          1         78      91.4            0  31318          5.7   292557  184002              5.6
-    5626374      56269920  5627001          1         78      91.4            0  31117          5.7   292840  184296              5.6
-    5626375      56269930  5627002          1         78      91.4            0  30761          5.7   293161  184554              5.6
-    5626376      56269940  5627003          1         78      91.4            0  30261          5.7   293522  184828              5.6
-
-    [5626377 rows x 11 columns]
-
-     Raw Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime
-    timedelta                                                             
-    0 days 00:00:00               0  36033  216524 2020-06-04 09:05:00.000
-    0 days 00:00:00.010000        1  40919  216470 2020-06-04 09:05:00.010
-    0 days 00:00:00.020000        2  45715  216415 2020-06-04 09:05:00.020
-    0 days 00:00:00.030000        3  50227  216364 2020-06-04 09:05:00.030
-    0 days 00:00:00.040000        4  54362  216379 2020-06-04 09:05:00.040
-    ...                         ...    ...     ...                     ...
-    0 days 15:37:49.900000  5626372  31408  183755 2020-06-05 00:42:49.900
-    0 days 15:37:49.910000  5626373  31318  184002 2020-06-05 00:42:49.910
-    0 days 15:37:49.920000  5626374  31117  184296 2020-06-05 00:42:49.920
-    0 days 15:37:49.930000  5626375  30761  184554 2020-06-05 00:42:49.930
-    0 days 15:37:49.940000  5626376  30261  184828 2020-06-05 00:42:49.940
-
-    [5626377 rows x 4 columns]
-
-     Truncated Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime
-    timedelta                                                             
-    0 days 00:05:00.010000    29913  21755  188656 2020-06-04 09:10:00.010
-    0 days 00:05:00.020000    29914  23262  187701 2020-06-04 09:10:00.020
-    0 days 00:05:00.030000    29915  25285  186998 2020-06-04 09:10:00.030
-    0 days 00:05:00.040000    29916  27839  186472 2020-06-04 09:10:00.040
-    0 days 00:05:00.050000    29917  30888  186113 2020-06-04 09:10:00.050
-    ...                         ...    ...     ...                     ...
-    0 days 15:32:49.890000  5596371  15083  186186 2020-06-05 00:37:49.890
-    0 days 15:32:49.900000  5596372  13923  186422 2020-06-05 00:37:49.900
-    0 days 15:32:49.910000  5596373  12818  186662 2020-06-05 00:37:49.910
-    0 days 15:32:49.920000  5596374  11769  186807 2020-06-05 00:37:49.920
-    0 days 15:32:49.930000  5596375  10763  186899 2020-06-05 00:37:49.930
-
-    [5566463 rows x 4 columns]
-
-     Raw and Filtered Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime    PLETH_bpf   IR_ADC_bpf
-    timedelta                                                                                       
-    0 days 00:05:00.010000    29913  21755  188656 2020-06-04 09:10:00.010  -214.886697   -32.494545
-    0 days 00:05:00.020000    29914  23262  187701 2020-06-04 09:10:00.020 -1224.999347  -226.831554
-    0 days 00:05:00.030000    29915  25285  186998 2020-06-04 09:10:00.030 -3047.445501  -734.950280
-    0 days 00:05:00.040000    29916  27839  186472 2020-06-04 09:10:00.040 -4351.721824 -1499.309485
-    0 days 00:05:00.050000    29917  30888  186113 2020-06-04 09:10:00.050 -3863.561589 -2230.015638
-    ...                         ...    ...     ...                     ...          ...          ...
-    0 days 15:32:49.890000  5596371  15083  186186 2020-06-05 00:37:49.890   942.030869    45.325519
-    0 days 15:32:49.900000  5596372  13923  186422 2020-06-05 00:37:49.900   708.195771    93.296871
-    0 days 15:32:49.910000  5596373  12818  186662 2020-06-05 00:37:49.910   542.754581   127.077955
-    0 days 15:32:49.920000  5596374  11769  186807 2020-06-05 00:37:49.920   442.131641   151.598399
-    0 days 15:32:49.930000  5596375  10763  186899 2020-06-05 00:37:49.930   402.889073   159.679506
-
-    [5566463 rows x 6 columns]
-    d:\files\desktop\dissertation icl\env\lib\site-packages\statsmodels\tsa\stattools.py:667: FutureWarning: fft=True will become the default after the release of the 0.12 release of statsmodels. To suppress this warning, explicitly set fft=False.
-      warnings.warn(
-    SQIs Signal 0 (Pleth):
-                                           PPG_w_s                 PPG_w_f    first  ...       msq   perfusion                                        correlogram
-    timedelta                                                                        ...                                                                         
-    0 days 00:05:00.010000 2020-06-04 09:10:00.010 2020-06-04 09:10:30.000    29913  ...  0.000438  131.768567  [75, 150, 225, 0.9247323846304137, 0.836659565...
-    0 days 00:05:30.010000 2020-06-04 09:10:30.010 2020-06-04 09:11:00.000    32913  ...  0.000037  129.721286  [74, 148, 222, 0.9374430072923502, 0.866928327...
-    0 days 00:06:00.010000 2020-06-04 09:11:00.010 2020-06-04 09:11:30.000    35913  ...  0.000000  135.690506  [75, 150, 225, 0.9244827555340438, 0.814277364...
-    0 days 00:06:30.010000 2020-06-04 09:11:30.010 2020-06-04 09:12:00.000    38913  ...  0.000007  136.156223  [75, 150, 225, 0.9386014677175014, 0.862369440...
-    0 days 00:07:00.010000 2020-06-04 09:12:00.010 2020-06-04 09:12:30.000    41913  ...  0.000000  139.046179  [74, 149, 224, 0.9313743004418997, 0.824739899...
-    ...                                        ...                     ...      ...  ...       ...         ...                                                ...
-    0 days 15:30:30.010000 2020-06-05 00:35:30.010 2020-06-05 00:36:00.000  5582383  ...  0.000000  148.508917  [37, 74, 110, -0.3912006306694429, 0.952924647...
-    0 days 15:31:00.010000 2020-06-05 00:36:00.010 2020-06-05 00:36:30.000  5585383  ...  0.000022  138.961305  [37, 75, 112, -0.38664616039771205, 0.95837555...
-    0 days 15:31:30.010000 2020-06-05 00:36:30.010 2020-06-05 00:37:00.000  5588383  ...  0.000015  125.616461  [77, 153, 230, 0.9462808953640326, 0.887181765...
-    0 days 15:32:00.010000 2020-06-05 00:37:00.010 2020-06-05 00:37:30.000  5591383  ...  0.000015  135.269077  [36, 74, 110, -0.37596691904957935, 0.93875374...
-    0 days 15:32:30.010000 2020-06-05 00:37:30.010 2020-06-05 00:37:49.930  5594383  ...  0.000022  134.870996  [37, 75, 112, -0.36633265827700123, 0.94094953...
-
-    [1856 rows x 13 columns]
-    SQIs Signal 1 (IR_ADC):
-                                           PPG_w_s                 PPG_w_f    first  ...       msq  perfusion                                        correlogram
-    timedelta                                                                        ...                                                                        
-    0 days 00:05:00.010000 2020-06-04 09:10:00.010 2020-06-04 09:10:30.000    29913  ...  0.000319   6.653209  [75, 150, 226, 0.9132608947040779, 0.799647163...
-    0 days 00:05:30.010000 2020-06-04 09:10:30.010 2020-06-04 09:11:00.000    32913  ...  0.000013   5.641682  [74, 148, 222, 0.9164960001123641, 0.827303342...
-    0 days 00:06:00.010000 2020-06-04 09:11:00.010 2020-06-04 09:11:30.000    35913  ...  0.000008   6.088179  [75, 150, 225, 0.9097936306566979, 0.779681593...
-    0 days 00:06:30.010000 2020-06-04 09:11:30.010 2020-06-04 09:12:00.000    38913  ...  0.000013   4.644686  [75, 149, 224, 0.9128541336509863, 0.807913379...
-    0 days 00:07:00.010000 2020-06-04 09:12:00.010 2020-06-04 09:12:30.000    41913  ...  0.000000   4.241945  [74, 149, 223, 0.9123059092032415, 0.791340070...
-    ...                                        ...                     ...      ...  ...       ...        ...                                                ...
-    0 days 15:30:30.010000 2020-06-05 00:35:30.010 2020-06-05 00:36:00.000  5582383  ...  0.000013   4.946963  [34, 74, 107, -0.38922458037787383, 0.95155578...
-    0 days 15:31:00.010000 2020-06-05 00:36:00.010 2020-06-05 00:36:30.000  5585383  ...  0.000000   4.268080  [75, 150, 226, 0.964216933015672, 0.9155762504...
-    0 days 15:31:30.010000 2020-06-05 00:36:30.010 2020-06-05 00:37:00.000  5588383  ...  0.000013   4.733346  [77, 153, 230, 0.9423859574341878, 0.877431048...
-    0 days 15:32:00.010000 2020-06-05 00:37:00.010 2020-06-05 00:37:30.000  5591383  ...  0.000008   4.645047  [74, 103, 148, 0.9269084193473138, -0.35288054...
-    0 days 15:32:30.010000 2020-06-05 00:37:30.010 2020-06-05 00:37:49.930  5594383  ...  0.000008   4.352384  [75, 150, 226, 0.9326593121930683, 0.859995140...
-
-    [1856 rows x 13 columns]
-
-     Individual SQI Check:
-                                           PPG_w_s                 PPG_w_f    first  ...                                      correlogram_1     w  study_no
-    timedelta                                                                        ...                                                                   
-    0 days 00:05:00.010000 2020-06-04 09:10:00.010 2020-06-04 09:10:30.000    29913  ...  [75, 150, 226, 0.9132608947040779, 0.799647163...     0  003-2001
-    0 days 00:05:30.010000 2020-06-04 09:10:30.010 2020-06-04 09:11:00.000    32913  ...  [74, 148, 222, 0.9164960001123641, 0.827303342...     1  003-2001
-    0 days 00:06:00.010000 2020-06-04 09:11:00.010 2020-06-04 09:11:30.000    35913  ...  [75, 150, 225, 0.9097936306566979, 0.779681593...     2  003-2001
-    0 days 00:06:30.010000 2020-06-04 09:11:30.010 2020-06-04 09:12:00.000    38913  ...  [75, 149, 224, 0.9128541336509863, 0.807913379...     3  003-2001
-    0 days 00:07:00.010000 2020-06-04 09:12:00.010 2020-06-04 09:12:30.000    41913  ...  [74, 149, 223, 0.9123059092032415, 0.791340070...     4  003-2001
-    ...                                        ...                     ...      ...  ...                                                ...   ...       ...
-    0 days 15:30:30.010000 2020-06-05 00:35:30.010 2020-06-05 00:36:00.000  5582383  ...  [34, 74, 107, -0.38922458037787383, 0.95155578...  1851  003-2001
-    0 days 15:31:00.010000 2020-06-05 00:36:00.010 2020-06-05 00:36:30.000  5585383  ...  [75, 150, 226, 0.964216933015672, 0.9155762504...  1852  003-2001
-    0 days 15:31:30.010000 2020-06-05 00:36:30.010 2020-06-05 00:37:00.000  5588383  ...  [77, 153, 230, 0.9423859574341878, 0.877431048...  1853  003-2001
-    0 days 15:32:00.010000 2020-06-05 00:37:00.010 2020-06-05 00:37:30.000  5591383  ...  [74, 103, 148, 0.9269084193473138, -0.35288054...  1854  003-2001
-    0 days 15:32:30.010000 2020-06-05 00:37:30.010 2020-06-05 00:37:49.930  5594383  ...  [75, 150, 226, 0.9326593121930683, 0.859995140...  1855  003-2001
-
-    [1856 rows x 24 columns]
-             TIMESTAMP_MS  COUNTER  DEVICE_ID  PULSE_BPM  SPO2_PCT  SPO2_STATUS  PLETH  BATTERY_PCT  RED_ADC  IR_ADC  PERFUSION_INDEX
-    0                   0        9          1         75      99.0            0  45065         99.9   127896  129705              0.5
-    1                  10       10          1         75      99.0            0  44683         99.9   127908  129796              0.5
-    2                  20       11          1         75      99.0            0  44244         99.9   127903  129793              0.5
-    3                  30       12          1         75      99.0            0  43776         99.9   127896  129789              0.5
-    4                  40       13          1         75      99.0            0  43335         99.9   127899  129789              0.5
-    ...               ...      ...        ...        ...       ...          ...    ...          ...      ...     ...              ...
-    4646515      46474170  4647426          1         96      99.9            0  25317         23.7   163170  234241              0.9
-    4646516      46474180  4647427          1         96      99.9            0  25094         23.7   163183  234256              0.9
-    4646517      46474190  4647428          1         96      99.9            0  24905         23.7   163164  234217              0.9
-    4646518      46474200  4647429          1         96      99.9            0  24788         23.7   163184  234239              0.9
-    4646519      46474210  4647430          1         96      99.9            0  24705         23.7   163188  234287              0.9
-
-    [4646520 rows x 11 columns]
-
-     Raw Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime
-    timedelta                                                             
-    0 days 00:00:00               0  45065  129705 2020-07-29 18:00:00.000
-    0 days 00:00:00.010000        1  44683  129796 2020-07-29 18:00:00.010
-    0 days 00:00:00.020000        2  44244  129793 2020-07-29 18:00:00.020
-    0 days 00:00:00.030000        3  43776  129789 2020-07-29 18:00:00.030
-    0 days 00:00:00.040000        4  43335  129789 2020-07-29 18:00:00.040
-    ...                         ...    ...     ...                     ...
-    0 days 12:54:34.170000  4646515  25317  234241 2020-07-30 06:54:34.170
-    0 days 12:54:34.180000  4646516  25094  234256 2020-07-30 06:54:34.180
-    0 days 12:54:34.190000  4646517  24905  234217 2020-07-30 06:54:34.190
-    0 days 12:54:34.200000  4646518  24788  234239 2020-07-30 06:54:34.200
-    0 days 12:54:34.210000  4646519  24705  234287 2020-07-30 06:54:34.210
-
-    [4646520 rows x 4 columns]
-
-     Truncated Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime
-    timedelta                                                             
-    0 days 00:05:00.010000    29913  10803  135438 2020-07-29 18:05:00.010
-    0 days 00:05:00.020000    29914  10609  135067 2020-07-29 18:05:00.020
-    0 days 00:05:00.030000    29915  10659  134754 2020-07-29 18:05:00.030
-    0 days 00:05:00.040000    29916  10983  134473 2020-07-29 18:05:00.040
-    0 days 00:05:00.050000    29917  11734  134286 2020-07-29 18:05:00.050
-    ...                         ...    ...     ...                     ...
-    0 days 12:49:34.160000  4616516  46632  223707 2020-07-30 06:49:34.160
-    0 days 12:49:34.170000  4616517  47157  223733 2020-07-30 06:49:34.170
-    0 days 12:49:34.180000  4616518  47404  223765 2020-07-30 06:49:34.180
-    0 days 12:49:34.190000  4616519  47372  223763 2020-07-30 06:49:34.190
-    0 days 12:49:34.200000  4616520  47131  223685 2020-07-30 06:49:34.200
-
-    [4586608 rows x 4 columns]
-
-     Raw and Filtered Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime     PLETH_bpf  IR_ADC_bpf
-    timedelta                                                                                       
-    0 days 00:05:00.010000    29913  10803  135438 2020-07-29 18:05:00.010   -347.936641   -0.439129
-    0 days 00:05:00.020000    29914  10609  135067 2020-07-29 18:05:00.020  -2051.585777  -16.222886
-    0 days 00:05:00.030000    29915  10659  134754 2020-07-29 18:05:00.030  -5424.102666  -96.673830
-    0 days 00:05:00.040000    29916  10983  134473 2020-07-29 18:05:00.040  -8735.859953 -286.584242
-    0 days 00:05:00.050000    29917  11734  134286 2020-07-29 18:05:00.050 -10096.052116 -548.629881
-    ...                         ...    ...     ...                     ...           ...         ...
-    0 days 12:49:34.160000  4616516  46632  223707 2020-07-30 06:49:34.160   3724.301504 -433.122809
-    0 days 12:49:34.170000  4616517  47157  223733 2020-07-30 06:49:34.170   4093.345682 -345.673803
-    0 days 12:49:34.180000  4616518  47404  223765 2020-07-30 06:49:34.180   4120.601540 -255.822729
-    0 days 12:49:34.190000  4616519  47372  223763 2020-07-30 06:49:34.190   3836.250019 -188.410883
-    0 days 12:49:34.200000  4616520  47131  223685 2020-07-30 06:49:34.200   3276.562309 -155.288825
-
-    [4586608 rows x 6 columns]
-    d:\files\desktop\dissertation icl\env\lib\site-packages\statsmodels\tsa\stattools.py:667: FutureWarning: fft=True will become the default after the release of the 0.12 release of statsmodels. To suppress this warning, explicitly set fft=False.
-      warnings.warn(
-    SQIs Signal 0 (Pleth):
-                                           PPG_w_s                 PPG_w_f    first  ...       msq   perfusion                                        correlogram
-    timedelta                                                                        ...                                                                         
-    0 days 00:05:00.010000 2020-07-29 18:05:00.010 2020-07-29 18:05:30.000    29913  ...  0.000670  136.396730  [72, 144, 216, 0.9129586116630783, 0.833755242...
-    0 days 00:05:30.010000 2020-07-29 18:05:30.010 2020-07-29 18:06:00.000    32913  ...  0.000024  135.264839  [73, 146, 218, 0.8836968954103781, 0.767674951...
-    0 days 00:06:00.010000 2020-07-29 18:06:00.010 2020-07-29 18:06:30.000    35913  ...  0.000016  131.393577  [79, 158, 238, 0.7515617345803158, 0.609377282...
-    0 days 00:06:30.010000 2020-07-29 18:06:30.010 2020-07-29 18:07:00.000    38913  ...  0.000024  116.280886  [72, 145, 218, 0.8423592808618892, 0.686354752...
-    0 days 00:07:00.010000 2020-07-29 18:07:00.010 2020-07-29 18:07:30.000    41913  ...  0.000040  118.980781  [72, 145, 219, 0.8267230004443079, 0.667913559...
-    ...                                        ...                     ...      ...  ...       ...         ...                                                ...
-    0 days 12:47:30.010000 2020-07-30 06:47:30.010 2020-07-30 06:48:00.000  4604101  ...  0.000008  121.552320  [66, 131, 200, 0.7251740050080869, 0.376853581...
-    0 days 12:48:00.010000 2020-07-30 06:48:00.010 2020-07-30 06:48:30.000  4607101  ...  0.000048  121.494581  [66, 131, 197, 0.7232446685511037, 0.623587412...
-    0 days 12:48:30.010000 2020-07-30 06:48:30.010 2020-07-30 06:49:00.000  4610101  ...  0.000008  133.937374  [65, 131, 197, 0.8721573412701865, 0.674853664...
-    0 days 12:49:00.010000 2020-07-30 06:49:00.010 2020-07-30 06:49:30.000  4613101  ...  0.000008  132.029448  [63, 124, 185, 0.7649171387035625, 0.470840172...
-    0 days 12:49:30.010000 2020-07-30 06:49:30.010 2020-07-30 06:49:34.200  4616101  ...  0.000008  100.188599  [60, 120, 180, 0.7619610520523479, 0.598062551...
-
-    [1530 rows x 13 columns]
-    SQIs Signal 1 (IR_ADC):
-                                           PPG_w_s                 PPG_w_f    first  ...       msq  perfusion                                        correlogram
-    timedelta                                                                        ...                                                                        
-    0 days 00:05:00.010000 2020-07-29 18:05:00.010 2020-07-29 18:05:30.000    29913  ...  0.000403   1.705650  [72, 144, 216, 0.8856102490591679, 0.794003526...
-    0 days 00:05:30.010000 2020-07-29 18:05:30.010 2020-07-29 18:06:00.000    32913  ...  0.000005   1.597326  [73, 145, 218, 0.8639663556739559, 0.743705493...
-    0 days 00:06:00.010000 2020-07-29 18:06:00.010 2020-07-29 18:06:30.000    35913  ...  0.000014   6.113822  [77, 154, 229, 0.3089570367797498, 0.333969613...
-    0 days 00:06:30.010000 2020-07-29 18:06:30.010 2020-07-29 18:07:00.000    38913  ...  0.000024   1.795996  [72, 145, 218, 0.7946297724004696, 0.627452938...
-    0 days 00:07:00.010000 2020-07-29 18:07:00.010 2020-07-29 18:07:30.000    41913  ...  0.000034   1.686847  [73, 146, 220, 0.7899852276271346, 0.640349794...
-    ...                                        ...                     ...      ...  ...       ...        ...                                                ...
-    0 days 12:47:30.010000 2020-07-30 06:47:30.010 2020-07-30 06:48:00.000  4604101  ...  0.000024   1.502201  [67, 135, 205, 0.6624446421176999, 0.344118629...
-    0 days 12:48:00.010000 2020-07-30 06:48:00.010 2020-07-30 06:48:30.000  4607101  ...  0.000010   4.291637  [66, 128, 192, 0.21797261139656024, 0.30192510...
-    0 days 12:48:30.010000 2020-07-30 06:48:30.010 2020-07-30 06:49:00.000  4610101  ...  0.000019   1.355389  [66, 132, 198, 0.8366592728879606, 0.633512163...
-    0 days 12:49:00.010000 2020-07-30 06:49:00.010 2020-07-30 06:49:30.000  4613101  ...  0.000034   1.498001  [62, 124, 185, 0.7827142477024097, 0.551712347...
-    0 days 12:49:30.010000 2020-07-30 06:49:30.010 2020-07-30 06:49:34.200  4616101  ...  0.000005   1.398639  [60, 120, 179, 0.7932304299133978, 0.617863646...
-
-    [1530 rows x 13 columns]
-
-     Individual SQI Check:
-                                           PPG_w_s                 PPG_w_f    first  ...                                      correlogram_1     w  study_no
-    timedelta                                                                        ...                                                                   
-    0 days 00:05:00.010000 2020-07-29 18:05:00.010 2020-07-29 18:05:30.000    29913  ...  [72, 144, 216, 0.8856102490591679, 0.794003526...     0  003-2009
-    0 days 00:05:30.010000 2020-07-29 18:05:30.010 2020-07-29 18:06:00.000    32913  ...  [73, 145, 218, 0.8639663556739559, 0.743705493...     1  003-2009
-    0 days 00:06:00.010000 2020-07-29 18:06:00.010 2020-07-29 18:06:30.000    35913  ...  [77, 154, 229, 0.3089570367797498, 0.333969613...     2  003-2009
-    0 days 00:06:30.010000 2020-07-29 18:06:30.010 2020-07-29 18:07:00.000    38913  ...  [72, 145, 218, 0.7946297724004696, 0.627452938...     3  003-2009
-    0 days 00:07:00.010000 2020-07-29 18:07:00.010 2020-07-29 18:07:30.000    41913  ...  [73, 146, 220, 0.7899852276271346, 0.640349794...     4  003-2009
-    ...                                        ...                     ...      ...  ...                                                ...   ...       ...
-    0 days 12:47:30.010000 2020-07-30 06:47:30.010 2020-07-30 06:48:00.000  4604101  ...  [67, 135, 205, 0.6624446421176999, 0.344118629...  1525  003-2009
-    0 days 12:48:00.010000 2020-07-30 06:48:00.010 2020-07-30 06:48:30.000  4607101  ...  [66, 128, 192, 0.21797261139656024, 0.30192510...  1526  003-2009
-    0 days 12:48:30.010000 2020-07-30 06:48:30.010 2020-07-30 06:49:00.000  4610101  ...  [66, 132, 198, 0.8366592728879606, 0.633512163...  1527  003-2009
-    0 days 12:49:00.010000 2020-07-30 06:49:00.010 2020-07-30 06:49:30.000  4613101  ...  [62, 124, 185, 0.7827142477024097, 0.551712347...  1528  003-2009
-    0 days 12:49:30.010000 2020-07-30 06:49:30.010 2020-07-30 06:49:34.200  4616101  ...  [60, 120, 179, 0.7932304299133978, 0.617863646...  1529  003-2009
-
-    [1530 rows x 24 columns]
-             TIMESTAMP_MS  COUNTER  DEVICE_ID  PULSE_BPM  SPO2_PCT  SPO2_STATUS  PLETH  BATTERY_PCT  RED_ADC  IR_ADC  PERFUSION_INDEX
-    0                   0        9          1         93     100.0            0  17712         95.4   144630  142842              1.7
-    1                  10       10          1         93     100.0            0  16585         95.4   144629  142896              1.7
-    2                  20       11          1         93     100.0            0  15577         95.4   144654  142845              1.7
-    3                  30       12          1         93     100.0            0  14607         95.4   144651  142925              1.7
-    4                  40       13          1         93     100.0            0  13718         95.4   144591  142793              1.7
-    ...               ...      ...        ...        ...       ...          ...    ...          ...      ...     ...              ...
-    5176629      51771580  5177167          1        255      12.7            2      0          5.7   320749  207341              0.0
-    5176630      51771590  5177168          1        255      12.7            2      0          5.7   320770  207359              0.0
-    5176631      51771600  5177169          1        255      12.7            2      0          5.7   320730  207331              0.0
-    5176632      51771610  5177170          1        255      12.7            2      0          5.7   320758  207370              0.0
-    5176633      51771620  5177171          1        255      12.7            2      0          5.7   320757  207338              0.0
-
-    [5176634 rows x 11 columns]
-
-     Raw Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime
-    timedelta                                                             
-    0 days 00:00:00               0  17712  142842 2020-08-12 00:00:00.000
-    0 days 00:00:00.010000        1  16585  142896 2020-08-12 00:00:00.010
-    0 days 00:00:00.020000        2  15577  142845 2020-08-12 00:00:00.020
-    0 days 00:00:00.030000        3  14607  142925 2020-08-12 00:00:00.030
-    0 days 00:00:00.040000        4  13718  142793 2020-08-12 00:00:00.040
-    ...                         ...    ...     ...                     ...
-    0 days 14:22:51.580000  5176629      0  207341 2020-08-12 14:22:51.580
-    0 days 14:22:51.590000  5176630      0  207359 2020-08-12 14:22:51.590
-    0 days 14:22:51.600000  5176631      0  207331 2020-08-12 14:22:51.600
-    0 days 14:22:51.610000  5176632      0  207370 2020-08-12 14:22:51.610
-    0 days 14:22:51.620000  5176633      0  207338 2020-08-12 14:22:51.620
-
-    [5176634 rows x 4 columns]
-
-     Truncated Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime
-    timedelta                                                             
-    0 days 00:05:00.010000    29913  22849  151983 2020-08-12 00:05:00.010
-    0 days 00:05:00.020000    29914  22570  151955 2020-08-12 00:05:00.020
-    0 days 00:05:00.030000    29915  22477  152053 2020-08-12 00:05:00.030
-    0 days 00:05:00.040000    29916  22561  152099 2020-08-12 00:05:00.040
-    0 days 00:05:00.050000    29917  22815  152190 2020-08-12 00:05:00.050
-    ...                         ...    ...     ...                     ...
-    0 days 14:17:51.570000  5146628      0  207405 2020-08-12 14:17:51.570
-    0 days 14:17:51.580000  5146629      0  207399 2020-08-12 14:17:51.580
-    0 days 14:17:51.590000  5146630      0  207395 2020-08-12 14:17:51.590
-    0 days 14:17:51.600000  5146631      0  207406 2020-08-12 14:17:51.600
-    0 days 14:17:51.610000  5146632      0  207389 2020-08-12 14:17:51.610
-
-    [5116720 rows x 4 columns]
-
-     Raw and Filtered Signals:
-                                idx  PLETH  IR_ADC            PPG_Datetime      PLETH_bpf   IR_ADC_bpf
-    timedelta                                                                                         
-    0 days 00:05:00.010000    29913  22849  151983 2020-08-12 00:05:00.010  -1.830181e+02  -139.490636
-    0 days 00:05:00.020000    29914  22570  151955 2020-08-12 00:05:00.020  -1.084809e+03  -817.097174
-    0 days 00:05:00.030000    29915  22477  152053 2020-08-12 00:05:00.030  -2.888813e+03 -2136.606414
-    0 days 00:05:00.040000    29916  22561  152099 2020-08-12 00:05:00.040  -4.697836e+03 -3383.942991
-    0 days 00:05:00.050000    29917  22815  152190 2020-08-12 00:05:00.050  -5.496911e+03 -3835.189663
-    ...                         ...    ...     ...                     ...            ...          ...
-    0 days 14:17:51.570000  5146628      0  207405 2020-08-12 14:17:51.570  4.940656e-324     9.769716
-    0 days 14:17:51.580000  5146629      0  207399 2020-08-12 14:17:51.580   0.000000e+00     7.184997
-    0 days 14:17:51.590000  5146630      0  207395 2020-08-12 14:17:51.590 -4.940656e-324     8.313185
-    0 days 14:17:51.600000  5146631      0  207406 2020-08-12 14:17:51.600 -4.940656e-324    10.441468
-    0 days 14:17:51.610000  5146632      0  207389 2020-08-12 14:17:51.610   0.000000e+00    11.381069
-
-    [5116720 rows x 6 columns]
-    d:\files\desktop\dissertation icl\env\lib\site-packages\statsmodels\tsa\stattools.py:667: FutureWarning: fft=True will become the default after the release of the 0.12 release of statsmodels. To suppress this warning, explicitly set fft=False.
-      warnings.warn(
-    SQIs Signal 0 (Pleth):
-                                           PPG_w_s                 PPG_w_f    first  ...       msq   perfusion                                        correlogram
-    timedelta                                                                        ...                                                                         
-    0 days 00:05:00.010000 2020-08-12 00:05:00.010 2020-08-12 00:05:30.000    29913  ...  0.001235  196.041422  [63, 95, 127, 0.5208701915801449, -0.253228754...
-    0 days 00:05:30.010000 2020-08-12 00:05:30.010 2020-08-12 00:06:00.000    32913  ...  0.000027  149.085079  [31, 62, 92, -0.3999978218123727, 0.9429205226...
-    0 days 00:06:00.010000 2020-08-12 00:06:00.010 2020-08-12 00:06:30.000    35913  ...  0.000066  122.743553  [30, 64, 128, -0.46548729589614796, 0.92929807...
-    0 days 00:06:30.010000 2020-08-12 00:06:30.010 2020-08-12 00:07:00.000    38913  ...  0.000053  134.256143  [31, 64, 95, -0.40929204537499414, 0.951512171...
-    0 days 00:07:00.010000 2020-08-12 00:07:00.010 2020-08-12 00:07:30.000    41913  ...  0.000013  144.069256  [31, 63, 94, -0.4090411879992332, 0.9665303924...
-    ...                                        ...                     ...      ...  ...       ...         ...                                                ...
-    0 days 14:15:30.010000 2020-08-12 14:15:30.010 2020-08-12 14:16:00.000  5132472  ...  0.000213         inf                                                 []
-    0 days 14:16:00.010000 2020-08-12 14:16:00.010 2020-08-12 14:16:30.000  5135472  ...  0.000213         inf                                                 []
-    0 days 14:16:30.010000 2020-08-12 14:16:30.010 2020-08-12 14:17:00.000  5138472  ...  0.000213         inf                                                 []
-    0 days 14:17:00.010000 2020-08-12 14:17:00.010 2020-08-12 14:17:30.000  5141472  ...  0.000213         inf                                                 []
-    0 days 14:17:30.010000 2020-08-12 14:17:30.010 2020-08-12 14:17:51.610  5144472  ...  0.000146         inf                                                 []
-
-    [1706 rows x 13 columns]
-    SQIs Signal 1 (IR_ADC):
-                                           PPG_w_s                 PPG_w_f    first  ...       msq   perfusion                                        correlogram
-    timedelta                                                                        ...                                                                         
-    0 days 00:05:00.010000 2020-08-12 00:05:00.010 2020-08-12 00:05:30.000    29913  ...  0.000220  179.030288  [39, 66, 87, -0.04351235688799981, -0.06876880...
-    0 days 00:05:30.010000 2020-08-12 00:05:30.010 2020-08-12 00:06:00.000    32913  ...  0.000006    7.522155  [31, 61, 92, -0.37061955281449915, 0.917735047...
-    0 days 00:06:00.010000 2020-08-12 00:06:00.010 2020-08-12 00:06:30.000    35913  ...  0.000010    4.760179  [64, 128, 193, 0.930280872709388, 0.8252839395...
-    0 days 00:06:30.010000 2020-08-12 00:06:30.010 2020-08-12 00:07:00.000    38913  ...  0.000004    4.876120  [63, 127, 190, 0.9404789519188358, 0.870332124...
-    0 days 00:07:00.010000 2020-08-12 00:07:00.010 2020-08-12 00:07:30.000    41913  ...  0.000000    5.085177  [63, 126, 189, 0.9605322200262248, 0.915669151...
-    ...                                        ...                     ...      ...  ...       ...         ...                                                ...
-    0 days 14:15:30.010000 2020-08-12 14:15:30.010 2020-08-12 14:16:00.000  5132472  ...  0.000033    0.060654  [6, 11, 18, -0.0019374058650579195, -0.0017696...
-    0 days 14:16:00.010000 2020-08-12 14:16:00.010 2020-08-12 14:16:30.000  5135472  ...  0.000039    0.050310  [6, 11, 20, 0.039241068108281145, 0.0041982087...
-    0 days 14:16:30.010000 2020-08-12 14:16:30.010 2020-08-12 14:17:00.000  5138472  ...  0.000033    0.056490  [6, 10, 18, -0.02065026993537243, -0.034124123...
-    0 days 14:17:00.010000 2020-08-12 14:17:00.010 2020-08-12 14:17:30.000  5141472  ...  0.000027    0.068543  [6, 11, 15, -0.0005607782359069993, -0.0363094...
-    0 days 14:17:30.010000 2020-08-12 14:17:30.010 2020-08-12 14:17:51.610  5144472  ...  0.000026    0.057402  [6, 10, 20, 0.014910364149073808, 0.0444651847...
-
-    [1706 rows x 13 columns]
-
-     Individual SQI Check:
-                                           PPG_w_s                 PPG_w_f    first  ...                                      correlogram_1     w  study_no
-    timedelta                                                                        ...                                                                   
-    0 days 00:05:00.010000 2020-08-12 00:05:00.010 2020-08-12 00:05:30.000    29913  ...  [39, 66, 87, -0.04351235688799981, -0.06876880...     0  003-2012
-    0 days 00:05:30.010000 2020-08-12 00:05:30.010 2020-08-12 00:06:00.000    32913  ...  [31, 61, 92, -0.37061955281449915, 0.917735047...     1  003-2012
-    0 days 00:06:00.010000 2020-08-12 00:06:00.010 2020-08-12 00:06:30.000    35913  ...  [64, 128, 193, 0.930280872709388, 0.8252839395...     2  003-2012
-    0 days 00:06:30.010000 2020-08-12 00:06:30.010 2020-08-12 00:07:00.000    38913  ...  [63, 127, 190, 0.9404789519188358, 0.870332124...     3  003-2012
-    0 days 00:07:00.010000 2020-08-12 00:07:00.010 2020-08-12 00:07:30.000    41913  ...  [63, 126, 189, 0.9605322200262248, 0.915669151...     4  003-2012
-    ...                                        ...                     ...      ...  ...                                                ...   ...       ...
-    0 days 14:15:30.010000 2020-08-12 14:15:30.010 2020-08-12 14:16:00.000  5132472  ...  [6, 11, 18, -0.0019374058650579195, -0.0017696...  1701  003-2012
-    0 days 14:16:00.010000 2020-08-12 14:16:00.010 2020-08-12 14:16:30.000  5135472  ...  [6, 11, 20, 0.039241068108281145, 0.0041982087...  1702  003-2012
-    0 days 14:16:30.010000 2020-08-12 14:16:30.010 2020-08-12 14:17:00.000  5138472  ...  [6, 10, 18, -0.02065026993537243, -0.034124123...  1703  003-2012
-    0 days 14:17:00.010000 2020-08-12 14:17:00.010 2020-08-12 14:17:30.000  5141472  ...  [6, 11, 15, -0.0005607782359069993, -0.0363094...  1704  003-2012
-    0 days 14:17:30.010000 2020-08-12 14:17:30.010 2020-08-12 14:17:51.610  5144472  ...  [6, 10, 20, 0.014910364149073808, 0.0444651847...  1705  003-2012
-
-    [1706 rows x 24 columns]
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 324-326
+.. GENERATED FROM PYTHON SOURCE LINES 384-386
 
 SQI Requirements
 example of the output
 
-.. GENERATED FROM PYTHON SOURCE LINES 326-328
+.. GENERATED FROM PYTHON SOURCE LINES 386-388
 
 .. code-block:: default
-   :lineno-start: 326
+   :lineno-start: 386
 
     img = plt.imread(r'..\..\..\..\MISC\SQI_requirements.png')
     plt.title('SQI Requirements')  
     plt.imshow(img)
 
-
-.. image:: /_examples/Pre-Processing/images/sphx_glr_plot_SQI_Pandas_on_Multiple_Patients_010.png
-    :alt: SQI Requirements
-    :class: sphx-glr-single-img
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-
-    <matplotlib.image.AxesImage object at 0x00000169AC402C70>
-
-
-
-
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 7 minutes  9.248 seconds)
+   **Total running time of the script:** ( 0 minutes  9.216 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py:

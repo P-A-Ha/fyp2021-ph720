@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Extracting Shock Data for Feature Extraction (UNFINISHED) &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery-rendered-html.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> fyp2021-ph720
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/setup.html">Tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Example Galleries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Example Gallery with some plots</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Pre Processing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Pre Processing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">fyp2021-ph720</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Extracting Shock Data for Feature Extraction (UNFINISHED)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/_examples/Pre-processing/plot_Extracting_Shock_Samples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examples-pre-processing-plot-extracting-shock-samples-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="extracting-shock-data-for-feature-extraction-unfinished">
+<span id="sphx-glr-examples-pre-processing-plot-extracting-shock-samples-py"></span><h1>Extracting Shock Data for Feature Extraction (UNFINISHED)<a class="headerlink" href="#extracting-shock-data-for-feature-extraction-unfinished" title="Permalink to this headline">¶</a></h1>
+<p>Fetching shock instances (including symptoms that indicate severe dengue) and structuring the data</p>
+<p># Importing Libraries</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Generic</span>
+ <span class="kn">import</span> <span class="nn">os</span>
+ <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+ <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+ <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+ <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+ <span class="kn">import</span> <span class="nn">glob</span>
+ <span class="kn">import</span> <span class="nn">plotly</span> <span class="k">as</span> <span class="nn">pl</span>
+
+ <span class="n">Terminal</span> <span class="o">=</span> <span class="kc">True</span>
+
+ <span class="n">SQI_clinical_file</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical.csv&#39;</span>
+ <span class="n">Raw_signals</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Raw_signals.csv&#39;</span>
+
+
+ <span class="c1">#Loading SQI Matched with clinitcal to the Dataframe</span>
+ <span class="n">SQI_C</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">SQI_clinical_file</span><span class="p">)</span>
+ <span class="c1">#Raw = pd.read_csv(Raw_signals)</span>
+
+ <span class="k">if</span> <span class="n">Terminal</span><span class="p">:</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> SQI with Clinical Match:&quot;</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">SQI_C</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Raw Signals&quot;</span><span class="p">)</span>
+     <span class="c1">#print(Raw)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> SQI with Clinical Match:
+       Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
+0               0  0 days 00:05:00.010000  2020-07-28 16:04:20.104  2020-07-28 16:04:50.094  ...           NaN         NaN               NaN      NaN
+1               1  0 days 00:05:30.010000  2020-07-28 16:04:50.104  2020-07-28 16:05:20.094  ...           NaN         NaN               NaN      NaN
+2               2  0 days 00:06:00.010000  2020-07-28 16:05:20.104  2020-07-28 16:05:50.094  ...           NaN         NaN               NaN      NaN
+3               3  0 days 00:06:30.010000  2020-07-28 16:05:50.104  2020-07-28 16:06:20.094  ...           NaN         NaN               NaN      NaN
+4               4  0 days 00:07:00.010000  2020-07-28 16:06:20.104  2020-07-28 16:06:50.094  ...           NaN         NaN               NaN      NaN
+...           ...                     ...                      ...                      ...  ...           ...         ...               ...      ...
+12698       12698  0 days 15:03:30.010000  2020-07-21 05:08:37.203  2020-07-21 05:09:07.193  ...           NaN         NaN               NaN      NaN
+12699       12699  0 days 15:04:00.010000  2020-07-21 05:09:07.203  2020-07-21 05:09:37.193  ...           NaN         NaN               NaN      NaN
+12700       12700  0 days 15:04:30.010000  2020-07-21 05:09:37.203  2020-07-21 05:10:07.193  ...           NaN         NaN               NaN      NaN
+12701       12701  0 days 15:05:00.010000  2020-07-21 05:10:07.203  2020-07-21 05:10:37.193  ...           NaN         NaN               NaN      NaN
+12702       12702  0 days 15:05:30.010000  2020-07-21 05:10:37.203  2020-07-21 05:10:52.883  ...           NaN         NaN               NaN      NaN
+
+[12703 rows x 42 columns]
+
+ Raw Signals
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">event</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event_shock&#39;</span><span class="p">,</span> <span class="s1">&#39;reshock24&#39;</span><span class="p">,</span><span class="s1">&#39;shock_admission&#39;</span><span class="p">,</span>\
+      <span class="s1">&#39;ascites&#39;</span><span class="p">,</span> <span class="s1">&#39;respiratory_distress&#39;</span><span class="p">,</span> <span class="s1">&#39;ventilation_cannula&#39;</span><span class="p">,</span> \
+      <span class="s1">&#39;ventilation_mechanical&#39;</span><span class="p">,</span> <span class="s1">&#39;ventilation_ncpap&#39;</span><span class="p">,</span> <span class="s1">&#39;bleeding_severe&#39;</span><span class="p">,</span> \
+      <span class="s1">&#39;cns_abnormal&#39;</span><span class="p">,</span> <span class="s1">&#39;liver_mild&#39;</span><span class="p">,</span> <span class="s1">&#39;pleural_effusion&#39;</span><span class="p">,</span> <span class="s1">&#39;skidney&#39;</span><span class="p">]</span>
+
+ <span class="n">event_shock</span> <span class="o">=</span> <span class="s1">&#39;diagnosis_admission&#39;</span>
+
+ <span class="n">SQI_C</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+ <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event</span><span class="p">)):</span>
+     <span class="n">event_s</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+     <span class="n">SQI_C_shock</span> <span class="o">=</span> <span class="n">SQI_C</span><span class="p">[</span><span class="n">SQI_C</span><span class="p">[</span><span class="n">event_s</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Total &quot;</span><span class="p">,</span> <span class="n">event</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot; events:&quot;</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">SQI_C_shock</span><span class="p">)</span>
+     <span class="n">SQI_C</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">][</span><span class="n">SQI_C_shock</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+ <span class="n">SQI_C</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> Total  event_shock  events:
+      Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
+1371        1371  0 days 11:30:30.010000  2020-07-29 03:29:50.104  2020-07-29 03:30:20.094  ...           NaN         NaN               NaN      NaN
+4751        4751  0 days 00:17:30.010000  2020-09-16 11:59:51.697  2020-09-16 12:00:21.687  ...           NaN         NaN               NaN      NaN
+6769        6769  0 days 02:33:30.010000  2020-09-18 17:59:38.316  2020-09-18 18:00:08.306  ...           NaN         NaN               NaN      NaN
+
+[3 rows x 42 columns]
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  reshock24  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  shock_admission  events:
+       Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
+0               0  0 days 00:05:00.010000  2020-07-28 16:04:20.104  2020-07-28 16:04:50.094  ...           NaN         NaN               NaN      NaN
+1               1  0 days 00:05:30.010000  2020-07-28 16:04:50.104  2020-07-28 16:05:20.094  ...           NaN         NaN               NaN      NaN
+2               2  0 days 00:06:00.010000  2020-07-28 16:05:20.104  2020-07-28 16:05:50.094  ...           NaN         NaN               NaN      NaN
+3               3  0 days 00:06:30.010000  2020-07-28 16:05:50.104  2020-07-28 16:06:20.094  ...           NaN         NaN               NaN      NaN
+4               4  0 days 00:07:00.010000  2020-07-28 16:06:20.104  2020-07-28 16:06:50.094  ...           NaN         NaN               NaN      NaN
+...           ...                     ...                      ...                      ...  ...           ...         ...               ...      ...
+10896       10896  0 days 00:24:30.010000  2020-11-05 10:13:10.614  2020-11-05 10:13:40.604  ...           NaN         NaN               NaN      NaN
+10897       10897  0 days 00:25:00.010000  2020-11-05 10:13:40.614  2020-11-05 10:14:10.604  ...           NaN         NaN               NaN      NaN
+10898       10898  0 days 00:25:30.010000  2020-11-05 10:14:10.614  2020-11-05 10:14:40.604  ...           NaN         NaN               NaN      NaN
+10899       10899  0 days 00:26:00.010000  2020-11-05 10:14:40.614  2020-11-05 10:15:10.604  ...           NaN         NaN               NaN      NaN
+10900       10900  0 days 00:26:30.010000  2020-11-05 10:15:10.614  2020-11-05 10:15:14.384  ...           NaN         NaN               NaN      NaN
+
+[9244 rows x 42 columns]
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  ascites  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  respiratory_distress  events:
+      Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
+1371        1371  0 days 11:30:30.010000  2020-07-29 03:29:50.104  2020-07-29 03:30:20.094  ...           NaN         NaN               NaN      NaN
+
+[1 rows x 42 columns]
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  ventilation_cannula  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  ventilation_mechanical  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  ventilation_ncpap  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  bleeding_severe  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  cns_abnormal  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  liver_mild  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  pleural_effusion  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+
+ Total  skidney  events:
+Empty DataFrame
+Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
+Index: []
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.089 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-extracting-shock-samples-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/28112687f66335c4a7b826d5f2f06fb2/plot_Extracting_Shock_Samples.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_Extracting_Shock_Samples.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/561b28943a36aa178262e2446eaae58c/plot_Extracting_Shock_Samples.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_Extracting_Shock_Samples.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Philippos Arkis Hadjimarkou.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

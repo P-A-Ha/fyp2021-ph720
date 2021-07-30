@@ -5,12 +5,16 @@
 
 Computation times
 =================
-**07:10.187** total execution time for **_examples_Pre-Processing** files:
+**00:14.640** total execution time for **_examples_Pre-Processing** files:
 
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py` (``plot_SQI_Pandas_on_Multiple_Patients.py``)                         | 07:09.248 | 0.0 MB |
+| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_Pandas_on_Multiple_Patients.py` (``plot_SQI_Pandas_on_Multiple_Patients.py``)                         | 00:09.216 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py` (``plot_SQI_and_clinical_matching_multiple_patients.py``) | 00:00.939 | 0.0 MB |
+| :ref:`sphx_glr__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py` (``plot_SQI_and_clinical_matching_multiple_patients.py``) | 00:04.334 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr__examples_Pre-Processing_plot_Extracting_Shock_Samples.py` (``plot_Extracting_Shock_Samples.py``)                                       | 00:01.089 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr__examples_Pre-Processing_file_exploration_tests_rough.py` (``file_exploration_tests_rough.py``)                                         | 00:00.000 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr__examples_Pre-Processing_plot_PeakDetectorsonPPG.py` (``plot_PeakDetectorsonPPG.py``)                                                   | 00:00.000 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+

@@ -173,12 +173,12 @@ to download the full example code</p>
 <span id="sphx-glr-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py"></span><h1>Matching SQI Dataframe Window to Clinical Time of “Event” for Multiple Records<a class="headerlink" href="#matching-sqi-dataframe-window-to-clinical-time-of-event-for-multiple-records" title="Permalink to this headline">¶</a></h1>
 <p>Matching SQI Dataframe Window to Clinical Time of “Event” for Multiple Records</p>
 <p>Importing Libraries</p>
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>11
-12
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>12
 13
 14
 15
-16</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
  <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
  <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
  <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
@@ -187,81 +187,123 @@ to download the full example code</p>
 </pre></div>
 </td></tr></table></div>
 <p>Loading SQI Data and clinical data</p>
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
  <span class="n">filename_Clinical</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv&#39;</span>
  <span class="n">study_no_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults&#39;</span>
+
 
  <span class="c1">#taking a list of records</span>
  <span class="n">study_no_list</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">study_no_path</span><span class="p">)</span> <span class="c1"># Need to take the last 8 characters i.e. study_no_list[i][-8:]</span>
@@ -269,6 +311,10 @@ to download the full example code</p>
  <span class="c1">#reading .csv into dataframes</span>
  <span class="n">Clinical</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_Clinical</span><span class="p">)</span>
  <span class="n">SQIs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename_SQIs</span><span class="p">)</span>
+
+ <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;PPG_w_s&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;PPG_w_s&#39;</span><span class="p">])</span>
+ <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;PPG_w_f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;PPG_w_f&#39;</span><span class="p">])</span>
+
 
  <span class="n">TERMINAL</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -286,32 +332,68 @@ to download the full example code</p>
      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">study_no_list</span><span class="p">)):</span>
          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> STUDY-NO: &quot;</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
          <span class="c1">#finding the rows for which the following logic is satisfied</span>
-         <span class="n">event_row</span> <span class="o">=</span> <span class="n">Clinical</span><span class="p">[(((</span><span class="n">Clinical</span><span class="o">.</span><span class="n">column</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="n">event</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
+         <span class="n">event_row</span> <span class="o">=</span> <span class="n">Clinical</span><span class="p">[(((</span><span class="n">Clinical</span><span class="o">.</span><span class="n">column</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">result</span> <span class="o">==</span> <span class="n">event</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Clinical</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
          <span class="c1">#iterating through the event row for indexing</span>
-         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_row</span><span class="p">)):</span>
-             <span class="n">valid_SQI_rows</span> <span class="o">=</span> <span class="n">SQIs</span><span class="p">[(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_s</span> <span class="o">&lt;=</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_f</span> <span class="o">&gt;</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
-             <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#Setting the value to True for the window corresponding to an event</span>
-             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Valid Event SQIs Index:&quot;</span><span class="p">)</span>
-             <span class="nb">print</span><span class="p">(</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+         <span class="n">event_row</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">event_row</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+         <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;shock_admission&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">event_row</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+             <span class="n">SQIs</span><span class="p">[</span><span class="s1">&#39;shock_admission&#39;</span><span class="p">][</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:]]</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#Showing whether a record indicates a shock on admission</span>
+         <span class="k">else</span><span class="p">:</span>
+             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_row</span><span class="p">)):</span>
+                 <span class="n">valid_SQI_rows</span> <span class="o">=</span> <span class="n">SQIs</span><span class="p">[(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_s</span> <span class="o">&lt;=</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_f</span> <span class="o">&gt;</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
+                 <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#Setting the value to True for the window corresponding to an event</span>
      <span class="k">return</span> <span class="n">SQIs</span>
 
  <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd"> NOTE:</span>
-
 <span class="sd"> We previously had functions that fetched ppg start and</span>
 <span class="sd"> calculated relative times but since we included the PPG Start times</span>
 <span class="sd"> in the SQI file, that is no longer needed.</span>
-
 <span class="sd"> &#39;&#39;&#39;</span>
 
  <span class="c1">#Calling the matching function by first defining the event</span>
- <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_laboratory&#39;</span>
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_shock&#39;</span>
  <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
 
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;reshock24&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;diagnosis_admission&#39;</span> <span class="c1">#all diagnosis admission are for shock so we can use this as is</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;shock_admission&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
  <span class="c1">#In the second iteration we call the function with the output of the first one, so that we can form</span>
  <span class="c1">#multiple columns of events</span>
- <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;event_shock&#39;</span>
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;ascites&#39;</span>
  <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;respiratory_distress&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;ventilation_cannula&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;ventilation_mechanical&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;ventilation_ncpap&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;bleeding_severe&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;cns_abnormal&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;liver_mild&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;pleural_effusion&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
+ <span class="n">event_lookup</span> <span class="o">=</span> <span class="s1">&#39;skidney&#39;</span>
+ <span class="n">SQIs_with_Clinical</span> <span class="o">=</span> <span class="n">match_clinical_to_SQIs</span><span class="p">(</span><span class="n">Clinical</span><span class="p">,</span> <span class="n">SQIs_with_Clinical</span><span class="p">,</span> <span class="n">event_lookup</span><span class="p">,</span> <span class="n">study_no_list</span><span class="p">)</span>
+
 
 
  <span class="k">if</span> <span class="n">TERMINAL</span><span class="p">:</span>
@@ -337,154 +419,351 @@ to download the full example code</p>
 <img alt="Example a Event Alignment with SQIs in Excel" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_SQI_and_clinical_matching_multiple_patients_001.png" />
 <p class="sphx-glr-script-out">Out:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> Clincial Data:
-       Unnamed: 0  study_no                 date        column         result unit result_old  date_old
-0               0  003-1001  2020-06-11 13:30:00  hypertension           True  NaN        NaN       NaN
-1               1  003-1002  2020-06-17 11:10:00  hypertension          False  NaN        NaN       NaN
-2               2  003-1003  2020-06-18 07:30:00  hypertension          False  NaN        NaN       NaN
-3               3  003-1004  2020-06-22 12:45:00  hypertension          False  NaN        NaN       NaN
-4               4  003-1005  2020-07-02 15:11:00  hypertension          False  NaN        NaN       NaN
-...           ...       ...                  ...           ...            ...  ...        ...       ...
-42060       42060  003-2231  2020-12-05 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-42061       42061  003-2232  2020-12-19 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-42062       42062  003-2233  2021-01-02 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-42063       42063  003-2234  2021-01-08 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-42064       42064  003-2235  2021-01-18 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+       Unnamed: 0  study_no              date        column         result unit result_old  date_old
+0               0  003-1001  11/06/2020 13:30  hypertension           TRUE  NaN        NaN       NaN
+1               1  003-1002  17/06/2020 11:10  hypertension          FALSE  NaN        NaN       NaN
+2               2  003-1003  18/06/2020 07:30  hypertension          FALSE  NaN        NaN       NaN
+3               3  003-1004  22/06/2020 12:45  hypertension          FALSE  NaN        NaN       NaN
+4               4  003-1005  02/07/2020 15:11  hypertension          FALSE  NaN        NaN       NaN
+...           ...       ...               ...           ...            ...  ...        ...       ...
+42060       42060  003-2231  05/12/2020 00:00       outcome  Full recovery  NaN        NaN       NaN
+42061       42061  003-2232  19/12/2020 00:00       outcome  Full recovery  NaN        NaN       NaN
+42062       42062  003-2233  02/01/2021 00:00       outcome  Full recovery  NaN        NaN       NaN
+42063       42063  003-2234  08/01/2021 00:00       outcome  Full recovery  NaN        NaN       NaN
+42064       42064  003-2235  18/01/2021 00:00       outcome  Full recovery  NaN        NaN       NaN
 
 [42065 rows x 8 columns]
 
  SQI Data:
-                   timedelta                  PPG_w_s                  PPG_w_f  ...                                      correlogram_1     w  study_no
-0     0 days 00:05:00.010000  2020-06-04 09:10:00.010  2020-06-04 09:10:30.000  ...  [75, 150, 226, 0.9132608947040779, 0.799647163...     0  003-2001
-1     0 days 00:05:30.010000  2020-06-04 09:10:30.010  2020-06-04 09:11:00.000  ...  [74, 148, 222, 0.9164960001123641, 0.827303342...     1  003-2001
-2     0 days 00:06:00.010000  2020-06-04 09:11:00.010  2020-06-04 09:11:30.000  ...  [75, 150, 225, 0.9097936306566979, 0.779681593...     2  003-2001
-3     0 days 00:06:30.010000  2020-06-04 09:11:30.010  2020-06-04 09:12:00.000  ...  [75, 149, 224, 0.9128541336509863, 0.807913379...     3  003-2001
-4     0 days 00:07:00.010000  2020-06-04 09:12:00.010  2020-06-04 09:12:30.000  ...  [74, 149, 223, 0.9123059092032415, 0.791340070...     4  003-2001
-...                      ...                      ...                      ...  ...                                                ...   ...       ...
-5087  0 days 14:15:30.010000  2020-08-12 14:15:30.010  2020-08-12 14:16:00.000  ...  [6, 11, 18, -0.0019374058650579195, -0.0017696...  1701  003-2012
-5088  0 days 14:16:00.010000  2020-08-12 14:16:00.010  2020-08-12 14:16:30.000  ...  [6, 11, 20, 0.039241068108281145, 0.0041982087...  1702  003-2012
-5089  0 days 14:16:30.010000  2020-08-12 14:16:30.010  2020-08-12 14:17:00.000  ...  [6, 10, 18, -0.02065026993537243, -0.034124123...  1703  003-2012
-5090  0 days 14:17:00.010000  2020-08-12 14:17:00.010  2020-08-12 14:17:30.000  ...  [6, 11, 15, -0.0005607782359069993, -0.0363094...  1704  003-2012
-5091  0 days 14:17:30.010000  2020-08-12 14:17:30.010  2020-08-12 14:17:51.610  ...  [6, 10, 20, 0.014910364149073808, 0.0444651847...  1705  003-2012
+                    timedelta                 PPG_w_s                 PPG_w_f    first  ...     w  study_no  study_no_rec  keep
+0      0 days 00:05:00.010000 2020-07-28 16:04:20.104 2020-07-28 16:04:50.094    29913  ...     0  003-2009             0  True
+1      0 days 00:05:30.010000 2020-07-28 16:04:50.104 2020-07-28 16:05:20.094    32913  ...     1  003-2009             0  True
+2      0 days 00:06:00.010000 2020-07-28 16:05:20.104 2020-07-28 16:05:50.094    35913  ...     2  003-2009             0  True
+3      0 days 00:06:30.010000 2020-07-28 16:05:50.104 2020-07-28 16:06:20.094    38913  ...     3  003-2009             0  True
+4      0 days 00:07:00.010000 2020-07-28 16:06:20.104 2020-07-28 16:06:50.094    41913  ...     4  003-2009             0  True
+...                       ...                     ...                     ...      ...  ...   ...       ...           ...   ...
+12698  0 days 15:03:30.010000 2020-07-21 05:08:37.203 2020-07-21 05:09:07.193  5420828  ...  1797  003-2162             0  True
+12699  0 days 15:04:00.010000 2020-07-21 05:09:07.203 2020-07-21 05:09:37.193  5423828  ...  1798  003-2162             0  True
+12700  0 days 15:04:30.010000 2020-07-21 05:09:37.203 2020-07-21 05:10:07.193  5426828  ...  1799  003-2162             0  True
+12701  0 days 15:05:00.010000 2020-07-21 05:10:07.203 2020-07-21 05:10:37.193  5429828  ...  1800  003-2162             0  True
+12702  0 days 15:05:30.010000 2020-07-21 05:10:37.203 2020-07-21 05:10:52.883  5432828  ...  1801  003-2162             0  True
 
-[5092 rows x 25 columns]
+[12703 rows x 27 columns]
 
- EVENT:  event_laboratory
+ EVENT:  event_shock
 
- STUDY-NO:  01NVa-003-2001
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:52: SettingWithCopyWarning:
+ STUDY-NO:  01NVa-003-2009
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:56: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  event_row[&#39;date&#39;] = pd.to_datetime(event_row[&#39;date&#39;])
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:62: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
   SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2012
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2023
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  reshock24
 
  STUDY-NO:  01NVa-003-2009
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
-
  STUDY-NO:  01NVa-003-2012
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2023
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2028
 
- Valid Event SQIs Index:
-Int64Index([3449], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2103
 
- Valid Event SQIs Index:
-Int64Index([4519], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2104
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2109
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2110
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2162
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([3435], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([3555], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([3795], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([3915], dtype=&#39;int64&#39;)
-
- Valid Event SQIs Index:
-Int64Index([4155], dtype=&#39;int64&#39;)
-
- EVENT:  event_shock
-
- STUDY-NO:  01NVa-003-2001
+ EVENT:  diagnosis_admission
 
  STUDY-NO:  01NVa-003-2009
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2012
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  shock_admission
+
+ STUDY-NO:  01NVa-003-2009
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:58: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQIs[&#39;shock_admission&#39;][SQIs.study_no == study_no_list[i][-8:]] = True #Showing whether a record indicates a shock on admission
 
  STUDY-NO:  01NVa-003-2012
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2023
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2028
 
- Valid Event SQIs Index:
-Int64Index([], dtype=&#39;int64&#39;)
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  ascites
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  respiratory_distress
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  ventilation_cannula
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  ventilation_mechanical
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  ventilation_ncpap
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  bleeding_severe
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  cns_abnormal
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  liver_mild
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  pleural_effusion
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
+
+ EVENT:  skidney
+
+ STUDY-NO:  01NVa-003-2009
+
+ STUDY-NO:  01NVa-003-2012
+
+ STUDY-NO:  01NVa-003-2023
+
+ STUDY-NO:  01NVa-003-2028
+
+ STUDY-NO:  01NVa-003-2103
+
+ STUDY-NO:  01NVa-003-2104
+
+ STUDY-NO:  01NVa-003-2109
+
+ STUDY-NO:  01NVa-003-2110
+
+ STUDY-NO:  01NVa-003-2162
 
  SQIs with Clinical Event Match:
-                   timedelta                  PPG_w_s                  PPG_w_f    first  ...     w  study_no  event_laboratory  event_shock
-0     0 days 00:05:00.010000  2020-06-04 09:10:00.010  2020-06-04 09:10:30.000    29913  ...     0  003-2001               NaN          NaN
-1     0 days 00:05:30.010000  2020-06-04 09:10:30.010  2020-06-04 09:11:00.000    32913  ...     1  003-2001               NaN          NaN
-2     0 days 00:06:00.010000  2020-06-04 09:11:00.010  2020-06-04 09:11:30.000    35913  ...     2  003-2001               NaN          NaN
-3     0 days 00:06:30.010000  2020-06-04 09:11:30.010  2020-06-04 09:12:00.000    38913  ...     3  003-2001               NaN          NaN
-4     0 days 00:07:00.010000  2020-06-04 09:12:00.010  2020-06-04 09:12:30.000    41913  ...     4  003-2001               NaN          NaN
-...                      ...                      ...                      ...      ...  ...   ...       ...               ...          ...
-5087  0 days 14:15:30.010000  2020-08-12 14:15:30.010  2020-08-12 14:16:00.000  5132472  ...  1701  003-2012               NaN          NaN
-5088  0 days 14:16:00.010000  2020-08-12 14:16:00.010  2020-08-12 14:16:30.000  5135472  ...  1702  003-2012               NaN          NaN
-5089  0 days 14:16:30.010000  2020-08-12 14:16:30.010  2020-08-12 14:17:00.000  5138472  ...  1703  003-2012               NaN          NaN
-5090  0 days 14:17:00.010000  2020-08-12 14:17:00.010  2020-08-12 14:17:30.000  5141472  ...  1704  003-2012               NaN          NaN
-5091  0 days 14:17:30.010000  2020-08-12 14:17:30.010  2020-08-12 14:17:51.610  5144472  ...  1705  003-2012               NaN          NaN
+                    timedelta                 PPG_w_s                 PPG_w_f    first  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
+0      0 days 00:05:00.010000 2020-07-28 16:04:20.104 2020-07-28 16:04:50.094    29913  ...           NaN         NaN               NaN      NaN
+1      0 days 00:05:30.010000 2020-07-28 16:04:50.104 2020-07-28 16:05:20.094    32913  ...           NaN         NaN               NaN      NaN
+2      0 days 00:06:00.010000 2020-07-28 16:05:20.104 2020-07-28 16:05:50.094    35913  ...           NaN         NaN               NaN      NaN
+3      0 days 00:06:30.010000 2020-07-28 16:05:50.104 2020-07-28 16:06:20.094    38913  ...           NaN         NaN               NaN      NaN
+4      0 days 00:07:00.010000 2020-07-28 16:06:20.104 2020-07-28 16:06:50.094    41913  ...           NaN         NaN               NaN      NaN
+...                       ...                     ...                     ...      ...  ...           ...         ...               ...      ...
+12698  0 days 15:03:30.010000 2020-07-21 05:08:37.203 2020-07-21 05:09:07.193  5420828  ...           NaN         NaN               NaN      NaN
+12699  0 days 15:04:00.010000 2020-07-21 05:09:07.203 2020-07-21 05:09:37.193  5423828  ...           NaN         NaN               NaN      NaN
+12700  0 days 15:04:30.010000 2020-07-21 05:09:37.203 2020-07-21 05:10:07.193  5426828  ...           NaN         NaN               NaN      NaN
+12701  0 days 15:05:00.010000 2020-07-21 05:10:07.203 2020-07-21 05:10:37.193  5429828  ...           NaN         NaN               NaN      NaN
+12702  0 days 15:05:30.010000 2020-07-21 05:10:37.203 2020-07-21 05:10:52.883  5432828  ...           NaN         NaN               NaN      NaN
 
-[5092 rows x 27 columns]
+[12703 rows x 41 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.939 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  4.334 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/03b5979f714e5200f67a3adc18e799cb/plot_SQI_and_clinical_matching_multiple_patients.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_and_clinical_matching_multiple_patients.py</span></code></a></p>

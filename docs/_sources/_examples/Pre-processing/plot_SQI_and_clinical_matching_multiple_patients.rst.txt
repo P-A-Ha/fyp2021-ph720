@@ -22,14 +22,14 @@ Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 ==============================================================================
 Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-10
+.. GENERATED FROM PYTHON SOURCE LINES 10-11
 
 Importing Libraries
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-18
+.. GENERATED FROM PYTHON SOURCE LINES 11-19
 
 .. code-block:: default
-   :lineno-start: 11
+   :lineno-start: 12
 
 
     from datetime import date
@@ -46,19 +46,20 @@ Importing Libraries
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 19-20
+.. GENERATED FROM PYTHON SOURCE LINES 20-21
 
 Loading SQI Data and clinical data
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-95
+.. GENERATED FROM PYTHON SOURCE LINES 21-137
 
 .. code-block:: default
-   :lineno-start: 21
+   :lineno-start: 22
 
 
     filename_SQIs = r'..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv'
     filename_Clinical = r'..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv'
     study_no_path = r'..\..\..\..\OUCRU\01NVa_Dengue\Adults'
+
 
     #taking a list of records
     study_no_list = os.listdir(study_no_path) # Need to take the last 8 characters i.e. study_no_list[i][-8:]
@@ -66,6 +67,10 @@ Loading SQI Data and clinical data
     #reading .csv into dataframes
     Clinical = pd.read_csv(filename_Clinical)
     SQIs = pd.read_csv(filename_SQIs)
+
+    SQIs['PPG_w_s'] = pd.to_datetime(SQIs['PPG_w_s'])
+    SQIs['PPG_w_f'] = pd.to_datetime(SQIs['PPG_w_f'])
+
 
     TERMINAL = True
 
@@ -83,32 +88,68 @@ Loading SQI Data and clinical data
         for i in range(len(study_no_list)):
             print("\n STUDY-NO: ", study_no_list[i])
             #finding the rows for which the following logic is satisfied
-            event_row = Clinical[(((Clinical.column == event) & (Clinical.result == 'True')) | (Clinical.result == event)) & (Clinical.study_no == study_no_list[i][-8:])]
-            #iterating through the event row for indexing 
-            for j in range(len(event_row)):
-                valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
-                SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
-                print("\n Valid Event SQIs Index:")
-                print(valid_SQI_rows.index) 
+            event_row = Clinical[(((Clinical.column == event) & (Clinical.result == 'TRUE')) | (Clinical.result == event)) & (Clinical.study_no == study_no_list[i][-8:])]
+            #iterating through the event row for indexing
+            event_row['date'] = pd.to_datetime(event_row['date'])
+            if event == 'shock_admission' and not event_row.empty:
+                SQIs['shock_admission'][SQIs.study_no == study_no_list[i][-8:]] = True #Showing whether a record indicates a shock on admission
+            else:
+                for j in range(len(event_row)):
+                    valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
+                    SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
         return SQIs
 
     '''
     NOTE: 
-
     We previously had functions that fetched ppg start and 
     calculated relative times but since we included the PPG Start times
     in the SQI file, that is no longer needed.
-
     '''
 
     #Calling the matching function by first defining the event
-    event_lookup = 'event_laboratory'
+    event_lookup = 'event_shock'
     SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs, event_lookup, study_no_list)
 
+    event_lookup = 'reshock24'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'diagnosis_admission' #all diagnosis admission are for shock so we can use this as is 
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'shock_admission'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
     #In the second iteration we call the function with the output of the first one, so that we can form 
     #multiple columns of events
-    event_lookup = 'event_shock'
+    event_lookup = 'ascites'
     SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'respiratory_distress'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'ventilation_cannula'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'ventilation_mechanical'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'ventilation_ncpap'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'bleeding_severe'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'cns_abnormal'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'liver_mild'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'pleural_effusion'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
+    event_lookup = 'skidney'
+    SQIs_with_Clinical = match_clinical_to_SQIs(Clinical, SQIs_with_Clinical, event_lookup, study_no_list)
+
 
 
     if TERMINAL:
@@ -146,151 +187,348 @@ Loading SQI Data and clinical data
 
 
      Clincial Data:
-           Unnamed: 0  study_no                 date        column         result unit result_old  date_old
-    0               0  003-1001  2020-06-11 13:30:00  hypertension           True  NaN        NaN       NaN
-    1               1  003-1002  2020-06-17 11:10:00  hypertension          False  NaN        NaN       NaN
-    2               2  003-1003  2020-06-18 07:30:00  hypertension          False  NaN        NaN       NaN
-    3               3  003-1004  2020-06-22 12:45:00  hypertension          False  NaN        NaN       NaN
-    4               4  003-1005  2020-07-02 15:11:00  hypertension          False  NaN        NaN       NaN
-    ...           ...       ...                  ...           ...            ...  ...        ...       ...
-    42060       42060  003-2231  2020-12-05 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-    42061       42061  003-2232  2020-12-19 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-    42062       42062  003-2233  2021-01-02 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-    42063       42063  003-2234  2021-01-08 00:00:00       outcome  Full recovery  NaN        NaN       NaN
-    42064       42064  003-2235  2021-01-18 00:00:00       outcome  Full recovery  NaN        NaN       NaN
+           Unnamed: 0  study_no              date        column         result unit result_old  date_old
+    0               0  003-1001  11/06/2020 13:30  hypertension           TRUE  NaN        NaN       NaN
+    1               1  003-1002  17/06/2020 11:10  hypertension          FALSE  NaN        NaN       NaN
+    2               2  003-1003  18/06/2020 07:30  hypertension          FALSE  NaN        NaN       NaN
+    3               3  003-1004  22/06/2020 12:45  hypertension          FALSE  NaN        NaN       NaN
+    4               4  003-1005  02/07/2020 15:11  hypertension          FALSE  NaN        NaN       NaN
+    ...           ...       ...               ...           ...            ...  ...        ...       ...
+    42060       42060  003-2231  05/12/2020 00:00       outcome  Full recovery  NaN        NaN       NaN
+    42061       42061  003-2232  19/12/2020 00:00       outcome  Full recovery  NaN        NaN       NaN
+    42062       42062  003-2233  02/01/2021 00:00       outcome  Full recovery  NaN        NaN       NaN
+    42063       42063  003-2234  08/01/2021 00:00       outcome  Full recovery  NaN        NaN       NaN
+    42064       42064  003-2235  18/01/2021 00:00       outcome  Full recovery  NaN        NaN       NaN
 
     [42065 rows x 8 columns]
 
      SQI Data:
-                       timedelta                  PPG_w_s                  PPG_w_f  ...                                      correlogram_1     w  study_no
-    0     0 days 00:05:00.010000  2020-06-04 09:10:00.010  2020-06-04 09:10:30.000  ...  [75, 150, 226, 0.9132608947040779, 0.799647163...     0  003-2001
-    1     0 days 00:05:30.010000  2020-06-04 09:10:30.010  2020-06-04 09:11:00.000  ...  [74, 148, 222, 0.9164960001123641, 0.827303342...     1  003-2001
-    2     0 days 00:06:00.010000  2020-06-04 09:11:00.010  2020-06-04 09:11:30.000  ...  [75, 150, 225, 0.9097936306566979, 0.779681593...     2  003-2001
-    3     0 days 00:06:30.010000  2020-06-04 09:11:30.010  2020-06-04 09:12:00.000  ...  [75, 149, 224, 0.9128541336509863, 0.807913379...     3  003-2001
-    4     0 days 00:07:00.010000  2020-06-04 09:12:00.010  2020-06-04 09:12:30.000  ...  [74, 149, 223, 0.9123059092032415, 0.791340070...     4  003-2001
-    ...                      ...                      ...                      ...  ...                                                ...   ...       ...
-    5087  0 days 14:15:30.010000  2020-08-12 14:15:30.010  2020-08-12 14:16:00.000  ...  [6, 11, 18, -0.0019374058650579195, -0.0017696...  1701  003-2012
-    5088  0 days 14:16:00.010000  2020-08-12 14:16:00.010  2020-08-12 14:16:30.000  ...  [6, 11, 20, 0.039241068108281145, 0.0041982087...  1702  003-2012
-    5089  0 days 14:16:30.010000  2020-08-12 14:16:30.010  2020-08-12 14:17:00.000  ...  [6, 10, 18, -0.02065026993537243, -0.034124123...  1703  003-2012
-    5090  0 days 14:17:00.010000  2020-08-12 14:17:00.010  2020-08-12 14:17:30.000  ...  [6, 11, 15, -0.0005607782359069993, -0.0363094...  1704  003-2012
-    5091  0 days 14:17:30.010000  2020-08-12 14:17:30.010  2020-08-12 14:17:51.610  ...  [6, 10, 20, 0.014910364149073808, 0.0444651847...  1705  003-2012
+                        timedelta                 PPG_w_s                 PPG_w_f    first  ...     w  study_no  study_no_rec  keep
+    0      0 days 00:05:00.010000 2020-07-28 16:04:20.104 2020-07-28 16:04:50.094    29913  ...     0  003-2009             0  True
+    1      0 days 00:05:30.010000 2020-07-28 16:04:50.104 2020-07-28 16:05:20.094    32913  ...     1  003-2009             0  True
+    2      0 days 00:06:00.010000 2020-07-28 16:05:20.104 2020-07-28 16:05:50.094    35913  ...     2  003-2009             0  True
+    3      0 days 00:06:30.010000 2020-07-28 16:05:50.104 2020-07-28 16:06:20.094    38913  ...     3  003-2009             0  True
+    4      0 days 00:07:00.010000 2020-07-28 16:06:20.104 2020-07-28 16:06:50.094    41913  ...     4  003-2009             0  True
+    ...                       ...                     ...                     ...      ...  ...   ...       ...           ...   ...
+    12698  0 days 15:03:30.010000 2020-07-21 05:08:37.203 2020-07-21 05:09:07.193  5420828  ...  1797  003-2162             0  True
+    12699  0 days 15:04:00.010000 2020-07-21 05:09:07.203 2020-07-21 05:09:37.193  5423828  ...  1798  003-2162             0  True
+    12700  0 days 15:04:30.010000 2020-07-21 05:09:37.203 2020-07-21 05:10:07.193  5426828  ...  1799  003-2162             0  True
+    12701  0 days 15:05:00.010000 2020-07-21 05:10:07.203 2020-07-21 05:10:37.193  5429828  ...  1800  003-2162             0  True
+    12702  0 days 15:05:30.010000 2020-07-21 05:10:37.203 2020-07-21 05:10:52.883  5432828  ...  1801  003-2162             0  True
 
-    [5092 rows x 25 columns]
+    [12703 rows x 27 columns]
 
-     EVENT:  event_laboratory
+     EVENT:  event_shock
 
-     STUDY-NO:  01NVa-003-2001
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:52: SettingWithCopyWarning: 
+     STUDY-NO:  01NVa-003-2009
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:56: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame.
+    Try using .loc[row_indexer,col_indexer] = value instead
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+      event_row['date'] = pd.to_datetime(event_row['date'])
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:62: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
       SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2012
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2023
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  reshock24
 
      STUDY-NO:  01NVa-003-2009
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
-
      STUDY-NO:  01NVa-003-2012
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2023
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2028
 
-     Valid Event SQIs Index:
-    Int64Index([3449], dtype='int64')
+     STUDY-NO:  01NVa-003-2103
 
-     Valid Event SQIs Index:
-    Int64Index([4519], dtype='int64')
+     STUDY-NO:  01NVa-003-2104
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2109
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2110
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2162
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([3435], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([3555], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([3795], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([3915], dtype='int64')
-
-     Valid Event SQIs Index:
-    Int64Index([4155], dtype='int64')
-
-     EVENT:  event_shock
-
-     STUDY-NO:  01NVa-003-2001
+     EVENT:  diagnosis_admission
 
      STUDY-NO:  01NVa-003-2009
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2012
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  shock_admission
+
+     STUDY-NO:  01NVa-003-2009
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:58: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+      SQIs['shock_admission'][SQIs.study_no == study_no_list[i][-8:]] = True #Showing whether a record indicates a shock on admission
 
      STUDY-NO:  01NVa-003-2012
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2023
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2028
 
-     Valid Event SQIs Index:
-    Int64Index([], dtype='int64')
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  ascites
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  respiratory_distress
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  ventilation_cannula
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  ventilation_mechanical
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  ventilation_ncpap
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  bleeding_severe
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  cns_abnormal
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  liver_mild
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  pleural_effusion
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
+
+     EVENT:  skidney
+
+     STUDY-NO:  01NVa-003-2009
+
+     STUDY-NO:  01NVa-003-2012
+
+     STUDY-NO:  01NVa-003-2023
+
+     STUDY-NO:  01NVa-003-2028
+
+     STUDY-NO:  01NVa-003-2103
+
+     STUDY-NO:  01NVa-003-2104
+
+     STUDY-NO:  01NVa-003-2109
+
+     STUDY-NO:  01NVa-003-2110
+
+     STUDY-NO:  01NVa-003-2162
 
      SQIs with Clinical Event Match:
-                       timedelta                  PPG_w_s                  PPG_w_f    first  ...     w  study_no  event_laboratory  event_shock
-    0     0 days 00:05:00.010000  2020-06-04 09:10:00.010  2020-06-04 09:10:30.000    29913  ...     0  003-2001               NaN          NaN
-    1     0 days 00:05:30.010000  2020-06-04 09:10:30.010  2020-06-04 09:11:00.000    32913  ...     1  003-2001               NaN          NaN
-    2     0 days 00:06:00.010000  2020-06-04 09:11:00.010  2020-06-04 09:11:30.000    35913  ...     2  003-2001               NaN          NaN
-    3     0 days 00:06:30.010000  2020-06-04 09:11:30.010  2020-06-04 09:12:00.000    38913  ...     3  003-2001               NaN          NaN
-    4     0 days 00:07:00.010000  2020-06-04 09:12:00.010  2020-06-04 09:12:30.000    41913  ...     4  003-2001               NaN          NaN
-    ...                      ...                      ...                      ...      ...  ...   ...       ...               ...          ...
-    5087  0 days 14:15:30.010000  2020-08-12 14:15:30.010  2020-08-12 14:16:00.000  5132472  ...  1701  003-2012               NaN          NaN
-    5088  0 days 14:16:00.010000  2020-08-12 14:16:00.010  2020-08-12 14:16:30.000  5135472  ...  1702  003-2012               NaN          NaN
-    5089  0 days 14:16:30.010000  2020-08-12 14:16:30.010  2020-08-12 14:17:00.000  5138472  ...  1703  003-2012               NaN          NaN
-    5090  0 days 14:17:00.010000  2020-08-12 14:17:00.010  2020-08-12 14:17:30.000  5141472  ...  1704  003-2012               NaN          NaN
-    5091  0 days 14:17:30.010000  2020-08-12 14:17:30.010  2020-08-12 14:17:51.610  5144472  ...  1705  003-2012               NaN          NaN
+                        timedelta                 PPG_w_s                 PPG_w_f    first  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
+    0      0 days 00:05:00.010000 2020-07-28 16:04:20.104 2020-07-28 16:04:50.094    29913  ...           NaN         NaN               NaN      NaN
+    1      0 days 00:05:30.010000 2020-07-28 16:04:50.104 2020-07-28 16:05:20.094    32913  ...           NaN         NaN               NaN      NaN
+    2      0 days 00:06:00.010000 2020-07-28 16:05:20.104 2020-07-28 16:05:50.094    35913  ...           NaN         NaN               NaN      NaN
+    3      0 days 00:06:30.010000 2020-07-28 16:05:50.104 2020-07-28 16:06:20.094    38913  ...           NaN         NaN               NaN      NaN
+    4      0 days 00:07:00.010000 2020-07-28 16:06:20.104 2020-07-28 16:06:50.094    41913  ...           NaN         NaN               NaN      NaN
+    ...                       ...                     ...                     ...      ...  ...           ...         ...               ...      ...
+    12698  0 days 15:03:30.010000 2020-07-21 05:08:37.203 2020-07-21 05:09:07.193  5420828  ...           NaN         NaN               NaN      NaN
+    12699  0 days 15:04:00.010000 2020-07-21 05:09:07.203 2020-07-21 05:09:37.193  5423828  ...           NaN         NaN               NaN      NaN
+    12700  0 days 15:04:30.010000 2020-07-21 05:09:37.203 2020-07-21 05:10:07.193  5426828  ...           NaN         NaN               NaN      NaN
+    12701  0 days 15:05:00.010000 2020-07-21 05:10:07.203 2020-07-21 05:10:37.193  5429828  ...           NaN         NaN               NaN      NaN
+    12702  0 days 15:05:30.010000 2020-07-21 05:10:37.203 2020-07-21 05:10:52.883  5432828  ...           NaN         NaN               NaN      NaN
 
-    [5092 rows x 27 columns]
+    [12703 rows x 41 columns]
 
 
 
@@ -298,7 +536,7 @@ Loading SQI Data and clinical data
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.939 seconds)
+   **Total running time of the script:** ( 0 minutes  4.334 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py:
