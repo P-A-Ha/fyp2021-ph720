@@ -1,8 +1,9 @@
+# %%
+
 """
 Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
 ==============================================================================
 Matching SQI Dataframe Window to Clinical Time of "Event" for Multiple Records
-
 """
 
 #%%
@@ -22,12 +23,17 @@ filename_SQIs = r'..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv'
 filename_Clinical = r'..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv'
 study_no_path = r'..\..\..\..\OUCRU\01NVa_Dengue\Adults'
 
+
 #taking a list of records
 study_no_list = os.listdir(study_no_path) # Need to take the last 8 characters i.e. study_no_list[i][-8:]
 
 #reading .csv into dataframes
 Clinical = pd.read_csv(filename_Clinical)
 SQIs = pd.read_csv(filename_SQIs)
+
+SQIs['PPG_w_s'] = pd.to_datetime(SQIs['PPG_w_s'])
+SQIs['PPG_w_f'] = pd.to_datetime(SQIs['PPG_w_f'])
+
 
 TERMINAL = True
 
@@ -45,22 +51,22 @@ def match_clinical_to_SQIs(Clinical, SQIs, event, study_no_list):
     for i in range(len(study_no_list)):
         print("\n STUDY-NO: ", study_no_list[i])
         #finding the rows for which the following logic is satisfied
-        event_row = Clinical[(((Clinical.column == event) & (Clinical.result == 'True')) | (Clinical.result == event)) & (Clinical.study_no == study_no_list[i][-8:])]
-        #iterating through the event row for indexing 
-        for j in range(len(event_row)):
-            valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
-            SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
-            print("\n Valid Event SQIs Index:")
-            print(valid_SQI_rows.index) 
+        event_row = Clinical[(((Clinical.column == event) & (Clinical.result == 'TRUE')) | (Clinical.result == event)) & (Clinical.study_no == study_no_list[i][-8:])]
+        #iterating through the event row for indexing
+        event_row['date'] = pd.to_datetime(event_row['date'])
+        if event == 'shock_admission' and not event_row.empty:
+            SQIs['shock_admission'][SQIs.study_no == study_no_list[i][-8:]] = True #Showing whether a record indicates a shock on admission
+        else:
+            for j in range(len(event_row)):
+                valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
+                SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
     return SQIs
 
 '''
 NOTE: 
-
 We previously had functions that fetched ppg start and 
 calculated relative times but since we included the PPG Start times
 in the SQI file, that is no longer needed.
-
 '''
 
 #Calling the matching function by first defining the event
@@ -128,4 +134,3 @@ if TERMINAL:
     axs[1].imshow(img2)
     plt.show()
 
-# %%

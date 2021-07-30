@@ -185,7 +185,7 @@ def sqi_all(x,raw,filtered,peaks,troughs):
         'snr': snr(x[raw]),
         'mcr': mcr(x[raw]),
         'zcr': zcr(x[filtered]),
-        'msq': msq(x[filtered],troughs),
+        'msq': msq(x[filtered],peaks),
         'perfusion': perfusion(x[raw], x[filtered]),
         'correlogram': correlogram(x[filtered]),
         #'dtw': dtw(x[filtered],troughs)
@@ -340,6 +340,7 @@ for i in range(len(files)):
         #Automatically fetching the study_no from the filename and including it in the DataFrame
         Signal_SQIs['study_no'] = files[i][-8:]
         Signal_SQIs['study_no_rec'] = j
+        #also doing it for the raw signals
         signals['study_no'] = files[i][-8:]
         signals['study_no_rec'] = j
         
@@ -368,7 +369,7 @@ for i in range(len(files)):
 
 
         #concatenating into a single dataframe for all studies
-        if i == 0:
+        if i == 0 and j == 0:
             Complete_SQIs = Signal_SQIs
             Raw_signals = signals
         else:

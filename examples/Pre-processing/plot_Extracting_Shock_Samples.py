@@ -34,6 +34,19 @@ if Terminal:
     print(Raw)
 
 
+# %%
 
+event = ['event_shock', 'reshock24', 'diagnosis_admission' ,'shock_admission',\
+     'ascites', 'respiratory_distress', 'ventilation_cannula', \
+     'ventilation_mechanical', 'ventilation_ncpap', 'bleeding_severe', \
+     'cns_abnormal', 'liver_mild', 'pleural_effusion', 'skidney']
 
+SQI_C['keep'] = False
+for i in range(len(event)):
+    SQI_C_shock = SQI_C[SQI_C[event[i]] == 'True']
+    SQI_C[SQI_C_shock]['keep'] = True
+    
 
+print(SQI_C[SQI_C["keep"] == 'True'])
+
+# %%
