@@ -1,12 +1,13 @@
 """
-Extracting Shock Data for Feature Extraction (UNFINISHED)
-=========================================================
+Extracting Shock Data for Feature Extraction - Initial Plots for BPF 
+====================================================================
 
-Fetching shock instances (including symptoms that indicate severe dengue) and structuring the data
+Fetching shock instances (including symptoms that indicate severe dengue) and plotting the data.
+Processing of data will follow this step
 
 """
 #%%
-## Importing Libraries
+## Importing Libraries, Definitions and Data Loading
 
 # Generic
 import os
@@ -35,33 +36,38 @@ if Terminal:
     print("\n Raw Signals")
     print(Raw)
 
-
-# %%
-
+#List of events explored
 event = ['event_shock', 'reshock24','diagnosis_admission',\
      'ascites', 'respiratory_distress', 'ventilation_cannula', \
      'ventilation_mechanical', 'ventilation_ncpap', 'bleeding_severe', \
      'cns_abnormal', 'liver_mild', 'pleural_effusion', 'skidney']
 
-event_shock = 'shock_admission'
+shock_ad = 'shock_admission' #excluding it from the prior list as we are treating this differently
 
+#Study_no list for ease of use
+patient_list = ['003-2162']
+#['003-2009', '003-2012','003-2023','003-2028','003-2103','003-2104','003-2109', '003-2110', '003-2162']
+
+#%%
+# Turning signal window rows with an event to "keep = True"
 SQI_C['keep'] = False
 for i in range(len(event)):
     event_s = event[i]
     SQI_C['keep'][SQI_C[event_s] == True] = True
     print("\n Total ", event[i], " events:")
 
-SQI_C.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv')
+#Optional Save
+#SQI_C.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv')
 
-
-patient_list = ['003-2009', '003-2012','003-2023','003-2028','003-2103','003-2104','003-2109', '003-2110', '003-2162']
     
 # %%
+#Plotting IR_ADC BPF and PLETH BPF on interactive graphs, together with the events (i.e. event of shock and whether or not the patient was admitted with shock)
 for i in range(len(patient_list)):
+    #Plotting IR_ADC BPF signals with events
     #fig = make_subplots(rows=2, cols=1)
-    title_str = 'IR_ADC over Time for patient ' + str(patient_list[i])
+    title_str = 'IR_ADC_BPF over Time for patient ' + str(patient_list[i])
     fig = go.Figure(layout_title_text = title_str)
-    fig.add_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == patient_list[i]], y =  Raw.IR_ADC[Raw.study_no == patient_list[i]], name='IR_ADC'))#,),row=1,col=1)
+    fig.add_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == patient_list[i]], y =  Raw.IR_ADC_bpf[Raw.study_no == patient_list[i]], name='IR_ADC'))#,),row=1,col=1)
     for index, row in SQI_C[(SQI_C.study_no == patient_list[i]) & (SQI_C.keep == True)].iterrows():
         fig.add_vline(x = row.PPG_w_s, line_width=3, line_dash="dot", line_color="red")# annotation_text="Shock")#, annotation_position="top left", annotation_font_size=20, annotation_font_color="red")
         if not row.empty:
@@ -89,27 +95,28 @@ for i in range(len(patient_list)):
     fig.update_yaxes(title_text="IR_ADC")
     fig.update_layout(showlegend=True)
 
-    imagepath1 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images\PNG"
-    imagepath2 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images\SVG"
-    imagepath3 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images\HTML"
-    img_title1 = os.path.join(imagepath1,title_str)
-    img_title2 = os.path.join(imagepath2,title_str)
-    img_title3 = os.path.join(imagepath3,title_str)
-    img_s1 = img_title1 + ".png"
-    img_s2 = img_title2 + ".svg"
-    img_s3 = img_title3 + ".html"
-    fig.write_image(img_s1)
-    fig.write_image(img_s2)
-    fig.write_html(img_s3)
+    # #IGNORE, this is to save locally
+    # imagepath1 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\PNG"
+    # imagepath2 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\SVG"
+    # imagepath3 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\HTML"
+    # img_title1 = os.path.join(imagepath1,title_str)
+    # img_title2 = os.path.join(imagepath2,title_str)
+    # img_title3 = os.path.join(imagepath3,title_str)
+    # img_s1 = img_title1 + ".png"
+    # img_s2 = img_title2 + ".svg"
+    # img_s3 = img_title3 + ".html"
+    # fig.write_image(img_s1)
+    # fig.write_image(img_s2)
+    # fig.write_html(img_s3)
 
     fig.show()
 
     
-
+    #Plotting PLETH BPF and events
     #fig = make_subplots(rows=2, cols=1)
-    title_str2 = 'PLETH over Time for patient ' + str(patient_list[i])
+    title_str2 = 'PLETH_BPF over Time for patient ' + str(patient_list[i])
     fig2 = go.Figure(layout_title_text = title_str2)
-    fig2.add_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == patient_list[i]], y =  Raw.PLETH[Raw.study_no == patient_list[i]], name='PLETH'))#,),row=1,col=1)
+    fig2.add_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == patient_list[i]], y =  Raw.PLETH_bpf[Raw.study_no == patient_list[i]], name='PLETH'))#,),row=1,col=1)
     for index, row in SQI_C[(SQI_C.study_no == patient_list[i]) & (SQI_C.keep == True)].iterrows():
         fig2.add_vline(x = row.PPG_w_s, line_width=3, line_dash="dot", line_color="red")#, annotation_text="Shock")#, annotation_position="top left", annotation_font_size=20, annotation_font_color="red")
         if not row.empty:
@@ -138,15 +145,16 @@ for i in range(len(patient_list)):
     fig2.update_layout(showlegend=True)
 
 
-    img_title4 = os.path.join(imagepath1,title_str2)
-    img_title5 = os.path.join(imagepath2,title_str2)
-    img_title6 = os.path.join(imagepath3,title_str2)
-    img_s4 = img_title4 + ".png"
-    img_s5 = img_title5 + ".svg"
-    img_s6 = img_title6 + ".html"
-    fig2.write_image(img_s4)
-    fig2.write_image(img_s5)
-    fig2.write_html(img_s6)
+    # #IGNORE, this is to save locally
+    # img_title4 = os.path.join(imagepath1,title_str2)
+    # img_title5 = os.path.join(imagepath2,title_str2)
+    # img_title6 = os.path.join(imagepath3,title_str2)
+    # img_s4 = img_title4 + ".png"
+    # img_s5 = img_title5 + ".svg"
+    # img_s6 = img_title6 + ".html"
+    # fig2.write_image(img_s4)
+    # fig2.write_image(img_s5)
+    # fig2.write_html(img_s6)
 
     fig2.show()
     
