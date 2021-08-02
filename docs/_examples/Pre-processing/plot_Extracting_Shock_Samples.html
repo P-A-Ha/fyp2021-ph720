@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Extracting Shock Data for Feature Extraction (UNFINISHED) &mdash; fyp2021-ph720 0.0.1 documentation</title>
+  <title>Extracting Shock Data for Feature Extraction - Initial Plots for BPF &mdash; fyp2021-ph720 0.0.1 documentation</title>
   
 
   
@@ -145,7 +145,7 @@
     
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Extracting Shock Data for Feature Extraction (UNFINISHED)</li>
+      <li>Extracting Shock Data for Feature Extraction - Initial Plots for BPF</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,12 +169,12 @@
 <p>Click <a class="reference internal" href="#sphx-glr-download-examples-pre-processing-plot-extracting-shock-samples-py"><span class="std std-ref">here</span></a>
 to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="extracting-shock-data-for-feature-extraction-unfinished">
-<span id="sphx-glr-examples-pre-processing-plot-extracting-shock-samples-py"></span><h1>Extracting Shock Data for Feature Extraction (UNFINISHED)<a class="headerlink" href="#extracting-shock-data-for-feature-extraction-unfinished" title="Permalink to this headline">¶</a></h1>
-<p>Fetching shock instances (including symptoms that indicate severe dengue) and structuring the data</p>
-<p># Importing Libraries</p>
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>11
-12
+<div class="sphx-glr-example-title section" id="extracting-shock-data-for-feature-extraction-initial-plots-for-bpf">
+<span id="sphx-glr-examples-pre-processing-plot-extracting-shock-samples-py"></span><h1>Extracting Shock Data for Feature Extraction - Initial Plots for BPF<a class="headerlink" href="#extracting-shock-data-for-feature-extraction-initial-plots-for-bpf" title="Permalink to this headline">¶</a></h1>
+<p>Fetching shock instances (including symptoms that indicate severe dengue) and plotting the data.
+Processing of data will follow this step</p>
+<p># Importing Libraries, Definitions and Data Loading</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>12
 13
 14
 15
@@ -196,14 +196,31 @@ to download the full example code</p>
 31
 32
 33
-34</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Generic</span>
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1"># Generic</span>
  <span class="kn">import</span> <span class="nn">os</span>
  <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
  <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
  <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
  <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
  <span class="kn">import</span> <span class="nn">glob</span>
- <span class="kn">import</span> <span class="nn">plotly</span> <span class="k">as</span> <span class="nn">pl</span>
+ <span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+ <span class="kn">from</span> <span class="nn">plotly.subplots</span> <span class="kn">import</span> <span class="n">make_subplots</span>
+ <span class="kn">import</span> <span class="nn">plotly.io</span> <span class="k">as</span> <span class="nn">pio</span>
 
  <span class="n">Terminal</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -213,13 +230,25 @@ to download the full example code</p>
 
  <span class="c1">#Loading SQI Matched with clinitcal to the Dataframe</span>
  <span class="n">SQI_C</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">SQI_clinical_file</span><span class="p">)</span>
- <span class="c1">#Raw = pd.read_csv(Raw_signals)</span>
+ <span class="n">Raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">Raw_signals</span><span class="p">)</span>
 
  <span class="k">if</span> <span class="n">Terminal</span><span class="p">:</span>
      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> SQI with Clinical Match:&quot;</span><span class="p">)</span>
      <span class="nb">print</span><span class="p">(</span><span class="n">SQI_C</span><span class="p">)</span>
      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Raw Signals&quot;</span><span class="p">)</span>
-     <span class="c1">#print(Raw)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">Raw</span><span class="p">)</span>
+
+ <span class="c1">#List of events explored</span>
+ <span class="n">event</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event_shock&#39;</span><span class="p">,</span> <span class="s1">&#39;reshock24&#39;</span><span class="p">,</span><span class="s1">&#39;diagnosis_admission&#39;</span><span class="p">,</span>\
+      <span class="s1">&#39;ascites&#39;</span><span class="p">,</span> <span class="s1">&#39;respiratory_distress&#39;</span><span class="p">,</span> <span class="s1">&#39;ventilation_cannula&#39;</span><span class="p">,</span> \
+      <span class="s1">&#39;ventilation_mechanical&#39;</span><span class="p">,</span> <span class="s1">&#39;ventilation_ncpap&#39;</span><span class="p">,</span> <span class="s1">&#39;bleeding_severe&#39;</span><span class="p">,</span> \
+      <span class="s1">&#39;cns_abnormal&#39;</span><span class="p">,</span> <span class="s1">&#39;liver_mild&#39;</span><span class="p">,</span> <span class="s1">&#39;pleural_effusion&#39;</span><span class="p">,</span> <span class="s1">&#39;skidney&#39;</span><span class="p">]</span>
+
+ <span class="n">shock_ad</span> <span class="o">=</span> <span class="s1">&#39;shock_admission&#39;</span> <span class="c1">#excluding it from the prior list as we are treating this differently</span>
+
+ <span class="c1">#Study_no list for ease of use</span>
+ <span class="n">patient_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;003-2162&#39;</span><span class="p">]</span>
+ <span class="c1">#[&#39;003-2009&#39;, &#39;003-2012&#39;,&#39;003-2023&#39;,&#39;003-2028&#39;,&#39;003-2103&#39;,&#39;003-2104&#39;,&#39;003-2109&#39;, &#39;003-2110&#39;, &#39;003-2162&#39;]</span>
 </pre></div>
 </td></tr></table></div>
 <p class="sphx-glr-script-out">Out:</p>
@@ -240,189 +269,362 @@ to download the full example code</p>
 [12703 rows x 42 columns]
 
  Raw Signals
+                       timedelta      idx  PLETH  IR_ADC             PPG_Datetime     PLETH_bpf  IR_ADC_bpf  study_no  study_no_rec
+0         0 days 00:05:00.010000    29913  10803  135438  2020-07-28 16:04:20.104   -347.936641   -0.439129  003-2009             0
+1         0 days 00:05:00.020000    29914  10609  135067  2020-07-28 16:04:20.114  -2051.585777  -16.222886  003-2009             0
+2         0 days 00:05:00.030000    29915  10659  134754  2020-07-28 16:04:20.124  -5424.102666  -96.673830  003-2009             0
+3         0 days 00:05:00.040000    29916  10983  134473  2020-07-28 16:04:20.134  -8735.859953 -286.584242  003-2009             0
+4         0 days 00:05:00.050000    29917  11734  134286  2020-07-28 16:04:20.144 -10096.052116 -548.629881  003-2009             0
+...                          ...      ...    ...     ...                      ...           ...         ...       ...           ...
+38090494  0 days 15:05:45.650000  5434392  29757  237669  2020-07-21 05:10:52.843   2225.061853  -71.816763  003-2162             0
+38090495  0 days 15:05:45.660000  5434393  28948  237769  2020-07-21 05:10:52.853   2087.608183  -63.166235  003-2162             0
+38090496  0 days 15:05:45.670000  5434394  28102  237833  2020-07-21 05:10:52.863   1924.112544  -54.688387  003-2162             0
+38090497  0 days 15:05:45.680000  5434395  27238  237917  2020-07-21 05:10:52.873   1729.246675  -46.064908  003-2162             0
+38090498  0 days 15:05:45.690000  5434396  26337  238017  2020-07-21 05:10:52.883   1506.537732  -44.085682  003-2162             0
+
+[38090499 rows x 9 columns]
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">event</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event_shock&#39;</span><span class="p">,</span> <span class="s1">&#39;reshock24&#39;</span><span class="p">,</span><span class="s1">&#39;shock_admission&#39;</span><span class="p">,</span>\
-      <span class="s1">&#39;ascites&#39;</span><span class="p">,</span> <span class="s1">&#39;respiratory_distress&#39;</span><span class="p">,</span> <span class="s1">&#39;ventilation_cannula&#39;</span><span class="p">,</span> \
-      <span class="s1">&#39;ventilation_mechanical&#39;</span><span class="p">,</span> <span class="s1">&#39;ventilation_ncpap&#39;</span><span class="p">,</span> <span class="s1">&#39;bleeding_severe&#39;</span><span class="p">,</span> \
-      <span class="s1">&#39;cns_abnormal&#39;</span><span class="p">,</span> <span class="s1">&#39;liver_mild&#39;</span><span class="p">,</span> <span class="s1">&#39;pleural_effusion&#39;</span><span class="p">,</span> <span class="s1">&#39;skidney&#39;</span><span class="p">]</span>
-
- <span class="n">event_shock</span> <span class="o">=</span> <span class="s1">&#39;diagnosis_admission&#39;</span>
-
- <span class="n">SQI_C</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<p>Turning signal window rows with an event to “keep = True”</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>53
+54
+55
+56
+57
+58
+59
+60</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">SQI_C</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event</span><span class="p">)):</span>
      <span class="n">event_s</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-     <span class="n">SQI_C_shock</span> <span class="o">=</span> <span class="n">SQI_C</span><span class="p">[</span><span class="n">SQI_C</span><span class="p">[</span><span class="n">event_s</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+     <span class="n">SQI_C</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">][</span><span class="n">SQI_C</span><span class="p">[</span><span class="n">event_s</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Total &quot;</span><span class="p">,</span> <span class="n">event</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot; events:&quot;</span><span class="p">)</span>
-     <span class="nb">print</span><span class="p">(</span><span class="n">SQI_C_shock</span><span class="p">)</span>
-     <span class="n">SQI_C</span><span class="p">[</span><span class="s1">&#39;keep&#39;</span><span class="p">][</span><span class="n">SQI_C_shock</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
- <span class="n">SQI_C</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv&#39;</span><span class="p">)</span>
+ <span class="c1">#Optional Save</span>
+ <span class="c1">#SQI_C.to_csv(r&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv&#39;)</span>
 </pre></div>
 </td></tr></table></div>
 <p class="sphx-glr-script-out">Out:</p>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> Total  event_shock  events:
-      Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
-1371        1371  0 days 11:30:30.010000  2020-07-29 03:29:50.104  2020-07-29 03:30:20.094  ...           NaN         NaN               NaN      NaN
-4751        4751  0 days 00:17:30.010000  2020-09-16 11:59:51.697  2020-09-16 12:00:21.687  ...           NaN         NaN               NaN      NaN
-6769        6769  0 days 02:33:30.010000  2020-09-18 17:59:38.316  2020-09-18 18:00:08.306  ...           NaN         NaN               NaN      NaN
-
-[3 rows x 42 columns]
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
+
+ Total  event_shock  events:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  reshock24  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
- Total  shock_admission  events:
-       Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
-0               0  0 days 00:05:00.010000  2020-07-28 16:04:20.104  2020-07-28 16:04:50.094  ...           NaN         NaN               NaN      NaN
-1               1  0 days 00:05:30.010000  2020-07-28 16:04:50.104  2020-07-28 16:05:20.094  ...           NaN         NaN               NaN      NaN
-2               2  0 days 00:06:00.010000  2020-07-28 16:05:20.104  2020-07-28 16:05:50.094  ...           NaN         NaN               NaN      NaN
-3               3  0 days 00:06:30.010000  2020-07-28 16:05:50.104  2020-07-28 16:06:20.094  ...           NaN         NaN               NaN      NaN
-4               4  0 days 00:07:00.010000  2020-07-28 16:06:20.104  2020-07-28 16:06:50.094  ...           NaN         NaN               NaN      NaN
-...           ...                     ...                      ...                      ...  ...           ...         ...               ...      ...
-10896       10896  0 days 00:24:30.010000  2020-11-05 10:13:10.614  2020-11-05 10:13:40.604  ...           NaN         NaN               NaN      NaN
-10897       10897  0 days 00:25:00.010000  2020-11-05 10:13:40.614  2020-11-05 10:14:10.604  ...           NaN         NaN               NaN      NaN
-10898       10898  0 days 00:25:30.010000  2020-11-05 10:14:10.614  2020-11-05 10:14:40.604  ...           NaN         NaN               NaN      NaN
-10899       10899  0 days 00:26:00.010000  2020-11-05 10:14:40.614  2020-11-05 10:15:10.604  ...           NaN         NaN               NaN      NaN
-10900       10900  0 days 00:26:30.010000  2020-11-05 10:15:10.614  2020-11-05 10:15:14.384  ...           NaN         NaN               NaN      NaN
-
-[9244 rows x 42 columns]
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+ Total  diagnosis_admission  events:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  ascites  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
 
  Total  respiratory_distress  events:
-      Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
-1371        1371  0 days 11:30:30.010000  2020-07-29 03:29:50.104  2020-07-29 03:30:20.094  ...           NaN         NaN               NaN      NaN
-
-[1 rows x 42 columns]
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  ventilation_cannula  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  ventilation_mechanical  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  ventilation_ncpap  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  bleeding_severe  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  cns_abnormal  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  liver_mild  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  pleural_effusion  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
+D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning:
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
+  SQI_C[&#39;keep&#39;][SQI_C[event_s] == True] = True
 
  Total  skidney  events:
-Empty DataFrame
-Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-Index: []
-D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQI_C[&#39;keep&#39;][SQI_C_shock.index] = True
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.089 seconds)</p>
+<p>Plotting IR_ADC BPF and PLETH BPF on interactive graphs, together with the events (i.e. event of shock and whether or not the patient was admitted with shock)</p>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">patient_list</span><span class="p">)):</span>
+     <span class="c1">#Plotting IR_ADC BPF signals with events</span>
+     <span class="c1">#fig = make_subplots(rows=2, cols=1)</span>
+     <span class="n">title_str</span> <span class="o">=</span> <span class="s1">&#39;IR_ADC_BPF over Time for patient &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+     <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">layout_title_text</span> <span class="o">=</span> <span class="n">title_str</span><span class="p">)</span>
+     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">Raw</span><span class="o">.</span><span class="n">PPG_Datetime</span><span class="p">[</span><span class="n">Raw</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">y</span> <span class="o">=</span>  <span class="n">Raw</span><span class="o">.</span><span class="n">IR_ADC_bpf</span><span class="p">[</span><span class="n">Raw</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;IR_ADC&#39;</span><span class="p">))</span><span class="c1">#,),row=1,col=1)</span>
+     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">SQI_C</span><span class="p">[(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">keep</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+         <span class="n">fig</span><span class="o">.</span><span class="n">add_vline</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">line_dash</span><span class="o">=</span><span class="s2">&quot;dot&quot;</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span><span class="c1"># annotation_text=&quot;Shock&quot;)#, annotation_position=&quot;top left&quot;, annotation_font_size=20, annotation_font_color=&quot;red&quot;)</span>
+         <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+             <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">Raw</span><span class="p">[</span><span class="s1">&#39;PLETH&#39;</span><span class="p">][(</span><span class="n">Raw</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Raw</span><span class="o">.</span><span class="n">PPG_Datetime</span> <span class="o">&gt;=</span> <span class="n">row</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Raw</span><span class="o">.</span><span class="n">PPG_Datetime</span> <span class="o">&lt;</span> <span class="n">row</span><span class="o">.</span><span class="n">PPG_w_f</span><span class="p">)]],</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Shock&quot;</span> <span class="p">))</span>
+     <span class="k">if</span> <span class="ow">not</span> <span class="n">SQI_C</span><span class="p">[(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">shock_admission</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)]</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+         <span class="n">fig</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+         <span class="n">xref</span><span class="o">=</span><span class="s2">&quot;x domain&quot;</span><span class="p">,</span>
+         <span class="n">yref</span><span class="o">=</span><span class="s2">&quot;y domain&quot;</span><span class="p">,</span>
+         <span class="c1"># The arrow head will be 25% along the x axis, starting from the left</span>
+         <span class="n">x</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+         <span class="c1"># The arrow head will be 40% along the y axis, starting from the bottom</span>
+         <span class="n">y</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+         <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Admitted with Shock&quot;</span><span class="p">,</span>
+         <span class="n">showarrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+             <span class="n">family</span><span class="o">=</span><span class="s2">&quot;Courier New, monospace&quot;</span><span class="p">,</span>
+             <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+             <span class="n">color</span><span class="o">=</span><span class="s2">&quot;RED&quot;</span>
+             <span class="p">)</span>
+                         <span class="p">)</span>
+
+
+     <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">rangeslider_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+     <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+     <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;IR_ADC&quot;</span><span class="p">)</span>
+     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+     <span class="c1"># #IGNORE, this is to save locally</span>
+     <span class="c1"># imagepath1 = &quot;D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\PNG&quot;</span>
+     <span class="c1"># imagepath2 = &quot;D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\SVG&quot;</span>
+     <span class="c1"># imagepath3 = &quot;D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\HTML&quot;</span>
+     <span class="c1"># img_title1 = os.path.join(imagepath1,title_str)</span>
+     <span class="c1"># img_title2 = os.path.join(imagepath2,title_str)</span>
+     <span class="c1"># img_title3 = os.path.join(imagepath3,title_str)</span>
+     <span class="c1"># img_s1 = img_title1 + &quot;.png&quot;</span>
+     <span class="c1"># img_s2 = img_title2 + &quot;.svg&quot;</span>
+     <span class="c1"># img_s3 = img_title3 + &quot;.html&quot;</span>
+     <span class="c1"># fig.write_image(img_s1)</span>
+     <span class="c1"># fig.write_image(img_s2)</span>
+     <span class="c1"># fig.write_html(img_s3)</span>
+
+     <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+     <span class="c1">#Plotting PLETH BPF and events</span>
+     <span class="c1">#fig = make_subplots(rows=2, cols=1)</span>
+     <span class="n">title_str2</span> <span class="o">=</span> <span class="s1">&#39;PLETH_BPF over Time for patient &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+     <span class="n">fig2</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">layout_title_text</span> <span class="o">=</span> <span class="n">title_str2</span><span class="p">)</span>
+     <span class="n">fig2</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">Raw</span><span class="o">.</span><span class="n">PPG_Datetime</span><span class="p">[</span><span class="n">Raw</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">y</span> <span class="o">=</span>  <span class="n">Raw</span><span class="o">.</span><span class="n">PLETH_bpf</span><span class="p">[</span><span class="n">Raw</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;PLETH&#39;</span><span class="p">))</span><span class="c1">#,),row=1,col=1)</span>
+     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">SQI_C</span><span class="p">[(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">keep</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)]</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+         <span class="n">fig2</span><span class="o">.</span><span class="n">add_vline</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">line_dash</span><span class="o">=</span><span class="s2">&quot;dot&quot;</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span><span class="c1">#, annotation_text=&quot;Shock&quot;)#, annotation_position=&quot;top left&quot;, annotation_font_size=20, annotation_font_color=&quot;red&quot;)</span>
+         <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+             <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span> <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;markers&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">Raw</span><span class="p">[</span><span class="s1">&#39;PLETH&#39;</span><span class="p">][(</span><span class="n">Raw</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Raw</span><span class="o">.</span><span class="n">PPG_Datetime</span> <span class="o">&gt;=</span> <span class="n">row</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Raw</span><span class="o">.</span><span class="n">PPG_Datetime</span> <span class="o">&lt;</span> <span class="n">row</span><span class="o">.</span><span class="n">PPG_w_f</span><span class="p">)]],</span> <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Shock&quot;</span> <span class="p">))</span>
+     <span class="k">if</span> <span class="ow">not</span> <span class="n">SQI_C</span><span class="p">[(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">patient_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQI_C</span><span class="o">.</span><span class="n">shock_admission</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)]</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+         <span class="n">fig2</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span>
+         <span class="n">xref</span><span class="o">=</span><span class="s2">&quot;x domain&quot;</span><span class="p">,</span>
+         <span class="n">yref</span><span class="o">=</span><span class="s2">&quot;y domain&quot;</span><span class="p">,</span>
+         <span class="c1"># The arrow head will be 25% along the x axis, starting from the left</span>
+         <span class="n">x</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+         <span class="c1"># The arrow head will be 40% along the y axis, starting from the bottom</span>
+         <span class="n">y</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+         <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Admitted with Shock&quot;</span><span class="p">,</span>
+         <span class="n">showarrow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+         <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+             <span class="n">family</span><span class="o">=</span><span class="s2">&quot;Courier New, monospace&quot;</span><span class="p">,</span>
+             <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+             <span class="n">color</span><span class="o">=</span><span class="s2">&quot;RED&quot;</span>
+             <span class="p">)</span>
+                         <span class="p">)</span>
+
+
+     <span class="n">fig2</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">rangeslider_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+     <span class="n">fig2</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+     <span class="n">fig2</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">&quot;PLETH&quot;</span><span class="p">)</span>
+     <span class="n">fig2</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+     <span class="c1"># #IGNORE, this is to save locally</span>
+     <span class="c1"># img_title4 = os.path.join(imagepath1,title_str2)</span>
+     <span class="c1"># img_title5 = os.path.join(imagepath2,title_str2)</span>
+     <span class="c1"># img_title6 = os.path.join(imagepath3,title_str2)</span>
+     <span class="c1"># img_s4 = img_title4 + &quot;.png&quot;</span>
+     <span class="c1"># img_s5 = img_title5 + &quot;.svg&quot;</span>
+     <span class="c1"># img_s6 = img_title6 + &quot;.html&quot;</span>
+     <span class="c1"># fig2.write_image(img_s4)</span>
+     <span class="c1"># fig2.write_image(img_s5)</span>
+     <span class="c1"># fig2.write_html(img_s6)</span>
+
+     <span class="n">fig2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+
+ <span class="c1">#MULTIPLE plots same figure</span>
+
+ <span class="c1">#fig.append_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == &#39;003-2009&#39;], y =  Raw.PLETH[Raw.study_no == &#39;003-2009&#39;], name=&#39;Pleth&#39;), row=2, col=1)</span>
+ <span class="c1">#for index, row in SQI_C[(SQI_C.study_no == &#39;003-2009&#39;) &amp; (SQI_C.keep == True)].iterrows():</span>
+ <span class="c1">#    fig.add_vline(x = row.PPG_w_s, line_width=3, line_dash=&quot;dash&quot;, line_color=&quot;red&quot;, row=2, col=1)</span>
+
+
+ <span class="c1">#fig.update_yaxes(title_text=&quot;Infrared&quot;, row=1, col=1)</span>
+ <span class="c1">#fig.update_yaxes(title_text=&quot;Pleth&quot;, row=2, col=1)</span>
+
+ <span class="c1"># fig.update_xaxes(rangeslider_visible=True, row=1, col=1)</span>
+ <span class="c1"># fig.update_xaxes(title_text=&quot;Date&quot;, row=1, col=1)</span>
+ <span class="c1"># fig.update_xaxes(rangeslider_visible=True, row=2, col=1)</span>
+ <span class="c1"># fig.update_xaxes(title_text=&quot;Date&quot;, row=2, col=1)</span>
+
+ <span class="c1">#fig.update_layout(height=1000, width=1000, title_text=&quot; IR_ADC and PLETH Plots for Patient 003-2009&quot;)</span>
+</pre></div>
+</td></tr></table></div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 5 minutes  44.614 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-extracting-shock-samples-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/28112687f66335c4a7b826d5f2f06fb2/plot_Extracting_Shock_Samples.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_Extracting_Shock_Samples.py</span></code></a></p>

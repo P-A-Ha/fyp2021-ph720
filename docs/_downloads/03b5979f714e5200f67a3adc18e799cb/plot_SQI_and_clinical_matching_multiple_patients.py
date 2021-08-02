@@ -60,6 +60,9 @@ def match_clinical_to_SQIs(Clinical, SQIs, event, study_no_list):
             for j in range(len(event_row)):
                 valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
                 SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
+                if valid_SQI_rows.empty:
+                    ##If the date is equal to the date of an event, we can raise True for the whole day, in case no time is present (or it's out of the recording)
+                    SQIs[event][(SQIs.PPG_w_s.dt.date == event_row.date[event_row.date.index[j]].date) & (SQIs.PPG_w_f.dt.date == event_row.date[event_row.date.index[j]].date) & (SQIs.study_no == study_no_list[i][-8:])]
     return SQIs
 
 '''

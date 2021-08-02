@@ -33,12 +33,12 @@ Below are some Pre-Processing examples
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Fetching shock instances (including symptoms that indicate severe dengue) and structuring the d...">
+    <div class="sphx-glr-thumbcontainer" tooltip="Fetching shock instances (including symptoms that indicate severe dengue) and plotting the data...">
 
 .. only:: html
 
  .. figure:: /_examples/Pre-Processing/images/thumb/sphx_glr_plot_Extracting_Shock_Samples_thumb.png
-     :alt: Extracting Shock Data for Feature Extraction (UNFINISHED)
+     :alt: Extracting Shock Data for Feature Extraction - Initial Plots for BPF
 
      :ref:`sphx_glr__examples_Pre-Processing_plot_Extracting_Shock_Samples.py`
 

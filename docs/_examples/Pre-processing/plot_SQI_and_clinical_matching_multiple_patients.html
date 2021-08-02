@@ -300,7 +300,10 @@ to download the full example code</p>
 132
 133
 134
-135</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
+135
+136
+137
+138</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="n">filename_SQIs</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Outputs\Complete_SQIs.csv&#39;</span>
  <span class="n">filename_Clinical</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\Clinical\v0.0.10\01nva_data_stacked_corrected.csv&#39;</span>
  <span class="n">study_no_path</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;..\..\..\..\OUCRU\01NVa_Dengue\Adults&#39;</span>
 
@@ -341,6 +344,9 @@ to download the full example code</p>
              <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">event_row</span><span class="p">)):</span>
                  <span class="n">valid_SQI_rows</span> <span class="o">=</span> <span class="n">SQIs</span><span class="p">[(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_s</span> <span class="o">&lt;=</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_f</span> <span class="o">&gt;</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
                  <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#Setting the value to True for the window corresponding to an event</span>
+                 <span class="k">if</span> <span class="n">valid_SQI_rows</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                     <span class="c1">##If the date is equal to the date of an event, we can raise True for the whole day, in case no time is present (or it&#39;s out of the recording)</span>
+                     <span class="n">SQIs</span><span class="p">[</span><span class="n">event</span><span class="p">][(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_s</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">date</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">PPG_w_f</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="p">[</span><span class="n">event_row</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">date</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SQIs</span><span class="o">.</span><span class="n">study_no</span> <span class="o">==</span> <span class="n">study_no_list</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">8</span><span class="p">:])]</span>
      <span class="k">return</span> <span class="n">SQIs</span>
 
  <span class="sd">&#39;&#39;&#39;</span>
@@ -454,16 +460,20 @@ to download the full example code</p>
 
  STUDY-NO:  01NVa-003-2009
 D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:56: SettingWithCopyWarning:
+
+
 A value is trying to be set on a copy of a slice from a DataFrame.
 Try using .loc[row_indexer,col_indexer] = value instead
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  event_row[&#39;date&#39;] = pd.to_datetime(event_row[&#39;date&#39;])
+
 D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:62: SettingWithCopyWarning:
+
+
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
+
 
  STUDY-NO:  01NVa-003-2012
 
@@ -525,10 +535,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
  STUDY-NO:  01NVa-003-2009
 D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:58: SettingWithCopyWarning:
+
+
 A value is trying to be set on a copy of a slice from a DataFrame
 
 See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  SQIs[&#39;shock_admission&#39;][SQIs.study_no == study_no_list[i][-8:]] = True #Showing whether a record indicates a shock on admission
+
 
  STUDY-NO:  01NVa-003-2012
 
@@ -763,7 +775,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 [12703 rows x 41 columns]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  4.334 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  4.307 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-pre-processing-plot-sqi-and-clinical-matching-multiple-patients-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/03b5979f714e5200f67a3adc18e799cb/plot_SQI_and_clinical_matching_multiple_patients.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_SQI_and_clinical_matching_multiple_patients.py</span></code></a></p>

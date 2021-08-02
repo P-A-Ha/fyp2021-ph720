@@ -50,7 +50,7 @@ Importing Libraries
 
 Loading SQI Data and clinical data
 
-.. GENERATED FROM PYTHON SOURCE LINES 21-137
+.. GENERATED FROM PYTHON SOURCE LINES 21-140
 
 .. code-block:: default
    :lineno-start: 22
@@ -97,6 +97,9 @@ Loading SQI Data and clinical data
                 for j in range(len(event_row)):
                     valid_SQI_rows = SQIs[(SQIs.PPG_w_s <= event_row.date[event_row.date.index[j]]) & (SQIs.PPG_w_f > event_row.date[event_row.date.index[j]]) & (SQIs.study_no == study_no_list[i][-8:])]
                     SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
+                    if valid_SQI_rows.empty:
+                        ##If the date is equal to the date of an event, we can raise True for the whole day, in case no time is present (or it's out of the recording)
+                        SQIs[event][(SQIs.PPG_w_s.dt.date == event_row.date[event_row.date.index[j]].date) & (SQIs.PPG_w_f.dt.date == event_row.date[event_row.date.index[j]].date) & (SQIs.study_no == study_no_list[i][-8:])]
         return SQIs
 
     '''
@@ -221,17 +224,21 @@ Loading SQI Data and clinical data
      EVENT:  event_shock
 
      STUDY-NO:  01NVa-003-2009
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:56: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:56: SettingWithCopyWarning:
+
+
     A value is trying to be set on a copy of a slice from a DataFrame.
     Try using .loc[row_indexer,col_indexer] = value instead
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      event_row['date'] = pd.to_datetime(event_row['date'])
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:62: SettingWithCopyWarning: 
+
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:62: SettingWithCopyWarning:
+
+
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQIs[event][valid_SQI_rows.index] = True #Setting the value to True for the window corresponding to an event
+
 
      STUDY-NO:  01NVa-003-2012
 
@@ -292,11 +299,13 @@ Loading SQI Data and clinical data
      EVENT:  shock_admission
 
      STUDY-NO:  01NVa-003-2009
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:58: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_SQI_and_clinical_matching_multiple_patients.py:58: SettingWithCopyWarning:
+
+
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQIs['shock_admission'][SQIs.study_no == study_no_list[i][-8:]] = True #Showing whether a record indicates a shock on admission
+
 
      STUDY-NO:  01NVa-003-2012
 
@@ -536,7 +545,7 @@ Loading SQI Data and clinical data
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  4.334 seconds)
+   **Total running time of the script:** ( 0 minutes  4.307 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_SQI_and_clinical_matching_multiple_patients.py:

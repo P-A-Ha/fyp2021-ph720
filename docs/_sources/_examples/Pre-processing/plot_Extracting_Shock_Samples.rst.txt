@@ -18,19 +18,20 @@
 .. _sphx_glr__examples_Pre-Processing_plot_Extracting_Shock_Samples.py:
 
 
-Extracting Shock Data for Feature Extraction (UNFINISHED)
-=========================================================
+Extracting Shock Data for Feature Extraction - Initial Plots for BPF 
+====================================================================
 
-Fetching shock instances (including symptoms that indicate severe dengue) and structuring the data
+Fetching shock instances (including symptoms that indicate severe dengue) and plotting the data.
+Processing of data will follow this step
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-10
+.. GENERATED FROM PYTHON SOURCE LINES 10-11
 
-# Importing Libraries
+# Importing Libraries, Definitions and Data Loading
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-37
+.. GENERATED FROM PYTHON SOURCE LINES 11-51
 
 .. code-block:: default
-   :lineno-start: 11
+   :lineno-start: 12
 
 
     # Generic
@@ -40,7 +41,9 @@ Fetching shock instances (including symptoms that indicate severe dengue) and st
     import matplotlib.pyplot as plt
     from datetime import datetime
     import glob
-    import plotly as pl
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+    import plotly.io as pio
 
     Terminal = True
 
@@ -50,14 +53,25 @@ Fetching shock instances (including symptoms that indicate severe dengue) and st
 
     #Loading SQI Matched with clinitcal to the Dataframe
     SQI_C = pd.read_csv(SQI_clinical_file)
-    #Raw = pd.read_csv(Raw_signals)
+    Raw = pd.read_csv(Raw_signals)
 
     if Terminal:
         print("\n SQI with Clinical Match:")
         print(SQI_C)
         print("\n Raw Signals")
-        #print(Raw)
+        print(Raw)
 
+    #List of events explored
+    event = ['event_shock', 'reshock24','diagnosis_admission',\
+         'ascites', 'respiratory_distress', 'ventilation_cannula', \
+         'ventilation_mechanical', 'ventilation_ncpap', 'bleeding_severe', \
+         'cns_abnormal', 'liver_mild', 'pleural_effusion', 'skidney']
+
+    shock_ad = 'shock_admission' #excluding it from the prior list as we are treating this differently
+
+    #Study_no list for ease of use
+    patient_list = ['003-2162']
+    #['003-2009', '003-2012','003-2023','003-2028','003-2103','003-2104','003-2109', '003-2110', '003-2162']
 
 
 
@@ -87,34 +101,42 @@ Fetching shock instances (including symptoms that indicate severe dengue) and st
     [12703 rows x 42 columns]
 
      Raw Signals
+                           timedelta      idx  PLETH  IR_ADC             PPG_Datetime     PLETH_bpf  IR_ADC_bpf  study_no  study_no_rec
+    0         0 days 00:05:00.010000    29913  10803  135438  2020-07-28 16:04:20.104   -347.936641   -0.439129  003-2009             0
+    1         0 days 00:05:00.020000    29914  10609  135067  2020-07-28 16:04:20.114  -2051.585777  -16.222886  003-2009             0
+    2         0 days 00:05:00.030000    29915  10659  134754  2020-07-28 16:04:20.124  -5424.102666  -96.673830  003-2009             0
+    3         0 days 00:05:00.040000    29916  10983  134473  2020-07-28 16:04:20.134  -8735.859953 -286.584242  003-2009             0
+    4         0 days 00:05:00.050000    29917  11734  134286  2020-07-28 16:04:20.144 -10096.052116 -548.629881  003-2009             0
+    ...                          ...      ...    ...     ...                      ...           ...         ...       ...           ...
+    38090494  0 days 15:05:45.650000  5434392  29757  237669  2020-07-21 05:10:52.843   2225.061853  -71.816763  003-2162             0
+    38090495  0 days 15:05:45.660000  5434393  28948  237769  2020-07-21 05:10:52.853   2087.608183  -63.166235  003-2162             0
+    38090496  0 days 15:05:45.670000  5434394  28102  237833  2020-07-21 05:10:52.863   1924.112544  -54.688387  003-2162             0
+    38090497  0 days 15:05:45.680000  5434395  27238  237917  2020-07-21 05:10:52.873   1729.246675  -46.064908  003-2162             0
+    38090498  0 days 15:05:45.690000  5434396  26337  238017  2020-07-21 05:10:52.883   1506.537732  -44.085682  003-2162             0
+
+    [38090499 rows x 9 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-58
+.. GENERATED FROM PYTHON SOURCE LINES 52-53
+
+Turning signal window rows with an event to "keep = True"
+
+.. GENERATED FROM PYTHON SOURCE LINES 53-63
 
 .. code-block:: default
-   :lineno-start: 39
-
-
-    event = ['event_shock', 'reshock24','shock_admission',\
-         'ascites', 'respiratory_distress', 'ventilation_cannula', \
-         'ventilation_mechanical', 'ventilation_ncpap', 'bleeding_severe', \
-         'cns_abnormal', 'liver_mild', 'pleural_effusion', 'skidney']
-
-    event_shock = 'diagnosis_admission'
+   :lineno-start: 53
 
     SQI_C['keep'] = False
     for i in range(len(event)):
         event_s = event[i]
-        SQI_C_shock = SQI_C[SQI_C[event_s] == True]
+        SQI_C['keep'][SQI_C[event_s] == True] = True
         print("\n Total ", event[i], " events:")
-        print(SQI_C_shock)
-        SQI_C['keep'][SQI_C_shock.index] = True
 
-    SQI_C.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv')
+    #Optional Save
+    #SQI_C.to_csv(r'..\..\..\..\OUCRU\Outputs\Complete_SQIs_with_Clinical_keep.csv')
 
-    
     
 
 
@@ -126,151 +148,223 @@ Fetching shock instances (including symptoms that indicate severe dengue) and st
 
  .. code-block:: none
 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
+    A value is trying to be set on a copy of a slice from a DataFrame
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  event_shock  events:
-          Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
-    1371        1371  0 days 11:30:30.010000  2020-07-29 03:29:50.104  2020-07-29 03:30:20.094  ...           NaN         NaN               NaN      NaN
-    4751        4751  0 days 00:17:30.010000  2020-09-16 11:59:51.697  2020-09-16 12:00:21.687  ...           NaN         NaN               NaN      NaN
-    6769        6769  0 days 02:33:30.010000  2020-09-18 17:59:38.316  2020-09-18 18:00:08.306  ...           NaN         NaN               NaN      NaN
-
-    [3 rows x 42 columns]
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  reshock24  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
-     Total  shock_admission  events:
-           Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
-    0               0  0 days 00:05:00.010000  2020-07-28 16:04:20.104  2020-07-28 16:04:50.094  ...           NaN         NaN               NaN      NaN
-    1               1  0 days 00:05:30.010000  2020-07-28 16:04:50.104  2020-07-28 16:05:20.094  ...           NaN         NaN               NaN      NaN
-    2               2  0 days 00:06:00.010000  2020-07-28 16:05:20.104  2020-07-28 16:05:50.094  ...           NaN         NaN               NaN      NaN
-    3               3  0 days 00:06:30.010000  2020-07-28 16:05:50.104  2020-07-28 16:06:20.094  ...           NaN         NaN               NaN      NaN
-    4               4  0 days 00:07:00.010000  2020-07-28 16:06:20.104  2020-07-28 16:06:50.094  ...           NaN         NaN               NaN      NaN
-    ...           ...                     ...                      ...                      ...  ...           ...         ...               ...      ...
-    10896       10896  0 days 00:24:30.010000  2020-11-05 10:13:10.614  2020-11-05 10:13:40.604  ...           NaN         NaN               NaN      NaN
-    10897       10897  0 days 00:25:00.010000  2020-11-05 10:13:40.614  2020-11-05 10:14:10.604  ...           NaN         NaN               NaN      NaN
-    10898       10898  0 days 00:25:30.010000  2020-11-05 10:14:10.614  2020-11-05 10:14:40.604  ...           NaN         NaN               NaN      NaN
-    10899       10899  0 days 00:26:00.010000  2020-11-05 10:14:40.614  2020-11-05 10:15:10.604  ...           NaN         NaN               NaN      NaN
-    10900       10900  0 days 00:26:30.010000  2020-11-05 10:15:10.614  2020-11-05 10:15:14.384  ...           NaN         NaN               NaN      NaN
-
-    [9244 rows x 42 columns]
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+     Total  diagnosis_admission  events:
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  ascites  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame
-
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
 
      Total  respiratory_distress  events:
-          Unnamed: 0               timedelta                  PPG_w_s                  PPG_w_f  ...  cns_abnormal  liver_mild  pleural_effusion  skidney
-    1371        1371  0 days 11:30:30.010000  2020-07-29 03:29:50.104  2020-07-29 03:30:20.094  ...           NaN         NaN               NaN      NaN
-
-    [1 rows x 42 columns]
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  ventilation_cannula  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  ventilation_mechanical  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  ventilation_ncpap  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  bleeding_severe  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  cns_abnormal  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  liver_mild  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  pleural_effusion  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
+    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:56: SettingWithCopyWarning: 
     A value is trying to be set on a copy of a slice from a DataFrame
 
     See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+      SQI_C['keep'][SQI_C[event_s] == True] = True
 
      Total  skidney  events:
-    Empty DataFrame
-    Columns: [Unnamed: 0, timedelta, PPG_w_s, PPG_w_f, first, last, skew_0, entropy_0, kurtosis_0, snr_0, mcr_0, zcr_0, msq_0, perfusion_0, correlogram_0, skew_1, entropy_1, kurtosis_1, snr_1, mcr_1, zcr_1, msq_1, perfusion_1, correlogram_1, w, study_no, study_no_rec, keep, event_shock, reshock24, diagnosis_admission, shock_admission, ascites, respiratory_distress, ventilation_cannula, ventilation_mechanical, ventilation_ncpap, bleeding_severe, cns_abnormal, liver_mild, pleural_effusion, skidney]
-    Index: []
-    D:\FILES\Desktop\Dissertation ICL\Git\main\examples\Pre-processing\plot_Extracting_Shock_Samples.py:52: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame
 
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      SQI_C['keep'][SQI_C_shock.index] = True
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 64-65
+
+Plotting IR_ADC BPF and PLETH BPF on interactive graphs, together with the events (i.e. event of shock and whether or not the patient was admitted with shock)
+
+.. GENERATED FROM PYTHON SOURCE LINES 65-180
+
+.. code-block:: default
+   :lineno-start: 65
+
+    for i in range(len(patient_list)):
+        #Plotting IR_ADC BPF signals with events
+        #fig = make_subplots(rows=2, cols=1)
+        title_str = 'IR_ADC_BPF over Time for patient ' + str(patient_list[i])
+        fig = go.Figure(layout_title_text = title_str)
+        fig.add_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == patient_list[i]], y =  Raw.IR_ADC_bpf[Raw.study_no == patient_list[i]], name='IR_ADC'))#,),row=1,col=1)
+        for index, row in SQI_C[(SQI_C.study_no == patient_list[i]) & (SQI_C.keep == True)].iterrows():
+            fig.add_vline(x = row.PPG_w_s, line_width=3, line_dash="dot", line_color="red")# annotation_text="Shock")#, annotation_position="top left", annotation_font_size=20, annotation_font_color="red")
+            if not row.empty:
+                fig.add_trace( go.Scatter(mode='markers', x=[row.PPG_w_s], y=[Raw['PLETH'][(Raw.study_no == patient_list[i]) & (Raw.PPG_Datetime >= row.PPG_w_s) & (Raw.PPG_Datetime < row.PPG_w_f)]], marker=dict(color='red', opacity=1), name = "Shock" ))
+        if not SQI_C[(SQI_C.study_no == patient_list[i]) & (SQI_C.shock_admission == True)].empty:
+            fig.add_annotation(
+            xref="x domain",
+            yref="y domain",
+            # The arrow head will be 25% along the x axis, starting from the left
+            x=0.01,
+            # The arrow head will be 40% along the y axis, starting from the bottom
+            y=0.01,
+            text="Admitted with Shock",
+            showarrow=False,
+            font=dict(
+                family="Courier New, monospace",
+                size=20,
+                color="RED"
+                )
+                            )
+    
+
+        fig.update_xaxes(rangeslider_visible=True)
+        fig.update_xaxes(title_text="Date")
+        fig.update_yaxes(title_text="IR_ADC")
+        fig.update_layout(showlegend=True)
+
+        # #IGNORE, this is to save locally
+        # imagepath1 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\PNG"
+        # imagepath2 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\SVG"
+        # imagepath3 = "D:\FILES\Desktop\Dissertation ICL\OUCRU\Outputs\Images_BPF\HTML"
+        # img_title1 = os.path.join(imagepath1,title_str)
+        # img_title2 = os.path.join(imagepath2,title_str)
+        # img_title3 = os.path.join(imagepath3,title_str)
+        # img_s1 = img_title1 + ".png"
+        # img_s2 = img_title2 + ".svg"
+        # img_s3 = img_title3 + ".html"
+        # fig.write_image(img_s1)
+        # fig.write_image(img_s2)
+        # fig.write_html(img_s3)
+
+        fig.show()
+
+    
+        #Plotting PLETH BPF and events
+        #fig = make_subplots(rows=2, cols=1)
+        title_str2 = 'PLETH_BPF over Time for patient ' + str(patient_list[i])
+        fig2 = go.Figure(layout_title_text = title_str2)
+        fig2.add_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == patient_list[i]], y =  Raw.PLETH_bpf[Raw.study_no == patient_list[i]], name='PLETH'))#,),row=1,col=1)
+        for index, row in SQI_C[(SQI_C.study_no == patient_list[i]) & (SQI_C.keep == True)].iterrows():
+            fig2.add_vline(x = row.PPG_w_s, line_width=3, line_dash="dot", line_color="red")#, annotation_text="Shock")#, annotation_position="top left", annotation_font_size=20, annotation_font_color="red")
+            if not row.empty:
+                fig.add_trace( go.Scatter(mode='markers', x=[row.PPG_w_s], y=[Raw['PLETH'][(Raw.study_no == patient_list[i]) & (Raw.PPG_Datetime >= row.PPG_w_s) & (Raw.PPG_Datetime < row.PPG_w_f)]], marker=dict(color='red', opacity=1), name = "Shock" ))
+        if not SQI_C[(SQI_C.study_no == patient_list[i]) & (SQI_C.shock_admission == True)].empty:
+            fig2.add_annotation(
+            xref="x domain",
+            yref="y domain",
+            # The arrow head will be 25% along the x axis, starting from the left
+            x=0.01,
+            # The arrow head will be 40% along the y axis, starting from the bottom
+            y=0.01,
+            text="Admitted with Shock",
+            showarrow=False,
+            font=dict(
+                family="Courier New, monospace",
+                size=20,
+                color="RED"
+                )
+                            )
+
+
+        fig2.update_xaxes(rangeslider_visible=True)
+        fig2.update_xaxes(title_text="Date")
+        fig2.update_yaxes(title_text="PLETH")
+        fig2.update_layout(showlegend=True)
+
+
+        # #IGNORE, this is to save locally
+        # img_title4 = os.path.join(imagepath1,title_str2)
+        # img_title5 = os.path.join(imagepath2,title_str2)
+        # img_title6 = os.path.join(imagepath3,title_str2)
+        # img_s4 = img_title4 + ".png"
+        # img_s5 = img_title5 + ".svg"
+        # img_s6 = img_title6 + ".html"
+        # fig2.write_image(img_s4)
+        # fig2.write_image(img_s5)
+        # fig2.write_html(img_s6)
+
+        fig2.show()
+    
+
+
+
+    #MULTIPLE plots same figure 
+
+    #fig.append_trace(go.Scatter(x = Raw.PPG_Datetime[Raw.study_no == '003-2009'], y =  Raw.PLETH[Raw.study_no == '003-2009'], name='Pleth'), row=2, col=1)
+    #for index, row in SQI_C[(SQI_C.study_no == '003-2009') & (SQI_C.keep == True)].iterrows():
+    #    fig.add_vline(x = row.PPG_w_s, line_width=3, line_dash="dash", line_color="red", row=2, col=1)
+
+
+    #fig.update_yaxes(title_text="Infrared", row=1, col=1)
+    #fig.update_yaxes(title_text="Pleth", row=2, col=1)
+
+    # fig.update_xaxes(rangeslider_visible=True, row=1, col=1)
+    # fig.update_xaxes(title_text="Date", row=1, col=1)
+    # fig.update_xaxes(rangeslider_visible=True, row=2, col=1)
+    # fig.update_xaxes(title_text="Date", row=2, col=1)
+
+    #fig.update_layout(height=1000, width=1000, title_text=" IR_ADC and PLETH Plots for Patient 003-2009")
+
+
+
 
 
 
@@ -278,7 +372,7 @@ Fetching shock instances (including symptoms that indicate severe dengue) and st
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  1.089 seconds)
+   **Total running time of the script:** ( 5 minutes  44.614 seconds)
 
 
 .. _sphx_glr_download__examples_Pre-Processing_plot_Extracting_Shock_Samples.py:
