@@ -5,3 +5,8 @@ sphinx-gallery
 matplotlib
 vital_sqi
 numpy
+keras
+scipy
+plotly
+tensorflow==2.5
+kaleido
